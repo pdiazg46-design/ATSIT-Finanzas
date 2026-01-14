@@ -10,8 +10,11 @@ if (!url) {
     console.warn('⚠️ No DATABASE_URL found, falling back to local SQLite file.');
 }
 
+// Turso/Vercel compatibility: Force HTTPS instead of libsql (WebSocket) to avoid "Failed query"
+const finalUrl = url?.replace('libsql://', 'https://') || 'file:finance.db';
+
 const client = createClient({
-    url: url || 'file:finance.db',
+    url: finalUrl,
     authToken,
 });
 
