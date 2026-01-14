@@ -35,7 +35,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
     const participatingProjectsResults = await Promise.all(
         projectIdsParticipating
             .filter(pid => !ownedProjects.find((op: any) => op.id === pid))
-            .map(pid => db.select().from(projects).where(eq(projects.id, pid)).get())
+            .map((pid: any) => db.select().from(projects).where(eq(projects.id, Number(pid))).get())
     );
 
     const participatingProjects = participatingProjectsResults.filter((p): p is NonNullable<typeof p> => p !== undefined);
