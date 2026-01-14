@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 57: FIX BUILD FINAL
+echo INTENTO 58: FIX TYPE ERROR
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Evitando crash de DB en tiempo de build...
-call git commit -m "Fix: Remove DB connection strict check to allow build to pass"
+echo Corrigiendo tipos en settings page...
+call git commit -m "Fix: Update settings initialization to match CompanySettings interface"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI QUE NO HAY EXCUSA...
+echo EL ULTIMO CLAVO...
 echo ==========================================
 call git push -u origin main
 

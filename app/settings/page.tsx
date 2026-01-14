@@ -6,7 +6,16 @@ import { getUsers, hasPermission, PERMISSIONS } from '@/lib/user-actions';
 export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
-    let settings = { name: 'Empresa', currency: 'CLP', phone: '', address: '', website: '', email: '', rut: '' };
+    let settings = {
+        name: 'Tangente',
+        businessName: 'Tangente SpA',
+        description: '',
+        phone: '',
+        address: '',
+        website: '',
+        email: '',
+        rut: ''
+    };
     let isAdmin = false;
 
     try {
