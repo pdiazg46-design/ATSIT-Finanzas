@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { LogOut, User as UserIcon } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { logout } from '@/lib/actions';
 
 export default function Sidebar({ companyName = 'Tangente', user }: { companyName?: string, user?: { name?: string | null, email?: string | null } }) {
     const pathname = usePathname();
@@ -62,7 +62,7 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                         </div>
                     </div>
                     <button
-                        onClick={() => signOut()}
+                        onClick={() => logout()}
                         className="w-full flex items-center justify-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-2 rounded-lg transition-colors"
                     >
                         <LogOut size={14} />

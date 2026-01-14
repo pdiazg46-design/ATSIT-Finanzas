@@ -38,4 +38,11 @@ export async function authenticate(
         }
         return `Error del servidor: ${(error as any).message}`;
     }
+    // ... existing code ...
+    return `Error del servidor: ${(error as any).message}`;
+}
+}
+
+export async function logout() {
+    await signOut({ redirectTo: '/login' });
 }

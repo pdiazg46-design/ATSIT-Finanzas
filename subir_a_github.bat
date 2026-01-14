@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 43: GESTION DE USUARIOS
+echo INTENTO 44: FIX LOGOUT
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando panel de usuarios y permisos...
-call git commit -m "Feat: User Management System and Role Permissions"
+echo Arreglando boton cerrar sesion...
+call git commit -m "Fix: Logout button not working"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo SUBIENDO CAMBIOS...
+echo ENVIANDO SOLUCION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Ve a Configuracion para crear usuarios.
+echo LISTO. Ahora el boton Cerrar Sesion funcionara.
 echo ==========================================
 pause
