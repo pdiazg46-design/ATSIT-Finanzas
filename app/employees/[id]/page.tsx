@@ -38,7 +38,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
             .map((pid: any) => db.select().from(projects).where(eq(projects.id, Number(pid))).get())
     );
 
-    const participatingProjects = participatingProjectsResults.filter((p): p is NonNullable<typeof p> => p !== undefined);
+    const participatingProjects = participatingProjectsResults.filter((p: any): p is NonNullable<typeof p> => p !== undefined);
     const allProjects = [...ownedProjects, ...participatingProjects];
 
     const formatCurrency = (val: number | null) => {
@@ -113,7 +113,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {employeeTasks.map(task => (
+                                {employeeTasks.map((task: any) => (
                                     <tr key={task.taskId} className="hover:bg-white/5 transition-colors group">
                                         <td className="px-6 py-4 text-xs font-bold text-sky-400">
                                             <Link href={`/projects/${task.projectId}`} className="hover:underline">

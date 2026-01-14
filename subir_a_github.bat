@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 18: FIX BUILD ERROR (Tipos en Empleados III)
+echo INTENTO 19: FIX FINAL - TIPOS EN EMPLEADOS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo error de overload en eq()...
-call git commit -m "Fix: Cast pid to number in employee projects query"
+echo Corrigiendo ultimos errores de TypeScript...
+call git commit -m "Fix: Add explicit any types to filter p and map task to solve build error"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO CORRECCION...
+echo ENVIANDO CORRECCION FINAL...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo A la tercera la vencida?
+echo Si esto no funciona, me hago monje tibetano.
 echo ==========================================
 pause
