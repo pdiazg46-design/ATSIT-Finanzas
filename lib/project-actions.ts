@@ -40,5 +40,28 @@ export async function deleteProject(id: number) {
 
     revalidatePath('/projects');
     revalidatePath('/');
+    revalidatePath('/');
     return { success: true };
+}
+
+export async function archiveProject(id: number) {
+    await db.update(projects)
+        .set({ isArchived: true, lastActionAt: new Date().toISOString() })
+        .where(eq(projects.id, id));
+
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${id}`);
+    revalidatePath('/');
+    revalidatePath('/history');
+}
+
+export async function activateProject(id: number) {
+    await db.update(projects)
+        .set({ isArchived: false, lastActionAt: new Date().toISOString() })
+        .where(eq(projects.id, id));
+
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${id}`);
+    revalidatePath('/');
+    revalidatePath('/history');
 }

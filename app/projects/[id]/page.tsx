@@ -4,7 +4,7 @@ import { eq, sql, desc } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, User, DollarSign, Clock, FileText, Archive, Play, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { archiveProject, activateProject } from '@/lib/actions';
+import { archiveProject, activateProject } from '@/lib/project-actions';
 import ProjectTaskTable from '@/components/ProjectTaskTable';
 import EditProjectButton from '@/components/EditProjectButton';
 
