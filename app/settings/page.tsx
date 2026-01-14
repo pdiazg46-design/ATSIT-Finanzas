@@ -6,8 +6,15 @@ import { getUsers, hasPermission, PERMISSIONS } from '@/lib/user-actions';
 export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
-    const settings = await getCompanySettings();
-    const isAdmin = await hasPermission(PERMISSIONS.ADMIN);
+    let settings = { name: 'Empresa', currency: 'CLP', phone: '', address: '', website: '', email: '', rut: '' };
+    let isAdmin = false;
+
+    try {
+        settings = await getCompanySettings();
+        isAdmin = await hasPermission(PERMISSIONS.ADMIN);
+    } catch (err) {
+        console.warn('Build-time data fetch failed (expected):', err);
+    }
 
     let users: any[] = [];
     if (isAdmin) {

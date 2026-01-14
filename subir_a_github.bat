@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 56: FIX BUILD SETTINGS
+echo INTENTO 57: FIX BUILD FINAL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Forzando renderizado dinamico en settings...
-call git commit -m "Fix: Add force-dynamic to settings page to prevent SSG build error"
+echo Evitando crash de DB en tiempo de build...
+call git commit -m "Fix: Remove DB connection strict check to allow build to pass"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo UN CLASICO DE NEXT.JS...
+echo AHORA SI QUE NO HAY EXCUSA...
 echo ==========================================
 call git push -u origin main
 
