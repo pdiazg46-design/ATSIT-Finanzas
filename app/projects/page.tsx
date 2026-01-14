@@ -4,6 +4,8 @@ import { eq, sql, desc } from 'drizzle-orm';
 import ProjectList from '@/components/ProjectList';
 import AddProjectButton from '@/components/AddProjectButton';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectsPage() {
     const allProjects = await db.select({
         id: projects.id,

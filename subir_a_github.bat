@@ -1,36 +1,36 @@
 @echo off
 echo ==========================================
-echo INTENTO 3: SUBIENDO CORRECCIONES A GITHUB
+echo INTENTO 4: FIX BUILD TIME ERROR
 echo ==========================================
 
-:: Configurar identidad por si acaso
+:: Configurar identidad
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: 1. Agregar cambios nuevos (package.json)
+:: 1. Agregar cambios
 echo Agregando archivos modificados...
 call git add .
 
-:: 2. Guardar los cambios (Commit)
-echo Creando paquete de correccion...
-call git commit -m "Eliminando better-sqlite3 incompatible"
+:: 2. Commit
+echo Guardando cambios...
+call git commit -m "Fix: Force dynamic rendering to avoid build DB connection"
 
-:: 3. Asegurar rama main
+:: 3. Branch
 call git branch -M main
 
-:: 4. Conectar remoto (Si da error "ya existe", es normal e ignoramos)
+:: 4. Remote (ignorando error si existe)
 call git remote add origin https://github.com/pdiazg46-design/Tangente-app.git 2>NUL
 
-:: 5. Subir a la nube
+:: 5. Push
 echo.
 echo ==========================================
-echo ENVIANDO A LA NUBE...
+echo ENVIANDO FIX A LA NUBE...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora revisa Vercel. Deberias ver "Eliminando better-sqlite3 incompatible"
+echo Revisa Vercel. Deberia funcionar ahora.
 echo ==========================================
 pause
