@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 54: FORZAR RECONSTRUCCION
+echo INTENTO 55: FIX BUILD ERROR
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Forzando recompilacion limpia en Vercel...
-call git commit -m "Chore: Force Vercel rebuild to pick up new API routes"
+echo Corrigiendo exportacion de handlers en auth.ts...
+call git commit -m "Fix: Export handlers from auth.ts to fix build"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo LIMPIANDO CAÑERIAS...
+echo AHORA SI QUE SI (x2)...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Espera unos 3 minutos a que Vercel termine.
+echo LISTO. Revisa que el 'Error' cambie a verde en Vercel.
 echo ==========================================
 pause
