@@ -13,7 +13,9 @@ export default function LoginPage() {
                 <LoginForm />
                 <div className="text-center pt-4">
                     <p className="text-xs text-gray-500 mb-2">¿Primera vez aquí?</p>
-                    {/* Debug Link Removed after success */}
+                    <a href="/api/seed" className="text-xs text-indigo-500 hover:text-indigo-600 block mt-2">
+                        Inicializar Base de Datos (Admin)
+                    </a>
                 </div>
             </div>
         </main>

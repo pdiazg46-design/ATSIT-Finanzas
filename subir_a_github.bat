@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 60: MEDIDA DE EMERGENCIA
+echo INTENTO 61: HABILITAR SEED
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Desactivando logic de Settings temporalmente...
-call git commit -m "Fix: Temporarily comment out Settings logic to unblock deployment"
+echo Rehabilitando enlace de seed para inicializar DB...
+call git commit -m "Fix: Re-enable seed link in login page for production initialization"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ESTO TIENE QUE PASAR SI O SI...
+echo CREANDO LA LLAVE MAESTRA...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Revisa Deployment.
+echo LISTO.
 echo ==========================================
 pause
