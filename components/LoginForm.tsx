@@ -1,11 +1,11 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useFormState } from 'react-dom';
 import { authenticate } from '@/lib/actions';
 import { ArrowRight, Key, AtSign, CircleAlert } from 'lucide-react';
 
 export default function LoginForm() {
-    const [errorMessage, formAction, isPending] = useActionState(
+    const [errorMessage, formAction, isPending] = useFormState(
         authenticate,
         undefined
     );

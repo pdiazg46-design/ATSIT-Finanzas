@@ -119,7 +119,7 @@ export default async function DashboardPage() {
             <section>
                 <h3 className="text-xl font-bold text-white mb-4">Actividad Reciente</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {recentProjects.map((project) => (
+                    {recentProjects.map((project: any) => (
                         <Link
                             key={project.id}
                             href={`/projects/${project.id}`}
