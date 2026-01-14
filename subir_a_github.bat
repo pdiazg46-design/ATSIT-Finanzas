@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 62: LLAVE DEL SEED
+echo INTENTO 63: SISTEMA DE DIAGNOSTICO NASA
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando clave secreta al enlace de seed...
-call git commit -m "Fix: Add secret param to seed link"
+echo Incorporando panel de telemetria en Login...
+call git commit -m "Feat: Add Diagnostic HUD to Login Page"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI ABRE LA PUERTA...
+echo HOUSTON, TENEMOS UNA SOLUCION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO.
+echo LISTO. Revisa el Login y dime QUE VES en el cuadro de Estado.
 echo ==========================================
 pause
