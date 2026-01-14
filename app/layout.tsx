@@ -33,7 +33,7 @@ export default async function RootLayout({
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <div className="flex min-h-screen">
           <Sidebar companyName={settings.name} user={session?.user} />
-          <main className="flex-1 p-8">
+          <main className="flex-1 p-4 pt-24 md:p-8 md:pt-8">
             {children}
           </main>
         </div>

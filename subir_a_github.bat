@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 39: LOGIN FINAL
+echo INTENTO 41: MOVIL FIX
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo manejo de redireccion exitosa en login...
-call git commit -m "Fix: Allow NEXT_REDIRECT to bubble up in login action"
+echo Corrigiendo menu movil y espaciados...
+call git commit -m "Fix: Mobile sidebar and layout responsiveness"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo FINALIZANDO ARREGLOS...
+echo ENVIANDO CAMBIOS VISUALES...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora el login deberia dejarte pasar.
+echo Revisa tu celular en 2 minutos.
 echo ==========================================
 pause
