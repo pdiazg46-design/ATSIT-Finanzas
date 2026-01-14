@@ -1,29 +1,33 @@
 @echo off
 echo ==========================================
-echo INTENTO 9: SQA - FINAL FIX DE VERSIONES
+echo INTENTO 10: FIX CONFIGURACION (TS - MJS)
 echo ==========================================
 
 :: Configurar identidad
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: 1. Agregar cambios
+:: 1. Eliminar archivo incompatible
+echo Eliminando next.config.ts...
+if exist next.config.ts del next.config.ts
+
+:: 2. Agregar cambios (incluye el nuevo next.config.mjs y el borrado)
 call git add .
 
-:: 2. Commit
-echo Guardando correcciones de librerias...
-call git commit -m "Fix: Align devDependencies with Next 14/React 18"
+:: 3. Commit
+echo Guardando cambio de formato de configuracion...
+call git commit -m "Fix: Replace next.config.ts with next.config.mjs"
 
-:: 3. Push
+:: 4. Push
 echo.
 echo ==========================================
-echo ENVIANDO MATRIZ DE COMPATIBILIDAD...
+echo ENVIANDO CORRECCION DE CONFIG...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora SI coinciden todas las piezas del rompecabezas.
+echo Vercel ahora si deberia estar feliz.
 echo ==========================================
 pause
