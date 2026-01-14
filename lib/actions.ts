@@ -38,9 +38,9 @@ export async function authenticate(
         }
         return `Error del servidor: ${(error as any).message}`;
     }
-    // ... existing code ...
-    return `Error del servidor: ${(error as any).message}`;
-}
+    // If signIn is successful, it will redirect, so this part is unreachable
+    // unless there's no redirect, in which case we might want to return a success message or null.
+    // For now, assuming successful signIn leads to a redirect handled by Next.js/NextAuth.
 }
 
 export async function logout() {
