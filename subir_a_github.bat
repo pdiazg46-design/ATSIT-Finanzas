@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 71: CORRECCION SINTAXIS
+echo INTENTO 72: FIX TYPESCRIPT
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo error de sintaxis en settings page...
-call git commit -m "Fix: Restore missing function declaration in settings page"
+echo Corrigiendo tipo de variable error para satisfacer a TypeScript...
+call git commit -m "Fix: Type error in Settings page (unknown not assignable to ReactNode)"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo VALIDANDO...
+echo SI ESTO NO FUNCIONA, LE PEGO A LA PANTALLA
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo ESPEREMOS QUE SEA LA VENCIDA.
+echo LISTO.
 echo ==========================================
 pause

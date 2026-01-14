@@ -18,7 +18,7 @@ export default async function SettingsPage() {
     };
     let isAdmin = false;
     let users: any[] = [];
-    let error = null;
+    let hasError = false;
 
     try {
         // Attempt to load settings
@@ -29,7 +29,6 @@ export default async function SettingsPage() {
         }
 
         // Attempt to check permissions and load users
-        // This is where it likely fails if DB is unreachable during build
         if (process.env.DATABASE_URL) {
             try {
                 isAdmin = await hasPermission(PERMISSIONS.ADMIN);
@@ -37,12 +36,12 @@ export default async function SettingsPage() {
                     users = await getUsers();
                 }
             } catch (e) {
-                console.warn("DB operations failed during settings load (expected during build):", e);
+                console.warn("DB operations failed during settings load:", e);
             }
         }
     } catch (criticalError) {
         console.error("CRITICAL SETTINGS PAGE ERROR:", criticalError);
-        error = criticalError;
+        hasError = true;
     }
 
     return (
@@ -50,7 +49,7 @@ export default async function SettingsPage() {
             <header>
                 <h2 className="text-3xl font-bold text-white mb-2">Configuración</h2>
                 <p className="text-slate-400">Personaliza la identidad y datos de tu empresa</p>
-                {error && (
+                {hasError && (
                     <div className="bg-amber-900/20 text-amber-200 text-xs p-2 rounded mt-2">
                         Modo Seguro (Error de Carga): Algunas funciones pueden estar deshabilitadas.
                     </div>
