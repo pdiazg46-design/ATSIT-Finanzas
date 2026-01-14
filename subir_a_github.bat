@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 30: MODIFICAR MENSAJE DE ERROR
+echo INTENTO 31: DEEP DEBUG
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Modificando actions.ts para mostrar errores detallados...
-call git commit -m "Fix: Expose detailed error message in login action for debugging"
+echo Exponiendo la causa raiz del error de login...
+call git commit -m "Fix: Unwrap specific error cause in login for better debugging"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX DE DEBUGGING...
+echo ENVIANDO SONDAS DE DEBUG...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora el login nos dira QUE esta fallando exactamente.
+echo Ahora veremos que hay debajo de la mascara del error.
 echo ==========================================
 pause

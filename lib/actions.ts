@@ -14,6 +14,9 @@ export async function authenticate(
             switch (error.type) {
                 case 'CredentialsSignin':
                     return 'Credenciales inválidas.';
+                case 'CallbackRouteError':
+                    const cause = (error as any).cause;
+                    return `Error en Callback: ${cause?.message || error.message}`;
                 default:
                     return 'Error de Auth: ' + error.message;
             }

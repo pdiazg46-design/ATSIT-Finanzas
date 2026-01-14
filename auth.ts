@@ -8,13 +8,8 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 async function getUser(email: string) {
-    try {
-        const user = await db.select().from(users).where(eq(users.email, email)).get();
-        return user;
-    } catch (error) {
-        console.error('Failed to fetch user:', error);
-        throw new Error('Failed to fetch user.');
-    }
+    const user = await db.select().from(users).where(eq(users.email, email)).get();
+    return user;
 }
 
 export const { auth, signIn, signOut } = NextAuth({
