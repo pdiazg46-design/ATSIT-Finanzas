@@ -1,8 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: "ATSIT Finance Pro",
@@ -24,7 +31,7 @@ export default async function RootLayout({
   return (
     <html lang="es-CL">
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <div className="flex min-height-screen">
+        <div className="flex min-h-screen">
           <Sidebar companyName={settings.name} user={session?.user} />
           <main className="flex-1 p-8">
             {children}

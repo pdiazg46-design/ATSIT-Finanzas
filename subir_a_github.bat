@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 26: FIX IMPORTS DB Y TIPOS BALANCE
+echo INTENTO 27: FIX UI GIGANTE (VIEWPORT)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo imports perdidos en db.ts y tipos en balance...
-call git commit -m "Fix: Add missing drizzle and schema imports and fix balance report build error"
+echo Agregando viewport para arreglar escala UI...
+call git commit -m "Fix: Add viewport configuration to RootLayout to fix scaling issues"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX 26...
+echo ENVIANDO FIX VIEWPORT...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si falta algo mas, me como el teclado.
+echo Ahora deberia verse normal en el celular y en escritorio. 📱💻
 echo ==========================================
 pause
