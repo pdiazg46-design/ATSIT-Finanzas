@@ -34,7 +34,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
     const projectIdsParticipating = [...new Set(employeeTasks.map((t: any) => t.projectId))];
     const participatingProjectsResults = await Promise.all(
         projectIdsParticipating
-            .filter(pid => !ownedProjects.find(op => op.id === pid))
+            .filter(pid => !ownedProjects.find((op: any) => op.id === pid))
             .map(pid => db.select().from(projects).where(eq(projects.id, pid)).get())
     );
 

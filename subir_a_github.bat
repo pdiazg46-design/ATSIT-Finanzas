@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 16: FIX BUILD ERROR (Tipos en Empleados)
+echo INTENTO 17: FIX BUILD ERROR (Tipos en Empleados II)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,8 +11,8 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipo implicito en map de empleados...
-call git commit -m "Fix: Add explicit any type to employee tasks map"
+echo Corrigiendo otro tipo implicito en empleados...
+call git commit -m "Fix: Add explicit any type to ownedProjects find callback"
 
 :: 3. Push
 echo.
@@ -24,6 +24,6 @@ call git push -u origin main
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Esperemos que este sea el ultimo error de tipos!
+echo Este si que si!
 echo ==========================================
 pause
