@@ -1,8 +1,22 @@
 import { getCompanySettings } from '@/lib/company-data';
 import SettingsForm from '@/components/SettingsForm';
+import UsersManager from '@/components/UsersManager';
+import { getUsers, hasPermission, PERMISSIONS } from '@/lib/user-actions';
+
+export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
     const settings = await getCompanySettings();
+    const isAdmin = await hasPermission(PERMISSIONS.ADMIN);
+
+    let users: any[] = [];
+    if (isAdmin) {
+        try {
+            users = await getUsers();
+        } catch (e) {
+            console.error("Failed to load users", e);
+        }
+    }
 
     return (
         <div className="max-w-4xl mx-auto space-y-8">
@@ -12,6 +26,10 @@ export default async function SettingsPage() {
             </header>
 
             <SettingsForm initialSettings={settings} />
+
+            {isAdmin && (
+                <UsersManager initialUsers={users} />
+            )}
         </div>
     );
 }
