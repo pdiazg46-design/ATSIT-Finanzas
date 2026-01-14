@@ -1,29 +1,29 @@
 @echo off
 echo ==========================================
-echo INTENTO 12: CONFIGURACION DE ESTILOS (Tailwind v3)
+echo INTENTO 14: FIX CLIENTE (FRAMER MOTION)
 echo ==========================================
 
 :: Configurar identidad
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: 1. Agregar cambios (archivos de config nuevos)
+:: 1. Agregar cambios
 call git add .
 
 :: 2. Commit
-echo Guardando configuracion de estilos...
-call git commit -m "Fix: Configure Tailwind v3 properly (globals.css, config, postcss)"
+echo Guardando version estable de animaciones...
+call git commit -m "Fix: Downgrade framer-motion to v11 and disable fs write in prod"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX DE DISEÑO...
+echo ENVIANDO SOLUCION DEFINITIVA...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora el CSS deberia compilar sin errores.
+echo Cruzando los dedos!
 echo ==========================================
 pause

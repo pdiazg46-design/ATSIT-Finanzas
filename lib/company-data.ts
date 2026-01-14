@@ -29,7 +29,11 @@ const DATA_FILE = join(process.cwd(), 'company-settings.json');
 export async function getCompanySettings(): Promise<CompanySettings> {
     try {
         if (!existsSync(DATA_FILE)) {
-            await writeFile(DATA_FILE, JSON.stringify(defaultSettings, null, 2));
+            // In production (Vercel), we cannot write to the filesystem.
+            // Just return defaults without trying to save.
+            if (process.env.NODE_ENV !== 'production') {
+                await writeFile(DATA_FILE, JSON.stringify(defaultSettings, null, 2));
+            }
             return defaultSettings;
         }
         const data = await readFile(DATA_FILE, 'utf-8');
