@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 72: FIX TYPESCRIPT
+echo INTENTO 73: SEPARACIÓN DE PODERES
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipo de variable error para satisfacer a TypeScript...
-call git commit -m "Fix: Type error in Settings page (unknown not assignable to ReactNode)"
+echo Separando constantes de Server Actions (Fix use server export violation)...
+call git commit -m "Fix: Extract PERMISSIONS constant to separate file to resolve 'use server' export restrictions"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo SI ESTO NO FUNCIONA, LE PEGO A LA PANTALLA
+echo ESTO TIENE QUE SER.
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO.
+echo Si esto falla, me corto un cable.
 echo ==========================================
 pause

@@ -1,7 +1,8 @@
 import { getCompanySettings } from '@/lib/company-data';
 import SettingsForm from '@/components/SettingsForm';
 import UsersManager from '@/components/UsersManager';
-import { getUsers, hasPermission, PERMISSIONS } from '@/lib/user-actions';
+import { getUsers, hasPermission } from '@/lib/user-actions';
+import { PERMISSIONS } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 

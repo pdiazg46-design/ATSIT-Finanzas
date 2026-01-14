@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { createUser, deleteUser } from '@/lib/user-actions';
+// No changes needed here if it doesn't import PERMISSIONS.
+// Checking file content: it does NOT import PERMISSIONS.
+// So no edit needed for UsersManager.tsx.
 import { Trash2, UserPlus, Shield, Check } from 'lucide-react';
 
 type User = {

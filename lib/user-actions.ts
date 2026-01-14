@@ -6,14 +6,15 @@ import { eq, ne } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { auth } from '@/auth';
+import { PERMISSIONS } from '@/lib/permissions';
 
-// Define available permissions
-export const PERMISSIONS = {
-    ADMIN: 'ADMIN',
-    MANAGE_PROJECTS: 'MANAGE_PROJECTS',
-    MANAGE_TASKS: 'MANAGE_TASKS',
-    MANAGE_EMPLOYEES: 'MANAGE_EMPLOYEES',
-};
+import { PERMISSIONS } from '@/lib/permissions';
+
+export { PERMISSIONS }; // Re-export if needed, OR just remove this line if I update imports everywhere. 
+// BUT 'use server' file cannot export object. So I CANNOT re-export it here.
+// I must remove the re-export and update consumers to import directly from lib/permissions.
+
+// No export of PERMISSIONS here.
 
 // Check if current user has a specific permission
 export async function hasPermission(permission: string) {
