@@ -1,38 +1,36 @@
 @echo off
 echo ==========================================
-echo Configurando e Iniciando subida a GitHub
+echo SUBIENDO CORRECCIONES A GITHUB
 echo ==========================================
 
-:: Iniciamos Git (si no estaba iniciado)
-call git init
-
-:: Configuramos tu identidad (SOLUCION AL ERROR ANTERIOR)
+:: Configurar identidad por si acaso
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: Agregamos todos los archivos
+:: 1. Agregar cambios nuevos
+echo Agregando archivos modificados...
 call git add .
 
-:: Hacemos el "paquete" (Commit)
-call git commit -m "Primera subida desde Tangente App"
+:: 2. Guardar los cambios (Commit)
+echo Creando paquete de correccion...
+call git commit -m "Correcciones Vercel"
 
-:: Configuramos la rama principal
+:: 3. Asegurar rama main
 call git branch -M main
 
-:: Conectamos con tu repositorio
-call git remote remove origin
-call git remote add origin https://github.com/pdiazg46-design/Tangente-app.git
+:: 4. Conectar remoto (Si da error "ya existe", es normal e ignoramos)
+call git remote add origin https://github.com/pdiazg46-design/Tangente-app.git 2>NUL
 
+:: 5. Subir a la nube
 echo.
 echo ==========================================
-echo SUBIENDO ARCHIVOS...
-echo (Si aparece una ventana pidiendo usuario/clave, ingresalos)
+echo ENVIANDO A LA NUBE...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo PROCESO FINALIZADO
-echo Si dice "Success" o ves porcentajes de carga, ¡lo logramos!
+echo PROCESO COMPLETADO
+echo Ahora revisa Vercel. Deberias ver "Correcciones Vercel"
 echo ==========================================
 pause
