@@ -146,15 +146,33 @@ export async function GET(request: Request) {
         const dbUrl = process.env.DATABASE_URL || 'undefined';
         const maskedUrl = dbUrl.startsWith('file:')
             ? dbUrl
-            : dbUrl.replace(/:([a-zA-Z0-9_\-]+)@/, ':***@'); // Simple mask
+            : dbUrl.replace(/:([a-zA-Z0-9_\-]+)@/, ':***@');
+
+        // Probe Raw Client
+        let rawProbeResult = 'Skipped';
+        try {
+            const { createClient } = await import('@libsql/client');
+            const rawClient = createClient({
+                url: dbUrl.replace('libsql://', 'https://'),
+                authToken: process.env.DATABASE_AUTH_TOKEN
+            });
+            await rawClient.execute('SELECT 1');
+            rawProbeResult = 'Success';
+        } catch (rawError) {
+            rawProbeResult = 'Failed: ' + String(rawError);
+        }
+
+        const token = process.env.DATABASE_AUTH_TOKEN || '';
 
         return NextResponse.json({
             error: 'Failed to seed/migrate',
             debug: {
-                urlPrefix: dbUrl.split(':')[0], // 'file', 'libsql', 'https'
+                urlPrefix: dbUrl.split(':')[0],
                 hasUrl: !!dbUrl,
-                hasToken: !!process.env.DATABASE_AUTH_TOKEN,
-                fullUrlMasked: maskedUrl
+                hasToken: !!token,
+                tokenPrefix: token.substring(0, 5) + '...',
+                fullUrlMasked: maskedUrl,
+                rawClientProbe: rawProbeResult
             },
             details: String(error)
         }, { status: 500 });

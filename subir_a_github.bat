@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 36: PROTOCOLO HTTPS
+echo INTENTO 37: SONDA CRUDA + CHECK DE TOKEN
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Cambiando protocolo de conexion a HTTPS para compatibilidad Vercel...
-call git commit -m "Fix: Force HTTPS protocol for Turso connection in production"
+echo Agregando prueba de conexion cruda para aislar Drizzle...
+call git commit -m "Fix: Add raw Turso client probe in seed error handler"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO AJUSTE DE PROTOCOLO...
+echo ENVIANDO SONDA DE NIVEL 4...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Esto deberia solucionar el 'Failed query'.
+echo Veremos si el problema es Drizzle o el Cliente.
 echo ==========================================
 pause
