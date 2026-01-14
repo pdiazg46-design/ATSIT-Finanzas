@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 70: MODO SEGURO
+echo INTENTO 71: CORRECCION SINTAXIS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Implementando Modo Seguro en Pagina de Configuracion...
-call git commit -m "Fix: Add Safe Mode wrap to settings page to survive build errors"
+echo Corrigiendo error de sintaxis en settings page...
+call git commit -m "Fix: Restore missing function declaration in settings page"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI...
+echo VALIDANDO...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Si esto no compila, me retiro y me hago granjero.
+echo ESPEREMOS QUE SEA LA VENCIDA.
 echo ==========================================
 pause
