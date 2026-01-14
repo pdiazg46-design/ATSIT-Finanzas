@@ -25,9 +25,17 @@ export async function GET(request: Request) {
                 email TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
                 role TEXT DEFAULT 'user',
-                created_at TEXT DEFAULT (CURRENT_TIMESTAMP)
+                created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
+                permissions TEXT
             );
         `);
+
+        // AUTO-MIGRATION: Patch existing table if missing column
+        try {
+            await db.run(sql`ALTER TABLE users ADD COLUMN permissions TEXT`);
+        } catch (e) {
+            // Ignore error if column already exists
+        }
 
         await db.run(sql`
             CREATE TABLE IF NOT EXISTS employees (
@@ -127,7 +135,11 @@ export async function GET(request: Request) {
         const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
 
         if (existingUser) {
-            return NextResponse.json({ message: 'Database initialized. User already exists.', user: existingUser });
+            // FORCE UPDATE PASSWORD to ensures known credentials
+            await db.update(users)
+                .set({ password })
+                .where(eq(users.email, email));
+            return NextResponse.json({ message: 'Database initialized. Password RESET for existing user.', user: existingUser });
         }
 
         // Create user
