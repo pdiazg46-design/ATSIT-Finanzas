@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 63: SISTEMA DE DIAGNOSTICO NASA
+echo INTENTO 64: FIX SYNTAX ERROR
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Incorporando panel de telemetria en Login...
-call git commit -m "Feat: Add Diagnostic HUD to Login Page"
+echo Corrigiendo error de sintaxis en Login page...
+call git commit -m "Fix: Escape arrow char in login page to fix build"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo HOUSTON, TENEMOS UNA SOLUCION...
+echo AHORA SI... NASA MODE ON 🚀
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Revisa el Login y dime QUE VES en el cuadro de Estado.
+echo LISTO. Revisa el Login.
 echo ==========================================
 pause

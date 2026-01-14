@@ -40,8 +40,8 @@ export default async function LoginPage() {
 
                 {/* HEADS UP DISPLAY (HUD) */}
                 <div className={`p-4 rounded-lg text-xs font-mono mb-4 border ${dbStatus === 'connected' && userCount > 0 ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-400' :
-                        dbStatus === 'connected' && userCount === 0 ? 'bg-amber-950/50 border-amber-500/50 text-amber-400' :
-                            'bg-rose-950/50 border-rose-500/50 text-rose-400'
+                    dbStatus === 'connected' && userCount === 0 ? 'bg-amber-950/50 border-amber-500/50 text-amber-400' :
+                        'bg-rose-950/50 border-rose-500/50 text-rose-400'
                     }`}>
                     <h3 className="font-bold border-b border-white/10 pb-1 mb-2">ESTADO DEL SISTEMA</h3>
                     <div className="grid grid-cols-2 gap-2">
@@ -83,7 +83,7 @@ export default async function LoginPage() {
                         <div className="bg-rose-950/50 p-3 rounded-lg border border-rose-500/50">
                             <p className="text-rose-300 font-bold mb-1">❌ ERROR CRÍTICO</p>
                             <p className="text-xs text-rose-200">
-                                Faltan las variables de entorno en Vercel (Settings -> Environment Variables).
+                                Faltan las variables de entorno en Vercel (Settings &rarr; Environment Variables).
                                 <br />DATABASE_URL y DATABASE_AUTH_TOKEN son requeridas.
                             </p>
                         </div>
