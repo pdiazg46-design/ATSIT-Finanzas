@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 20: FIX BUILD ERROR (Tipos en Historial)
+echo INTENTO 21: FIX BUILD ERROR (Tipos en Dashboard)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,8 +11,8 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipo implicito en historial...
-call git commit -m "Fix: Add explicit any type to archivedProjects map"
+echo Corrigiendo tipo implicito en dashboard...
+call git commit -m "Fix: Add explicit any type to activeProjects map"
 
 :: 3. Push
 echo.
@@ -24,6 +24,6 @@ call git push -u origin main
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Este tiene que ser el ultimo, por favor!
+echo Este juego de Whac-A-Mole con TypeScript debe terminar pronto.
 echo ==========================================
 pause

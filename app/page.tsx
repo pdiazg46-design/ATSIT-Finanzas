@@ -122,7 +122,7 @@ export default async function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {activeProjects.map((p) => (
+                {activeProjects.map((p: any) => (
                   <tr key={p.id} className="hover:bg-white/5 transition-colors group">
                     <td className="px-6 py-4">
                       <Link href={`/projects/${p.id}`} className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors block">
