@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 44: FIX LOGOUT
+echo INTENTO 45: FIX LOGOUT FINAL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Arreglando boton cerrar sesion...
-call git commit -m "Fix: Logout button not working"
+echo Agregando import faltante para logout...
+call git commit -m "Fix: Missing signOut import in actions"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO SOLUCION...
+echo ENVIANDO FIX REAL...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Ahora el boton Cerrar Sesion funcionara.
+echo LISTO. Ahora si, prueba cerrar sesion.
 echo ==========================================
 pause
