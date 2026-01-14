@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 27: FIX UI GIGANTE (VIEWPORT)
+echo INTENTO 28: SEED USER API
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando viewport para arreglar escala UI...
-call git commit -m "Fix: Add viewport configuration to RootLayout to fix scaling issues"
+echo Agregando ruta API para crear usuario admin...
+call git commit -m "Feat: Add seed API route to create admin user"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX VIEWPORT...
+echo ENVIANDO RUTINA DE CREACION DE USUARIO...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora deberia verse normal en el celular y en escritorio. 📱💻
+echo Sigue las instrucciones que te dare a continuacion.
 echo ==========================================
 pause
