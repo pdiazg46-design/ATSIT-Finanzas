@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 34: AUTO-MIGRACION
+echo INTENTO 35: CONFIG CHECK
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando creacion automatica de tablas en ruta seed...
-call git commit -m "Feat: Update seed route to perform auto-migration (create tables)"
+echo Agregando reporte de variables de entorno en seed...
+call git commit -m "Fix: Return DB config details in seed error for debugging"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO SOLUCION DEFINITIVA...
+echo ENVIANDO SONDA DE CONFIGURACION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora el link de setup creara las tablas que faltaban.
+echo Ahora veremos si Vercel tiene la variable correcta.
 echo ==========================================
 pause

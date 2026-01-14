@@ -141,6 +141,22 @@ export async function GET(request: Request) {
         return NextResponse.json({ message: 'Database structure created and User added successfully', user: newUser });
     } catch (error) {
         console.error('Seed error:', error);
-        return NextResponse.json({ error: 'Failed to seed/migrate', details: String(error) }, { status: 500 });
+
+        // DEBUG: Expose config safery
+        const dbUrl = process.env.DATABASE_URL || 'undefined';
+        const maskedUrl = dbUrl.startsWith('file:')
+            ? dbUrl
+            : dbUrl.replace(/:([a-zA-Z0-9_\-]+)@/, ':***@'); // Simple mask
+
+        return NextResponse.json({
+            error: 'Failed to seed/migrate',
+            debug: {
+                urlPrefix: dbUrl.split(':')[0], // 'file', 'libsql', 'https'
+                hasUrl: !!dbUrl,
+                hasToken: !!process.env.DATABASE_AUTH_TOKEN,
+                fullUrlMasked: maskedUrl
+            },
+            details: String(error)
+        }, { status: 500 });
     }
 }
