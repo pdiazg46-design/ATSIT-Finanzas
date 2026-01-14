@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 67: BOTON VISIBLE SIEMPRE
+echo INTENTO 68: LA VICTORIA FINAL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Haciendo visible el boton de seed aunque existan usuarios...
-call git commit -m "Fix: Make seed/reset button always visible for password recovery"
+echo Limpiando herramientas de diagnostico y reactivando pagina de configuracion...
+call git commit -m "Chore: Cleanup diagnostics and re-enable settings page logic"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ULTIMO EMPUJON...
+echo MISIÓN CUMPLIDA.
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Ahora si te aparecera el boton.
+echo GRACIAS POR VOLAR CON NASA AIRLINES. 🚀
 echo ==========================================
 pause
