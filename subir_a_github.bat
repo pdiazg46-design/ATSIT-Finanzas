@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 31: DEEP DEBUG
+echo INTENTO 32: DETECTOR DE ERRORES REALES
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Exponiendo la causa raiz del error de login...
-call git commit -m "Fix: Unwrap specific error cause in login for better debugging"
+echo Modificando auth.ts para lanzar errores legibles...
+call git commit -m "Fix: Wrap authorize in try-catch to propagate internal errors to UI"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO SONDAS DE DEBUG...
+echo ENVIANDO SONDAS NIVEL 2...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora veremos que hay debajo de la mascara del error.
+echo Ahora el error deberia gritar cual es el problema.
 echo ==========================================
 pause

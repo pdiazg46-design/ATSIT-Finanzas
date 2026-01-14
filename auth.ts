@@ -17,26 +17,32 @@ export const { auth, signIn, signOut } = NextAuth({
     providers: [
         Credentials({
             async authorize(credentials) {
-                const parsedCredentials = z
-                    .object({ email: z.string().email(), password: z.string().min(6) })
-                    .safeParse(credentials);
+                try {
+                    const parsedCredentials = z
+                        .object({ email: z.string().email(), password: z.string().min(6) })
+                        .safeParse(credentials);
 
-                if (parsedCredentials.success) {
-                    const { email, password } = parsedCredentials.data;
-                    const user = await getUser(email);
-                    if (!user) return null;
+                    if (parsedCredentials.success) {
+                        const { email, password } = parsedCredentials.data;
+                        const user = await getUser(email);
+                        if (!user) return null;
 
-                    const passwordsMatch = await bcrypt.compare(password, user.password);
-                    if (passwordsMatch) {
-                        return {
-                            ...user,
-                            id: user.id.toString(),
-                        };
+                        const passwordsMatch = await bcrypt.compare(password, user.password);
+                        if (passwordsMatch) {
+                            return {
+                                ...user,
+                                id: user.id.toString(),
+                            };
+                        }
                     }
-                }
 
-                console.log('Invalid credentials');
-                return null;
+                    console.log('Invalid credentials');
+                    return null;
+                } catch (error) {
+                    console.error('AUTH ERROR:', error);
+                    // Throw a simple Error that can be read by the client
+                    throw new Error(`INTERNAL_AUTH_ERROR: ${error instanceof Error ? error.message : String(error)}`);
+                }
             },
         }),
     ],
