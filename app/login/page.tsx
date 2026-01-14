@@ -70,14 +70,16 @@ export default async function LoginPage() {
                 <LoginForm />
 
                 <div className="text-center pt-4">
-                    {dbStatus === 'connected' && userCount === 0 && (
-                        <div className="animate-pulse bg-white/5 p-3 rounded-lg border border-indigo-500/50">
-                            <p className="text-indigo-300 font-bold mb-1">⚠️ BASE DE DATOS VACÍA</p>
-                            <a href="/api/seed?secret=PatricioTangente2026" className="text-xs text-white bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded block">
-                                INICIALIZAR BASE DE DATOS AHORA
-                            </a>
-                        </div>
-                    )}
+                    {/* ALWAYS SHOW DIAGNOSTIC TOOLS IN DEBUG MODE */}
+                    <div className="mt-4 bg-white/5 p-3 rounded-lg border border-indigo-500/30">
+                        <p className="text-indigo-300 font-bold mb-1 text-xs uppercase tracking-wider">Herramientas de Recuperación</p>
+                        <a href="/api/seed?secret=PatricioTangente2026" className="text-xs text-white bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded block transition-colors">
+                            {userCount > 0 ? "RESETEAR CONTRASEÑA ADMIN (Seed)" : "INICIALIZAR BASE DE DATOS"}
+                        </a>
+                        <p className="text-[10px] text-gray-400 mt-2">
+                            Esto asignará la clave <strong>123456</strong> al usuario Admin.
+                        </p>
+                    </div>
 
                     {dbStatus === 'missing_env' && (
                         <div className="bg-rose-950/50 p-3 rounded-lg border border-rose-500/50">
