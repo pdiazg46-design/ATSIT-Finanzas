@@ -61,8 +61,6 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                             <p className="text-xs text-slate-500 truncate">{user.email}</p>
                         </div>
                     </div>
-                        </div>
-                    </div>
                     <form action={logout}>
                         <button
                             type="submit"
@@ -72,73 +70,72 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                             Cerrar Sesión
                         </button>
                     </form>
-                </div >
-            )
-}
-        </div >
+                </div>
+            )}
+        </div>
     );
 
-return (
-    <>
-        {/* Mobile Header */}
-        <div className="md:hidden fixed top-0 inset-x-0 h-16 glass-card z-40 m-4 flex items-center justify-between px-4">
-            <div className="flex items-center gap-2">
-                <div className="relative w-8 h-8">
-                    <Image
-                        src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
-                        alt="Logo"
-                        fill
-                        className="object-contain"
-                        unoptimized
-                    />
+    return (
+        <>
+            {/* Mobile Header */}
+            <div className="md:hidden fixed top-0 inset-x-0 h-16 glass-card z-40 m-4 flex items-center justify-between px-4">
+                <div className="flex items-center gap-2">
+                    <div className="relative w-8 h-8">
+                        <Image
+                            src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
+                            alt="Logo"
+                            fill
+                            className="object-contain"
+                            unoptimized
+                        />
+                    </div>
+                    <span className="font-bold text-white text-lg truncate max-w-[150px]">{companyName}</span>
                 </div>
-                <span className="font-bold text-white text-lg truncate max-w-[150px]">{companyName}</span>
-            </div>
-            <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
-            >
-                {isMobileMenuOpen ? <LogOut size={24} className="rotate-180" /> : <div className="space-y-1.5">
-                    <span className="block w-6 h-0.5 bg-white"></span>
-                    <span className="block w-6 h-0.5 bg-white"></span>
-                    <span className="block w-6 h-0.5 bg-white"></span>
-                </div>}
-            </button>
-        </div>
-
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-            <div className="fixed inset-0 z-50 md:hidden bg-slate-900/95 backdrop-blur-xl p-6 flex flex-col pt-24 animate-in fade-in slide-in-from-top-10 duration-200">
                 <button
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="absolute top-6 right-6 p-2 text-slate-400 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
                 >
-                    <LogOut size={24} className="rotate-45" />
+                    {isMobileMenuOpen ? <LogOut size={24} className="rotate-180" /> : <div className="space-y-1.5">
+                        <span className="block w-6 h-0.5 bg-white"></span>
+                        <span className="block w-6 h-0.5 bg-white"></span>
+                        <span className="block w-6 h-0.5 bg-white"></span>
+                    </div>}
                 </button>
+            </div>
+
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden bg-slate-900/95 backdrop-blur-xl p-6 flex flex-col pt-24 animate-in fade-in slide-in-from-top-10 duration-200">
+                    <button
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="absolute top-6 right-6 p-2 text-slate-400 hover:text-white"
+                    >
+                        <LogOut size={24} className="rotate-45" />
+                    </button>
+                    <NavLinks />
+                    <UserSection />
+                </div>
+            )}
+
+            {/* Desktop Sidebar */}
+            <aside className="w-64 glass-card m-4 p-6 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
+                <div className="flex flex-col items-center gap-3 mb-6 w-full shrink-0">
+                    <div className="relative w-full h-32 hover:scale-105 transition-transform duration-300">
+                        <Image
+                            src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
+                            alt="Company Logo"
+                            fill
+                            className="object-contain drop-shadow-[0_0_25px_rgba(14,165,233,0.4)]"
+                            priority
+                            unoptimized
+                        />
+                    </div>
+                    <h1 className="text-xl font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
+                </div>
+
                 <NavLinks />
                 <UserSection />
-            </div>
-        )}
-
-        {/* Desktop Sidebar */}
-        <aside className="w-64 glass-card m-4 p-6 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
-            <div className="flex flex-col items-center gap-3 mb-6 w-full shrink-0">
-                <div className="relative w-full h-32 hover:scale-105 transition-transform duration-300">
-                    <Image
-                        src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
-                        alt="Company Logo"
-                        fill
-                        className="object-contain drop-shadow-[0_0_25px_rgba(14,165,233,0.4)]"
-                        priority
-                        unoptimized
-                    />
-                </div>
-                <h1 className="text-xl font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
-            </div>
-
-            <NavLinks />
-            <UserSection />
-        </aside>
-    </>
-);
+            </aside>
+        </>
+    );
 }

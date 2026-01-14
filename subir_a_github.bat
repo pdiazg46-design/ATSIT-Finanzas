@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 46: FORM LOGOUT
+echo INTENTO 47: FIX SYNTAX SIDEBAR
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Usando formulario nativo para logout...
-call git commit -m "Fix: Replace logout click handler with form action"
+echo Reparando error de sintaxis en Sidebar...
+call git commit -m "Fix: Sidebar JSX syntax errors"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ESTE SI QUE SI...
+echo ENVIANDO FIX...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Prueba de fuego.
+echo LISTO.
 echo ==========================================
 pause
