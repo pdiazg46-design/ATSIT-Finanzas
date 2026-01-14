@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 48: BOTON AISLADO
+echo INTENTO 49: FIX IMPORT LOGOUT
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Usando componente de boton dedicado para debug...
-call git commit -m "Refactor: Extract LogoutButton component"
+echo Agregando import faltante de LogoutButton...
+call git commit -m "Fix: Add missing LogoutButton import"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA VEREMOS QUE PASA...
+echo AHORA SI QUE SI...
 echo ==========================================
 call git push -u origin main
 

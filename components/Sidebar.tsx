@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { LogOut, User as UserIcon } from 'lucide-react';
 import { logout } from '@/lib/actions';
+import LogoutButton from './LogoutButton';
 
 export default function Sidebar({ companyName = 'Tangente', user }: { companyName?: string, user?: { name?: string | null, email?: string | null } }) {
     const pathname = usePathname();
