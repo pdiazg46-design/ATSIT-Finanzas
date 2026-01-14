@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 24: FIX MASIVO DE REPORTES
+echo INTENTO 25: FIX IMPORT Y TIPOS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipos implicitos en todos los reportes...
-call git commit -m "Fix: Mass update to add explicit any types to reports maps filters and reduces"
+echo Corrigiendo import faltante en db.ts y tipos en balance...
+call git commit -m "Fix: Add missing createClient import and fix balance report type error"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX MASIVO...
+echo ENVIANDO FIX FINAL (ESPERO)...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo He oido tus plegarias. He predecido y corregido. 🔮
+echo Si esto no funciona, reinicio el router.
 echo ==========================================
 pause

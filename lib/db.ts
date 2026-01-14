@@ -1,6 +1,6 @@
 const url = process.env.DATABASE_URL;
 const authToken = process.env.DATABASE_AUTH_TOKEN;
-
+import { createClient } from '@libsql/client';
 if (!url) {
     if (process.env.NODE_ENV === 'production') {
         throw new Error('CRITICAL ERROR: DATABASE_URL is missing in Vercel environment variables.');
