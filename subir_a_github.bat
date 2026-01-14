@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 51: REPARACION TOTAL LOGOUT
+echo INTENTO 52: EMERGENCIA - MODO CLIENTE
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Reparando archivo de acciones corrupto...
-call git commit -m "Fix: Rewrite corrupted actions.ts file"
+echo Cambiando a logout nativo del cliente...
+call git commit -m "Fix: Switch to client-side signOut with SessionProvider"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ESTA ES LA DEFINITIVA...
+echo RECUPERANDO EL CONTROL...
 echo ==========================================
 call git push -u origin main
 

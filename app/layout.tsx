@@ -28,16 +28,30 @@ export default async function RootLayout({
   const settings = await getCompanySettings();
   const session = await auth();
 
-  return (
-    <html lang="es-CL">
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <div className="flex min-h-screen">
-          <Sidebar companyName={settings.name} user={session?.user} />
-          <main className="flex-1 p-4 pt-24 md:p-8 md:pt-8">
-            {children}
-          </main>
-        </div>
-      </body>
-    </html>
-  );
-}
+  import { SessionProvider } from 'next-auth/react';
+
+  // ... (existing imports)
+
+  export default async function RootLayout({
+    children,
+  }: Readonly<{
+    children: React.ReactNode;
+  }>) {
+    const settings = await getCompanySettings();
+    const session = await auth();
+
+    return (
+      <html lang="es-CL">
+        <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+          <SessionProvider session={session}>
+            <div className="flex min-h-screen">
+              <Sidebar companyName={settings.name} user={session?.user} />
+              <main className="flex-1 p-4 pt-24 md:p-8 md:pt-8">
+                {children}
+              </main>
+            </div>
+          </SessionProvider>
+        </body>
+      </html>
+    );
+  }
