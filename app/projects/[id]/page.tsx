@@ -58,14 +58,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     };
 
     // Operational Logic Formulas
-    const realIncome = projectTasks.filter(t => (t.netValue || 0) > 0).reduce((acc, t) => acc + (t.netValue || 0), 0);
+    const realIncome = projectTasks.filter((t: any) => (t.netValue || 0) > 0).reduce((acc: any, t: any) => acc + (t.netValue || 0), 0);
     const pendingBalance = (project.expectedIncome || 0) - realIncome;
 
-    const totalNetIncome = projectTasks.reduce((acc, t) => acc + (t.netValue || 0), 0);
-    const totalTaxBalance = projectTasks.reduce((acc, t) => acc + (t.taxValue || 0), 0);
-    // const totalCashBalance = projectTasks.reduce((acc, t) => acc + (t.totalValue || 0), 0);
+    const totalNetIncome = projectTasks.reduce((acc: any, t: any) => acc + (t.netValue || 0), 0);
+    const totalTaxBalance = projectTasks.reduce((acc: any, t: any) => acc + (t.taxValue || 0), 0);
+    // const totalCashBalance = projectTasks.reduce((acc: any, t: any) => acc + (t.totalValue || 0), 0);
 
-    const totalExpenses = Math.abs(projectTasks.filter(t => (t.netValue || 0) < 0).reduce((acc, t) => acc + (t.netValue || 0), 0));
+    const totalExpenses = Math.abs(projectTasks.filter((t: any) => (t.netValue || 0) < 0).reduce((acc: any, t: any) => acc + (t.netValue || 0), 0));
 
     // const totalCostDays = projectTasks.reduce((acc, t) => acc + (t.costDays || 0), 0);
     // const balanceDays = (project.budgetDays || 0) - totalCostDays;
