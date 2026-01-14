@@ -13,13 +13,7 @@ export default function LoginPage() {
                 <LoginForm />
                 <div className="text-center pt-4">
                     <p className="text-xs text-gray-500 mb-2">¿Primera vez aquí?</p>
-                    <a
-                        href="/api/seed?secret=PatricioTangente2026"
-                        target="_blank"
-                        className="text-xs font-bold text-indigo-600 hover:text-indigo-500 underline"
-                    >
-                        Inicializar Base de Datos (Admin)
-                    </a>
+                    {/* Debug Link Removed after success */}
                 </div>
             </div>
         </main>

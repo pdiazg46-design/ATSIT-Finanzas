@@ -21,18 +21,21 @@ export async function authenticate(
     try {
         await signIn('credentials', formData);
     } catch (error) {
+        // SUCCESS: NEXT_REDIRECT means strict logic worked and it's redirecting to dashboard
+        if ((error as Error).message === 'NEXT_REDIRECT' || (error as Error).message.includes('NEXT_REDIRECT')) {
+            throw error;
+        }
+
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
                     return 'Credenciales inválidas.';
                 case 'CallbackRouteError':
-                    const cause = (error as any).cause;
-                    return `Error en Callback: ${cause?.message || error.message}`;
+                    return `Error de ruta: ${(error as any).cause?.message || error.message}`;
                 default:
-                    return 'Error de Auth: ' + error.message;
+                    return error.message; // Expose full error for debugging
             }
         }
-        // Expose the real error for debugging
-        return 'Error del servidor: ' + (error instanceof Error ? error.message : String(error));
+        return `Error del servidor: ${(error as any).message}`;
     }
 }

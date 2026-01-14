@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 38: LIMPIEZA DE COMILLAS
+echo INTENTO 39: LOGIN FINAL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Eliminando comillas accidentales en el token de autenticacion...
-call git commit -m "Fix: Strip trimming quotes from env variables to prevent auth errors"
+echo Corrigiendo manejo de redireccion exitosa en login...
+call git commit -m "Fix: Allow NEXT_REDIRECT to bubble up in login action"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX DE CONFIGURACION...
+echo FINALIZANDO ARREGLOS...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si pegaste el token con comillas, esto lo arregla.
+echo Ahora el login deberia dejarte pasar.
 echo ==========================================
 pause
