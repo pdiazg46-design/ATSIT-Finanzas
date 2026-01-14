@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 4: FIX BUILD TIME ERROR
+echo INTENTO 5: CORRECCION DE TIPO DE ID
 echo ==========================================
 
 :: Configurar identidad
@@ -13,7 +13,7 @@ call git add .
 
 :: 2. Commit
 echo Guardando cambios...
-call git commit -m "Fix: Force dynamic rendering to avoid build DB connection"
+call git commit -m "Fix: Convert user ID to string for NextAuth"
 
 :: 3. Branch
 call git branch -M main
@@ -24,13 +24,13 @@ call git remote add origin https://github.com/pdiazg46-design/Tangente-app.git 2
 :: 5. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX A LA NUBE...
+echo ENVIANDO FIX FINAL A LA NUBE...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Revisa Vercel. Deberia funcionar ahora.
+echo Este error era de TIPOS (TypeScript). Ahora deberia compilar bien.
 echo ==========================================
 pause
