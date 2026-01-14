@@ -15,9 +15,10 @@ export async function authenticate(
                 case 'CredentialsSignin':
                     return 'Credenciales inválidas.';
                 default:
-                    return 'Algo salió mal.';
+                    return 'Error de Auth: ' + error.message;
             }
         }
-        throw error;
+        // Expose the real error for debugging
+        return 'Error del servidor: ' + (error instanceof Error ? error.message : String(error));
     }
 }

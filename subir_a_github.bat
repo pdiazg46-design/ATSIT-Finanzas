@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 29: BOTON SETUP
+echo INTENTO 30: MODIFICAR MENSAJE DE ERROR
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando boton de setup en login...
-call git commit -m "Feat: Add convenient seed database link to login page"
+echo Modificando actions.ts para mostrar errores detallados...
+call git commit -m "Fix: Expose detailed error message in login action for debugging"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO ACTUALIZACION...
+echo ENVIANDO FIX DE DEBUGGING...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Ahora sera mas facil configurar la base de datos.
+echo Ahora el login nos dira QUE esta fallando exactamente.
 echo ==========================================
 pause
