@@ -61,15 +61,7 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                             <p className="text-xs text-slate-500 truncate">{user.email}</p>
                         </div>
                     </div>
-                    <form action={logout}>
-                        <button
-                            type="submit"
-                            className="w-full flex items-center justify-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-2 rounded-lg transition-colors"
-                        >
-                            <LogOut size={14} />
-                            Cerrar Sesión
-                        </button>
-                    </form>
+                    <LogoutButton />
                 </div>
             )}
         </div>

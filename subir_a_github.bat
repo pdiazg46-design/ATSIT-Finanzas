@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 47: FIX SYNTAX SIDEBAR
+echo INTENTO 48: BOTON AISLADO
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Reparando error de sintaxis en Sidebar...
-call git commit -m "Fix: Sidebar JSX syntax errors"
+echo Usando componente de boton dedicado para debug...
+call git commit -m "Refactor: Extract LogoutButton component"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX...
+echo AHORA VEREMOS QUE PASA...
 echo ==========================================
 call git push -u origin main
 
