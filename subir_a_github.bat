@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 49: FIX IMPORT LOGOUT
+echo INTENTO 50: LOGOUT FORZADO
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando import faltante de LogoutButton...
-call git commit -m "Fix: Add missing LogoutButton import"
+echo Forzando redireccion en logout...
+call git commit -m "Fix: Force redirect on logout"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI QUE SI...
+echo AHORA SI, POR LAS BUENAS O POR LAS MALAS...
 echo ==========================================
 call git push -u origin main
 
