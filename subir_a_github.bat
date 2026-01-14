@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 19: FIX FINAL - TIPOS EN EMPLEADOS
+echo INTENTO 20: FIX BUILD ERROR (Tipos en Historial)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo ultimos errores de TypeScript...
-call git commit -m "Fix: Add explicit any types to filter p and map task to solve build error"
+echo Corrigiendo tipo implicito en historial...
+call git commit -m "Fix: Add explicit any type to archivedProjects map"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO CORRECCION FINAL...
+echo ENVIANDO CORRECCION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si esto no funciona, me hago monje tibetano.
+echo Este tiene que ser el ultimo, por favor!
 echo ==========================================
 pause

@@ -34,7 +34,7 @@ export default async function HistoryPage() {
             </header>
 
             <div className="grid grid-cols-1 gap-4 opacity-75">
-                {archivedProjects.map((project) => (
+                {archivedProjects.map((project: any) => (
                     <Link
                         key={project.id}
                         href={`/projects/${project.id}`}
