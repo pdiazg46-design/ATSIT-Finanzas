@@ -7,6 +7,17 @@ export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
 ) {
+    // PROBE: Check DB connection explicitly before Auth
+    try {
+        const { db } = await import('@/lib/db');
+        const { users } = await import('@/lib/schema');
+        const { count } = await import('drizzle-orm');
+        await db.select({ count: count() }).from(users).get();
+    } catch (dbError) {
+        console.error('DB PROBE ERROR:', dbError);
+        return 'ERROR DE CONEXIÓN DB: ' + (dbError instanceof Error ? dbError.message : String(dbError));
+    }
+
     try {
         await signIn('credentials', formData);
     } catch (error) {
