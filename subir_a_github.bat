@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 41: MOVIL FIX
+echo INTENTO 42: MOVIL + LOGIN SIMPLE
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo menu movil y espaciados...
-call git commit -m "Fix: Mobile sidebar and layout responsiveness"
+echo Aplicando mejoras de movil y login por nombre...
+call git commit -m "Feat: Mobile UI + Username based Login"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO CAMBIOS VISUALES...
+echo SUBIENDO ACTUALIZACION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo PROCESO COMPLETADO
-echo Revisa tu celular en 2 minutos.
+echo LISTO. Recuerda que tu usuario ahora es 'Patricio'
 echo ==========================================
 pause

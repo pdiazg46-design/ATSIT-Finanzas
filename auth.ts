@@ -19,11 +19,12 @@ export const { auth, signIn, signOut } = NextAuth({
             async authorize(credentials) {
                 try {
                     const parsedCredentials = z
-                        .object({ email: z.string().email(), password: z.string().min(6) })
+                        .object({ email: z.string(), password: z.string().min(6) })
                         .safeParse(credentials);
 
                     if (parsedCredentials.success) {
                         const { email, password } = parsedCredentials.data;
+                        // email field now acts as username/email identifier
                         const user = await getUser(email);
                         if (!user) return null;
 
