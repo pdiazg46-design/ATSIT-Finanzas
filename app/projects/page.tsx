@@ -37,8 +37,8 @@ export default async function ProjectsPage() {
 
     const allEmployees = await db.select().from(employees).all();
 
-    const activeProjectStats = allProjects.filter(p => !p.isArchived);
-    const totalNet = activeProjectStats.reduce((sum, p) => sum + (p.netBalance || 0), 0);
+    const activeProjectStats = allProjects.filter((p: any) => !p.isArchived);
+    const totalNet = activeProjectStats.reduce((sum: any, p: any) => sum + (p.netBalance || 0), 0);
     // const totalTax = activeProjectStats.reduce((sum, p) => sum + (p.taxBalance || 0), 0);
 
     const formatCurrency = (val: number) => {

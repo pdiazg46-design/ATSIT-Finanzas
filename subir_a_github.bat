@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 22: FIX BUILD - DETALLE PROYECTO
+echo INTENTO 23: FIX BUILD ERROR (Tipos en Lista Proyectos)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,8 +11,8 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipos implicitos en detalle de proyecto...
-call git commit -m "Fix: Add explicit any types to project detail page calculations"
+echo Corrigiendo tipos implicitos en pagina de proyectos...
+call git commit -m "Fix: Add explicit any types to project list calculations"
 
 :: 3. Push
 echo.
@@ -24,6 +24,6 @@ call git push -u origin main
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo TypeScript vs Developer: Round 22
+echo Si sale otro error de tipos, invito las cervezas. 🍺
 echo ==========================================
 pause
