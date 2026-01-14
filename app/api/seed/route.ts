@@ -150,11 +150,14 @@ export async function GET(request: Request) {
 
         // Probe Raw Client
         let rawProbeResult = 'Skipped';
+        const token = process.env.DATABASE_AUTH_TOKEN || '';
+        const cleanToken = token.replace(/^['"]|['"]$/g, '');
+
         try {
             const { createClient } = await import('@libsql/client');
             const rawClient = createClient({
                 url: dbUrl.replace('libsql://', 'https://'),
-                authToken: process.env.DATABASE_AUTH_TOKEN
+                authToken: cleanToken
             });
             await rawClient.execute('SELECT 1');
             rawProbeResult = 'Success';
@@ -162,15 +165,14 @@ export async function GET(request: Request) {
             rawProbeResult = 'Failed: ' + String(rawError);
         }
 
-        const token = process.env.DATABASE_AUTH_TOKEN || '';
-
         return NextResponse.json({
             error: 'Failed to seed/migrate',
             debug: {
                 urlPrefix: dbUrl.split(':')[0],
                 hasUrl: !!dbUrl,
                 hasToken: !!token,
-                tokenPrefix: token.substring(0, 5) + '...',
+                tokenWasQuoted: token !== cleanToken,
+                tokenPrefix: cleanToken.substring(0, 5) + '...',
                 fullUrlMasked: maskedUrl,
                 rawClientProbe: rawProbeResult
             },

@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 37: SONDA CRUDA + CHECK DE TOKEN
+echo INTENTO 38: LIMPIEZA DE COMILLAS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando prueba de conexion cruda para aislar Drizzle...
-call git commit -m "Fix: Add raw Turso client probe in seed error handler"
+echo Eliminando comillas accidentales en el token de autenticacion...
+call git commit -m "Fix: Strip trimming quotes from env variables to prevent auth errors"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO SONDA DE NIVEL 4...
+echo ENVIANDO FIX DE CONFIGURACION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Veremos si el problema es Drizzle o el Cliente.
+echo Si pegaste el token con comillas, esto lo arregla.
 echo ==========================================
 pause

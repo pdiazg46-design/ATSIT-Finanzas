@@ -13,9 +13,12 @@ if (!url) {
 // Turso/Vercel compatibility: Force HTTPS instead of libsql (WebSocket) to avoid "Failed query"
 const finalUrl = url?.replace('libsql://', 'https://') || 'file:finance.db';
 
+// Fix: Strip quotes if user added them in Vercel env vars
+const cleanToken = authToken?.replace(/^['"]|['"]$/g, '');
+
 const client = createClient({
     url: finalUrl,
-    authToken,
+    authToken: cleanToken,
 });
 
 export const db = drizzle(client, { schema });
