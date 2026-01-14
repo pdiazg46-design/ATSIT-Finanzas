@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 25: FIX IMPORT Y TIPOS
+echo INTENTO 26: FIX IMPORTS DB Y TIPOS BALANCE
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo import faltante en db.ts y tipos en balance...
-call git commit -m "Fix: Add missing createClient import and fix balance report type error"
+echo Corrigiendo imports perdidos en db.ts y tipos en balance...
+call git commit -m "Fix: Add missing drizzle and schema imports and fix balance report build error"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX FINAL (ESPERO)...
+echo ENVIANDO FIX 26...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si esto no funciona, reinicio el router.
+echo Si falta algo mas, me como el teclado.
 echo ==========================================
 pause
