@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 33: SONDA DE BASE DE DATOS
+echo INTENTO 34: AUTO-MIGRACION
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando prueba de conexion directa antes de auth...
-call git commit -m "Fix: Add direct DB connectivity probe in login action"
+echo Agregando creacion automatica de tablas en ruta seed...
+call git commit -m "Feat: Update seed route to perform auto-migration (create tables)"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO SONDA DE NIVEL 3...
+echo ENVIANDO SOLUCION DEFINITIVA...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si falla la conexion, ahora lo sabremos seguro.
+echo Ahora el link de setup creara las tablas que faltaban.
 echo ==========================================
 pause
