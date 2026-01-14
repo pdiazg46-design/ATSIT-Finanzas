@@ -1,29 +1,29 @@
 @echo off
 echo ==========================================
-echo INTENTO 8: RETORNO A NEXT.JS 14 (ESTABILIDAD TOTAL)
+echo INTENTO 9: SQA - FINAL FIX DE VERSIONES
 echo ==========================================
 
 :: Configurar identidad
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: 1. Agregar cambios (package.json nuevo)
+:: 1. Agregar cambios
 call git add .
 
 :: 2. Commit
-echo Guardando cambios...
-call git commit -m "Fix: Downgrade to Next 14 and React 18 for stability"
+echo Guardando correcciones de librerias...
+call git commit -m "Fix: Align devDependencies with Next 14/React 18"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO VERSION ESTABLE...
+echo ENVIANDO MATRIZ DE COMPATIBILIDAD...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Vercel instalara Next.js 14 (A prueba de balas).
+echo Ahora SI coinciden todas las piezas del rompecabezas.
 echo ==========================================
 pause
