@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 28: SEED USER API
+echo INTENTO 29: BOTON SETUP
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando ruta API para crear usuario admin...
-call git commit -m "Feat: Add seed API route to create admin user"
+echo Agregando boton de setup en login...
+call git commit -m "Feat: Add convenient seed database link to login page"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO RUTINA DE CREACION DE USUARIO...
+echo ENVIANDO ACTUALIZACION...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Sigue las instrucciones que te dare a continuacion.
+echo Ahora sera mas facil configurar la base de datos.
 echo ==========================================
 pause
