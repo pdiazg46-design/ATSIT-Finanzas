@@ -22,7 +22,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
     const monthlyFlow: Record<string, { income: number, expense: number }> = {};
 
     // Process Movements - Filter by Selected Month
-    allMovements.forEach(row => {
+    allMovements.forEach((row: any) => {
         const m = row.tasks;
         if (!m.startDate) return;
 
@@ -48,7 +48,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
     });
 
     // Process VAT Payments - Filter by Selected Month
-    allPayments.forEach(p => {
+    allPayments.forEach((p: any) => {
         const date = new Date(p.paymentDate);
         if (isNaN(date.getTime())) return;
 
@@ -69,7 +69,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
 
     // Unified List for Table - Filter by Selected Month
     const normalizedMovements = [
-        ...allMovements.map(row => {
+        ...allMovements.map((row: any) => {
             const t = row.tasks;
             const p = row.projects;
             const val = t.totalValue || t.netValue || 0;
@@ -84,7 +84,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                 typeLabel: val > 0 ? 'Ingreso' : 'Egreso'
             };
         }),
-        ...allPayments.map(p => {
+        ...allPayments.map((p: any) => {
             return {
                 id: `payment-${p.id}`,
                 date: new Date(p.paymentDate),
@@ -96,14 +96,14 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                 typeLabel: 'Egreso'
             };
         })
-    ].filter(item => {
+    ].filter((item: any) => {
         if (!item.date) return false;
         const key = `${item.date.getFullYear()}-${String(item.date.getMonth() + 1).padStart(2, '0')}`;
         return key === selectedMonth;
     });
 
     // Sort Descending (Newest First)
-    normalizedMovements.sort((a, b) => {
+    normalizedMovements.sort((a: any, b: any) => {
         const timeA = a.date ? a.date.getTime() : 0;
         const timeB = b.date ? b.date.getTime() : 0;
         return timeB - timeA;
@@ -160,7 +160,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                         No hay movimientos registrados para este mes.
                     </div>
                 ) : (
-                    months.map(m => {
+                    months.map((m: string) => {
                         const flow = monthlyFlow[m];
                         const net = flow.income - flow.expense;
                         return (
@@ -207,7 +207,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                                 <tr>
                                     <td colSpan={4} className="p-4 text-center text-slate-500">Sin movimientos</td>
                                 </tr>
-                            ) : normalizedMovements.map((item) => {
+                            ) : normalizedMovements.map((item: any) => {
                                 return (
                                     <tr key={item.id} className="hover:bg-white/5 transition-colors">
                                         <td className="p-3 text-slate-400 whitespace-nowrap">{formatDate(item.date)}</td>

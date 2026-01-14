@@ -10,7 +10,7 @@ export default async function WithdrawalsReportPage() {
     const groupedByPartner: Record<string, Record<string, WithdrawalItem[]>> = {};
     const partnerTotals: Record<string, number> = {};
 
-    rawData.forEach(item => {
+    rawData.forEach((item: any) => {
         // Use 'Sin Asignar' if employee is missing, though logic requires it
         const partnerName = item.employeeName || 'Desconocido';
         if (!item.date) return;
@@ -44,12 +44,12 @@ export default async function WithdrawalsReportPage() {
 
     const partners = Object.keys(groupedByPartner).sort();
 
-    const exportData = rawData.map(item => ({
+    const exportData = rawData.map((item: any) => ({
         date: item.date,
         partner: item.employeeName || 'Desconocido',
         project: item.projectName,
         amount: Math.abs(item.amount || 0)
-    })).sort((a, b) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime());
+    })).sort((a: any, b: any) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime());
 
     const exportColumns = [
         { header: 'Fecha', key: 'date' },
@@ -82,7 +82,7 @@ export default async function WithdrawalsReportPage() {
 
             {/* Totals Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {partners.map(partner => (
+                {partners.map((partner: string) => (
                     <div key={partner} className="glass-card p-6 border-pink-500/20 bg-pink-500/5">
                         <div className="flex items-center gap-4 mb-2">
                             <div className="p-3 bg-pink-500/10 rounded-xl text-pink-400">
@@ -99,7 +99,7 @@ export default async function WithdrawalsReportPage() {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {partners.map(partner => {
+                {partners.map((partner: string) => {
                     // Sort months descending
                     const months = Object.keys(groupedByPartner[partner]).sort().reverse();
 
@@ -110,9 +110,9 @@ export default async function WithdrawalsReportPage() {
                                 {partner}
                             </h3>
 
-                            {months.map(monthKey => {
+                            {months.map((monthKey: string) => {
                                 const items = groupedByPartner[partner][monthKey];
-                                const monthTotal = items.reduce((acc, curr) => acc + Math.abs(curr.amount || 0), 0);
+                                const monthTotal = items.reduce((acc: number, curr: any) => acc + Math.abs(curr.amount || 0), 0);
 
                                 return (
                                     <div key={monthKey} className="glass-card p-6">
@@ -131,7 +131,7 @@ export default async function WithdrawalsReportPage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-white/5">
-                                                    {items.map(item => (
+                                                    {items.map((item: any) => (
                                                         <tr key={item.id} className="hover:bg-white/5 transition-colors">
                                                             <td className="py-2 text-slate-400">{item.date}</td>
                                                             <td className="py-2 text-white font-medium">{item.projectName}</td>

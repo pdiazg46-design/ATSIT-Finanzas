@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 23: FIX BUILD ERROR (Tipos en Lista Proyectos)
+echo INTENTO 24: FIX MASIVO DE REPORTES
 echo ==========================================
 
 :: Configurar identidad
@@ -11,19 +11,19 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipos implicitos en pagina de proyectos...
-call git commit -m "Fix: Add explicit any types to project list calculations"
+echo Corrigiendo tipos implicitos en todos los reportes...
+call git commit -m "Fix: Mass update to add explicit any types to reports maps filters and reduces"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX...
+echo ENVIANDO FIX MASIVO...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
 echo PROCESO COMPLETADO
-echo Si sale otro error de tipos, invito las cervezas. 🍺
+echo He oido tus plegarias. He predecido y corregido. 🔮
 echo ==========================================
 pause

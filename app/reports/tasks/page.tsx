@@ -52,7 +52,7 @@ export default async function PendingTasksPage() {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pendingTasks.map(t => (
+                {pendingTasks.map((t: any) => (
                     <div key={t.id} className="glass-card p-6 flex flex-col justify-between hover:bg-white/5 transition-all">
                         <div>
                             <div className="flex justify-between items-start mb-4">

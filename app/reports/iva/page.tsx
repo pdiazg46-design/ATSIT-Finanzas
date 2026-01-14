@@ -14,7 +14,7 @@ export default async function IVAReportPage() {
     // Grouping Logic
     const groupedByMonth: Record<string, { debito: IvaItem[], credito: IvaItem[], pagos: typeof payments }> = {};
 
-    rawData.forEach(item => {
+    rawData.forEach((item: any) => {
         if (!item.date) return;
         const dateObj = new Date(item.date);
         const monthKey = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -31,7 +31,7 @@ export default async function IVAReportPage() {
     });
 
     // Group payments
-    payments.forEach(p => {
+    payments.forEach((p: any) => {
         const dateObj = new Date(p.paymentDate);
         const monthKey = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
 
@@ -54,17 +54,17 @@ export default async function IVAReportPage() {
         return date.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
     };
 
-    const calculateTotalIva = (items: IvaItem[]) => items.reduce((acc, curr) => acc + (curr.taxValue || 0), 0);
+    const calculateTotalIva = (items: IvaItem[]) => items.reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
 
     // Calculate Global Totals for Summary
-    const globalDebito = rawData.filter(i => i.movementType === 'Ingreso').reduce((acc, curr) => acc + (curr.taxValue || 0), 0);
-    const globalCredito = rawData.filter(i => i.movementType !== 'Ingreso').reduce((acc, curr) => acc + (curr.taxValue || 0), 0);
-    const globalPagado = payments.reduce((acc, curr) => acc + curr.amount, 0);
+    const globalDebito = rawData.filter((i: any) => i.movementType === 'Ingreso').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    const globalCredito = rawData.filter((i: any) => i.movementType !== 'Ingreso').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    const globalPagado = payments.reduce((acc: number, curr: any) => acc + curr.amount, 0);
     const globalBalance = globalDebito + globalCredito - globalPagado; // If positive, payable. If negative, credit.
 
     // Prepare Export Data (Flat List)
     const exportData = [
-        ...rawData.map(item => ({
+        ...rawData.map((item: any) => ({
             date: item.date,
             project: item.projectName || 'Sin Proyecto',
             type: item.movementType === 'Ingreso' ? 'Venta (IVA Débito)' : 'Compra (IVA Crédito)',
@@ -73,7 +73,7 @@ export default async function IVAReportPage() {
             tax: item.taxValue,
             total: (item.netValue || 0) + (item.taxValue || 0)
         })),
-        ...payments.map(p => ({
+        ...payments.map((p: any) => ({
             date: p.paymentDate,
             project: 'Tesoreria',
             type: 'Pago IVA',
@@ -82,7 +82,7 @@ export default async function IVAReportPage() {
             tax: 0,
             total: p.amount
         }))
-    ].sort((a, b) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime());
+    ].sort((a: any, b: any) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime());
 
     const exportColumns = [
         { header: 'Fecha', key: 'date' },
@@ -130,11 +130,11 @@ export default async function IVAReportPage() {
                 </div>
             ) : (
                 <div className="space-y-12">
-                    {sortedMonths.map(monthKey => {
+                    {sortedMonths.map((monthKey: string) => {
                         const monthData = groupedByMonth[monthKey];
                         const totalDebito = calculateTotalIva(monthData.debito);
                         const totalCredito = calculateTotalIva(monthData.credito);
-                        const totalPagado = monthData.pagos.reduce((acc, curr) => acc + curr.amount, 0);
+                        const totalPagado = monthData.pagos.reduce((acc: number, curr: any) => acc + curr.amount, 0);
 
                         const balance = totalDebito + totalCredito - totalPagado;
 
@@ -168,7 +168,7 @@ export default async function IVAReportPage() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
-                                                        {monthData.debito.map(item => (
+                                                        {monthData.debito.map((item: any) => (
                                                             <tr key={item.id}>
                                                                 <td className="py-2 text-slate-300">{item.date}</td>
                                                                 <td className="py-2 text-slate-300">
@@ -207,7 +207,7 @@ export default async function IVAReportPage() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
-                                                        {monthData.credito.map(item => (
+                                                        {monthData.credito.map((item: any) => (
                                                             <tr key={item.id}>
                                                                 <td className="py-2 text-slate-300">{item.date}</td>
                                                                 <td className="py-2 text-slate-300">
@@ -248,7 +248,7 @@ export default async function IVAReportPage() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
-                                                        {monthData.pagos.map(item => (
+                                                        {monthData.pagos.map((item: any) => (
                                                             <tr key={item.id}>
                                                                 <td className="py-2 text-slate-300">{item.paymentDate}</td>
                                                                 <td className="py-2 text-slate-400">{item.notes || '-'}</td>

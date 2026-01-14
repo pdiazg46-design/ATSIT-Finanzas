@@ -39,7 +39,7 @@ export default async function BalanceReportPage() {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
     };
 
-    const totals = reportData.reduce((acc, row) => ({
+    const totals = reportData.reduce((acc: any, row: any) => ({
         expectedIncome: acc.expectedIncome + (row.expectedIncome || 0),
         realIncomeNet: acc.realIncomeNet + (row.realIncomeNet || 0),
         expensesNet: acc.expensesNet + (row.expensesNet || 0),
@@ -120,7 +120,7 @@ export default async function BalanceReportPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {reportData.map((row, i) => {
+                            {reportData.map((row: any, i: number) => {
                                 const perc = row.expectedIncome ? (row.realIncomeNet / row.expectedIncome) * 100 : 0;
                                 return (
                                     <tr key={i} className="hover:bg-white/5 transition-colors">
