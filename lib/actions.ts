@@ -1,17 +1,23 @@
+'use server';
+
+import { signIn, signOut } from '@/auth';
+import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
 
-// ... existing code ...
-
+// Logout function
 export async function logout() {
     try {
+        // Attempt clean signout
         await signOut({ redirect: false });
     } catch (err) {
-        // Ignore signOut errors
+        console.error("SignOut Failed", err);
     } finally {
+        // Force redirect to login page
         redirect('/login');
     }
 }
 
+// Authentication function
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
@@ -47,9 +53,4 @@ export async function authenticate(
         }
         return `Error del servidor: ${(error as any).message}`;
     }
-    // If signIn is successful, it will redirect, so this part is unreachable
-    // unless there's no redirect, in which case we might want to return a success message or null.
-    // For now, assuming successful signIn leads to a redirect handled by Next.js/NextAuth.
 }
-
-

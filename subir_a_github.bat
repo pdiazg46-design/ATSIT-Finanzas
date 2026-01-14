@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 50: LOGOUT FORZADO
+echo INTENTO 51: REPARACION TOTAL LOGOUT
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Forzando redireccion en logout...
-call git commit -m "Fix: Force redirect on logout"
+echo Reparando archivo de acciones corrupto...
+call git commit -m "Fix: Rewrite corrupted actions.ts file"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI, POR LAS BUENAS O POR LAS MALAS...
+echo ESTA ES LA DEFINITIVA...
 echo ==========================================
 call git push -u origin main
 
