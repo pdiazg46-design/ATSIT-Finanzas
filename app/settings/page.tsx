@@ -28,9 +28,15 @@ export default async function SettingsPage() {
     let users: any[] = [];
     if (isAdmin) {
         try {
-            users = await getUsers();
+            // Late import to potentially avoid side-effects if possible, though esm handles this differently.
+            // Better to rely on the try-catch we already have, but let's make sure getUsers isn't failing hard.
+            users = await getUsers().catch(err => {
+                console.error("Error fetching users:", err);
+                return [];
+            });
         } catch (e) {
             console.error("Failed to load users", e);
+            users = [];
         }
     }
 

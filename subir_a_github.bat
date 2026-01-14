@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 68: LA VICTORIA FINAL
+echo INTENTO 69: BLINDAJE SETTINGS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Limpiando herramientas de diagnostico y reactivando pagina de configuracion...
-call git commit -m "Chore: Cleanup diagnostics and re-enable settings page logic"
+echo Reforzando manejo de errores en pagina de configuracion...
+call git commit -m "Fix: Enhance error handling in Settings page to prevent build failure"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo MISIÓN CUMPLIDA.
+echo OTRA VEZ A LA CARGA...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo GRACIAS POR VOLAR CON NASA AIRLINES. 🚀
+echo LISTO. Revisa Deployment.
 echo ==========================================
 pause
