@@ -1,33 +1,32 @@
 @echo off
 echo ==========================================
-echo INTENTO 6: DOWNGRADE A NEXT.JS ESTABLE
+echo INTENTO 7: LIMPIEZA TOTAL DE DEPENDENCIAS
 echo ==========================================
 
-:: Configurar identidad
+:: Configurar identidad (por seguridad)
 call git config user.email "pdiazg46@gmail.com"
 call git config user.name "Patricio Díaz"
 
-:: 1. Agregar cambios
-echo Agregando package.json corregido...
+:: 1. Borrar el archivo que causa conflictos
+echo Eliminando package-lock.json antiguo...
+del package-lock.json
+
+:: 2. Agregar cambios
 call git add .
 
-:: 2. Commit
+:: 3. Commit
 echo Guardando cambios...
-call git commit -m "Fix: Downgrade to Next.js 15.1.3 for stability"
-
-:: 3. Branch
-call git branch -M main
+call git commit -m "Fix: Remove package-lock to force clean install"
 
 :: 4. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX DE VERSIONES...
+echo ENVIANDO LIMPIEZA...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo PROCESO COMPLETADO
-echo Vercel instalara la version CORRECTA esta vez.
+echo LISTO. Vercel ahora instalara todo desde cero.
 echo ==========================================
 pause
