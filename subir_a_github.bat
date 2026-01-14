@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 45: FIX LOGOUT FINAL
+echo INTENTO 46: FORM LOGOUT
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Agregando import faltante para logout...
-call git commit -m "Fix: Missing signOut import in actions"
+echo Usando formulario nativo para logout...
+call git commit -m "Fix: Replace logout click handler with form action"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo ENVIANDO FIX REAL...
+echo ESTE SI QUE SI...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo LISTO. Ahora si, prueba cerrar sesion.
+echo LISTO. Prueba de fuego.
 echo ==========================================
 pause
