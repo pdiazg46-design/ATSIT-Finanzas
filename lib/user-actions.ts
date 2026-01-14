@@ -17,6 +17,9 @@ export const PERMISSIONS = {
 
 // Check if current user has a specific permission
 export async function hasPermission(permission: string) {
+    // BUILD-TIME GUARD: If no DB URL, assume no permissions/build mode
+    if (!process.env.DATABASE_URL) return false;
+
     const session = await auth();
     if (!session?.user?.email) return false;
 
@@ -32,6 +35,9 @@ export async function hasPermission(permission: string) {
 }
 
 export async function getUsers() {
+    // BUILD-TIME GUARD
+    if (!process.env.DATABASE_URL) return [];
+
     // Check admin permission first
     if (!await hasPermission(PERMISSIONS.ADMIN)) {
         throw new Error("No tienes permiso para ver usuarios");

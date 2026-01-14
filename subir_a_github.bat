@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 58: FIX TYPE ERROR
+echo INTENTO 59: FIX BUILD ACTIONS
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo tipos en settings page...
-call git commit -m "Fix: Update settings initialization to match CompanySettings interface"
+echo Protegiendo acciones de usuario contra build sin DB...
+call git commit -m "Fix: Add guard clauses to user actions to prevent build crash"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo EL ULTIMO CLAVO...
+echo BLINDAJE COMPLETO...
 echo ==========================================
 call git push -u origin main
 
