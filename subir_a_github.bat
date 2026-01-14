@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 52: EMERGENCIA - MODO CLIENTE
+echo INTENTO 53: FIX DEFINITIVO (Manejador de Ruta)
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Cambiando a logout nativo del cliente...
-call git commit -m "Fix: Switch to client-side signOut with SessionProvider"
+echo Agregando ruta API de auth faltante...
+call git commit -m "Fix: Add missing NextAuth API route"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo RECUPERANDO EL CONTROL...
+echo ESTO ERA LO QUE FALTABA (99% SEGURO)...
 echo ==========================================
 call git push -u origin main
 
