@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 61: HABILITAR SEED
+echo INTENTO 62: LLAVE DEL SEED
 echo ==========================================
 
 :: Configurar identidad
@@ -11,13 +11,13 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Rehabilitando enlace de seed para inicializar DB...
-call git commit -m "Fix: Re-enable seed link in login page for production initialization"
+echo Agregando clave secreta al enlace de seed...
+call git commit -m "Fix: Add secret param to seed link"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo CREANDO LA LLAVE MAESTRA...
+echo AHORA SI ABRE LA PUERTA...
 echo ==========================================
 call git push -u origin main
 
