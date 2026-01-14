@@ -31,7 +31,7 @@ export default async function EmployeeDetailPage({ params }: { params: Promise<{
         .all();
 
     // Consolidar proyectos donde participa con tareas pero no es dueño
-    const projectIdsParticipating = [...new Set(employeeTasks.map(t => t.projectId))];
+    const projectIdsParticipating = [...new Set(employeeTasks.map((t: any) => t.projectId))];
     const participatingProjectsResults = await Promise.all(
         projectIdsParticipating
             .filter(pid => !ownedProjects.find(op => op.id === pid))
