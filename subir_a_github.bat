@@ -12,7 +12,7 @@ call git add .
 
 :: 2. Commit
 echo Transformando filas de tabla en tarjetas apiladas para movil...
-call git commit -m "UI: Compact Dashboard Cards & Mobile List Optimization"
+call git commit -m "Feat: Edit User Permissions & Profiles"
 
 :: 3. Push
 echo.

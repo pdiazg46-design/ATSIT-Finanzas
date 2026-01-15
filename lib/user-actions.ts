@@ -85,6 +85,46 @@ export async function createUser(formData: FormData) {
     }
 }
 
+export async function updateUser(formData: FormData) {
+    if (!await hasPermission(PERMISSIONS.ADMIN)) return { success: false, message: 'No autorizado' };
+
+    const id = parseInt(formData.get('id') as string);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    // Extract permissions
+    const permissions: string[] = [];
+    if (formData.get('perm_projects') === 'on') permissions.push(PERMISSIONS.MANAGE_PROJECTS);
+    if (formData.get('perm_tasks') === 'on') permissions.push(PERMISSIONS.MANAGE_TASKS);
+    if (formData.get('perm_employees') === 'on') permissions.push(PERMISSIONS.MANAGE_EMPLOYEES);
+    if (formData.get('perm_admin') === 'on') permissions.push(PERMISSIONS.ADMIN);
+
+    if (!id || !name || !email) {
+        return { success: false, message: 'Faltan datos requeridos' };
+    }
+
+    try {
+        const updateData: any = {
+            name,
+            email,
+            permissions: JSON.stringify(permissions)
+        };
+
+        if (password && password.trim() !== '') {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        await db.update(users).set(updateData).where(eq(users.id, id));
+
+        revalidatePath('/settings');
+        return { success: true, message: 'Usuario actualizado exitosamente' };
+    } catch (error) {
+        console.error("Update User Error:", error);
+        return { success: false, message: 'Error al actualizar usuario.' };
+    }
+}
+
 export async function deleteUser(userId: number) {
     if (!await hasPermission(PERMISSIONS.ADMIN)) return { success: false, message: 'No autorizado' };
 
