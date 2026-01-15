@@ -134,12 +134,17 @@ export async function GET(request: Request) {
         // Check if user exists
         const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
 
+        const adminPermissions = JSON.stringify(['ADMIN', 'MANAGE_PROJECTS', 'MANAGE_TASKS', 'MANAGE_EMPLOYEES']);
+
         if (existingUser) {
-            // FORCE UPDATE PASSWORD to ensures known credentials
+            // FORCE UPDATE PASSWORD AND PERMISSIONS
             await db.update(users)
-                .set({ password })
+                .set({
+                    password,
+                    permissions: adminPermissions
+                })
                 .where(eq(users.email, email));
-            return NextResponse.json({ message: 'Database initialized. Password RESET for existing user.', user: existingUser });
+            return NextResponse.json({ message: 'Database initialized. Admin restored (Password + Permissions).', user: existingUser });
         }
 
         // Create user
@@ -148,6 +153,7 @@ export async function GET(request: Request) {
             email,
             password,
             role: 'admin',
+            permissions: adminPermissions
         }).returning().get();
 
         return NextResponse.json({ message: 'Database structure created and User added successfully', user: newUser });

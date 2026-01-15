@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo INTENTO 74: LIMPIEZA DE DUPLICADOS
+echo FIX: PERMISOS DE ADMIN
 echo ==========================================
 
 :: Configurar identidad
@@ -11,18 +11,18 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Eliminando imports duplicados en user-actions.ts (Error mio)...
-call git commit -m "Fix: Remove duplicate PERMISSIONS import in user-actions.ts"
+echo Corrigiendo script de Seed para asignar PERMISOS de verdad...
+call git commit -m "Fix: Seed script now enforces permissions for admin user (insert/update)"
 
 :: 3. Push
 echo.
 echo ==========================================
-echo AHORA SI. 
+echo SUBIENDO...
 echo ==========================================
 call git push -u origin main
 
 echo.
 echo ==========================================
-echo Rezando...
+echo LISTO.
 echo ==========================================
 pause
