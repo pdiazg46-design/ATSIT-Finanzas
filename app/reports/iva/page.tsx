@@ -120,8 +120,8 @@ export default async function IVAReportPage() {
             </div>
 
             <header>
-                <h2 className="text-3xl font-bold text-white">Resumen Mensual de IVA</h2>
-                <p className="text-slate-400">Detalle de Créditos y Débitos fiscales agrupados por mes</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white">Resumen Mensual de IVA</h2>
+                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos y Débitos fiscales agrupados por mes</p>
             </header>
 
             {sortedMonths.length === 0 ? (
@@ -140,19 +140,19 @@ export default async function IVAReportPage() {
 
                         return (
                             <section key={monthKey} className="space-y-6">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                                    <h3 className="text-2xl font-bold text-indigo-400 capitalize">{formatMonthName(monthKey)}</h3>
-                                    <div className={`px-6 py-3 rounded-full text-xl font-bold ${balance >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-white/10 pb-4 gap-2 md:gap-0">
+                                    <h3 className="text-xl md:text-2xl font-bold text-indigo-400 capitalize">{formatMonthName(monthKey)}</h3>
+                                    <div className={`px-4 py-2 md:px-6 md:py-3 rounded-full text-sm md:text-xl font-bold ${balance >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
                                         Balance IVA: {formatCurrency(balance)} {balance > 0 ? '(Pagar)' : '(Remanente)'}
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                                     {/* IVA DEBITO (VENTAS) */}
-                                    <div className="glass-card p-6">
+                                    <div className="glass-card p-4 md:p-6">
                                         <div className="flex justify-between items-center mb-4">
-                                            <h4 className="text-lg font-bold text-emerald-400">IVA Débito (Ventas)</h4>
-                                            <span className="text-white font-mono font-bold">{formatCurrency(totalDebito)}</span>
+                                            <h4 className="text-base md:text-lg font-bold text-emerald-400">IVA Débito (Ventas)</h4>
+                                            <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(totalDebito)}</span>
                                         </div>
                                         {monthData.debito.length === 0 ? (
                                             <p className="text-sm text-slate-500 italic">Sin movimientos.</p>
@@ -160,25 +160,25 @@ export default async function IVAReportPage() {
                                             <div className="overflow-x-auto">
                                                 <table className="w-full text-sm text-left">
                                                     <thead>
-                                                        <tr className="text-xs text-slate-500 border-b border-white/10">
-                                                            <th className="py-2">Fecha</th>
-                                                            <th className="py-2">Doc/N°</th>
-                                                            <th className="py-2 text-right">Neto</th>
-                                                            <th className="py-2 text-right">IVA</th>
+                                                        <tr className="text-[10px] md:text-xs text-slate-500 border-b border-white/10">
+                                                            <th className="py-2 whitespace-nowrap">Fecha</th>
+                                                            <th className="py-2 whitespace-nowrap">Doc/N°</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">Neto</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">IVA</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
                                                         {monthData.debito.map((item: any) => (
                                                             <tr key={item.id}>
-                                                                <td className="py-2 text-slate-300">{item.date}</td>
-                                                                <td className="py-2 text-slate-300">
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm whitespace-nowrap">{item.date}</td>
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm">
                                                                     <div className="flex flex-col">
-                                                                        <span>{item.documentName}</span>
-                                                                        <span className="text-xs text-slate-500">#{item.docNumber || '-'}</span>
+                                                                        <span className="truncate max-w-[120px] md:max-w-none">{item.documentName}</span>
+                                                                        <span className="text-[10px] md:text-xs text-slate-500">#{item.docNumber || '-'}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td className="py-2 text-right text-slate-400">{formatCurrency(item.netValue)}</td>
-                                                                <td className="py-2 text-right text-emerald-400 font-medium">{formatCurrency(item.taxValue)}</td>
+                                                                <td className="py-2 text-right text-slate-400 text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.netValue)}</td>
+                                                                <td className="py-2 text-right text-emerald-400 font-medium text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.taxValue)}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -188,10 +188,10 @@ export default async function IVAReportPage() {
                                     </div>
 
                                     {/* IVA CREDITO (COMPRAS) */}
-                                    <div className="glass-card p-6">
+                                    <div className="glass-card p-4 md:p-6">
                                         <div className="flex justify-between items-center mb-4">
-                                            <h4 className="text-lg font-bold text-amber-400">IVA Crédito (Compras)</h4>
-                                            <span className="text-white font-mono font-bold">{formatCurrency(totalCredito)}</span>
+                                            <h4 className="text-base md:text-lg font-bold text-amber-400">IVA Crédito (Compras)</h4>
+                                            <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(totalCredito)}</span>
                                         </div>
                                         {monthData.credito.length === 0 ? (
                                             <p className="text-sm text-slate-500 italic">Sin movimientos.</p>
@@ -199,25 +199,25 @@ export default async function IVAReportPage() {
                                             <div className="overflow-x-auto">
                                                 <table className="w-full text-sm text-left">
                                                     <thead>
-                                                        <tr className="text-xs text-slate-500 border-b border-white/10">
-                                                            <th className="py-2">Fecha</th>
-                                                            <th className="py-2">Doc/N°</th>
-                                                            <th className="py-2 text-right">Neto</th>
-                                                            <th className="py-2 text-right">IVA</th>
+                                                        <tr className="text-[10px] md:text-xs text-slate-500 border-b border-white/10">
+                                                            <th className="py-2 whitespace-nowrap">Fecha</th>
+                                                            <th className="py-2 whitespace-nowrap">Doc/N°</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">Neto</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">IVA</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
                                                         {monthData.credito.map((item: any) => (
                                                             <tr key={item.id}>
-                                                                <td className="py-2 text-slate-300">{item.date}</td>
-                                                                <td className="py-2 text-slate-300">
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm whitespace-nowrap">{item.date}</td>
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm">
                                                                     <div className="flex flex-col">
-                                                                        <span>{item.documentName}</span>
-                                                                        <span className="text-xs text-slate-500">#{item.docNumber || '-'}</span>
+                                                                        <span className="truncate max-w-[120px] md:max-w-none">{item.documentName}</span>
+                                                                        <span className="text-[10px] md:text-xs text-slate-500">#{item.docNumber || '-'}</span>
                                                                     </div>
                                                                 </td>
-                                                                <td className="py-2 text-right text-slate-400">{formatCurrency(item.netValue)}</td>
-                                                                <td className="py-2 text-right text-amber-400 font-medium">{formatCurrency(item.taxValue)}</td>
+                                                                <td className="py-2 text-right text-slate-400 text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.netValue)}</td>
+                                                                <td className="py-2 text-right text-amber-400 font-medium text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.taxValue)}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -227,13 +227,13 @@ export default async function IVAReportPage() {
                                     </div>
 
                                     {/* PAGOS REALIZADOS */}
-                                    <div className="glass-card p-6 xl:col-span-2 border-sky-500/10 bg-sky-500/5">
+                                    <div className="glass-card p-4 md:p-6 xl:col-span-2 border-sky-500/10 bg-sky-500/5">
                                         <div className="flex justify-between items-center mb-4">
                                             <div className="flex items-center gap-2">
                                                 <Wallet size={20} className="text-sky-400" />
-                                                <h4 className="text-lg font-bold text-sky-400">Pagos de IVA Realizados</h4>
+                                                <h4 className="text-base md:text-lg font-bold text-sky-400">Pagos de IVA Realizados</h4>
                                             </div>
-                                            <span className="text-white font-mono font-bold">{formatCurrency(totalPagado)}</span>
+                                            <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(totalPagado)}</span>
                                         </div>
                                         {monthData.pagos.length === 0 ? (
                                             <p className="text-sm text-slate-500 italic">No se registraron pagos este mes.</p>
@@ -241,18 +241,18 @@ export default async function IVAReportPage() {
                                             <div className="overflow-x-auto">
                                                 <table className="w-full text-sm text-left">
                                                     <thead>
-                                                        <tr className="text-xs text-slate-500 border-b border-white/10">
-                                                            <th className="py-2">Fecha</th>
+                                                        <tr className="text-[10px] md:text-xs text-slate-500 border-b border-white/10">
+                                                            <th className="py-2 whitespace-nowrap">Fecha</th>
                                                             <th className="py-2">Observaciones</th>
-                                                            <th className="py-2 text-right">Monto</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">Monto</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
                                                         {monthData.pagos.map((item: any) => (
                                                             <tr key={item.id}>
-                                                                <td className="py-2 text-slate-300">{item.paymentDate}</td>
-                                                                <td className="py-2 text-slate-400">{item.notes || '-'}</td>
-                                                                <td className="py-2 text-right text-sky-400 font-medium">{formatCurrency(item.amount)}</td>
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm whitespace-nowrap">{item.paymentDate}</td>
+                                                                <td className="py-2 text-slate-400 text-xs md:text-sm truncate max-w-[200px] md:max-w-none">{item.notes || '-'}</td>
+                                                                <td className="py-2 text-right text-sky-400 font-medium text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.amount)}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>

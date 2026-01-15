@@ -150,13 +150,13 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
             </div>
 
             <header>
-                <h2 className="text-3xl font-bold text-white">Flujo de Caja</h2>
-                <p className="text-slate-400">Ingresos y egresos del periodo {formatMonth(selectedMonth)}</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white">Flujo de Caja</h2>
+                <p className="text-sm md:text-base text-slate-400">Ingresos y egresos del periodo {formatMonth(selectedMonth)}</p>
             </header>
 
             <div className="grid grid-cols-1 gap-6">
                 {months.length === 0 ? (
-                    <div className="glass-card p-12 text-center text-slate-500 italic">
+                    <div className="glass-card p-8 md:p-12 text-center text-slate-500 italic">
                         No hay movimientos registrados para este mes.
                     </div>
                 ) : (
@@ -164,24 +164,24 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                         const flow = monthlyFlow[m];
                         const net = flow.income - flow.expense;
                         return (
-                            <div key={m} className="glass-card p-6 flex items-center justify-between">
+                            <div key={m} className="glass-card p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-0">
                                 <div>
-                                    <p className="text-sm text-slate-500 uppercase font-bold tracking-widest">{formatMonth(m)}</p>
-                                    <h3 className="text-xl font-bold text-white">Resumen Mensual</h3>
+                                    <p className="text-xs md:text-sm text-slate-500 uppercase font-bold tracking-widest">{formatMonth(m)}</p>
+                                    <h3 className="text-lg md:text-xl font-bold text-white">Resumen Mensual</h3>
                                 </div>
 
-                                <div className="flex gap-12">
-                                    <div className="text-right">
-                                        <p className="text-xs text-slate-500 flex items-center justify-end gap-1"><TrendingUp size={12} className="text-emerald-500" />Ingresos</p>
-                                        <p className="text-lg font-bold text-emerald-400">{formatCurrency(flow.income)}</p>
+                                <div className="grid grid-cols-3 w-full md:w-auto md:flex md:gap-12 gap-4">
+                                    <div className="text-left md:text-right">
+                                        <p className="text-[10px] md:text-xs text-slate-500 flex items-center justify-start md:justify-end gap-1"><TrendingUp size={12} className="text-emerald-500" />Ingresos</p>
+                                        <p className="text-sm md:text-lg font-bold text-emerald-400">{formatCurrency(flow.income)}</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xs text-slate-500 flex items-center justify-end gap-1"><TrendingDown size={12} className="text-rose-500" />Egresos</p>
-                                        <p className="text-lg font-bold text-rose-400">{formatCurrency(flow.expense)}</p>
+                                    <div className="text-left md:text-right">
+                                        <p className="text-[10px] md:text-xs text-slate-500 flex items-center justify-start md:justify-end gap-1"><TrendingDown size={12} className="text-rose-500" />Egresos</p>
+                                        <p className="text-sm md:text-lg font-bold text-rose-400">{formatCurrency(flow.expense)}</p>
                                     </div>
-                                    <div className="text-right border-l border-white/10 pl-12">
-                                        <p className="text-xs text-slate-500">Saldo del Mes</p>
-                                        <p className={`text-xl font-extrabold ${net >= 0 ? 'text-sky-400' : 'text-rose-500'}`}>{formatCurrency(net)}</p>
+                                    <div className="text-left md:text-right border-l border-white/10 pl-4 md:pl-12">
+                                        <p className="text-[10px] md:text-xs text-slate-500">Saldo del Mes</p>
+                                        <p className={`text-base md:text-xl font-extrabold ${net >= 0 ? 'text-sky-400' : 'text-rose-500'}`}>{formatCurrency(net)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -191,15 +191,15 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
             </div>
 
             <div className="pt-8 border-t border-white/10">
-                <h3 className="text-xl font-bold text-white mb-4">Detalle de Movimientos</h3>
+                <h3 className="text-lg md:text-xl font-bold text-white mb-4">Detalle de Movimientos</h3>
                 <div className="glass-card overflow-hidden">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-white/5 text-slate-300">
                             <tr>
-                                <th className="p-3">Fecha</th>
-                                <th className="p-3">Proyecto</th>
-                                <th className="p-3">Descripción</th>
-                                <th className="p-3 text-right">Monto (Total)</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Fecha</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Proyecto</th>
+                                <th className="p-2 md:p-3 text-xs md:text-sm">Descripción</th>
+                                <th className="p-2 md:p-3 text-right text-xs md:text-sm">Monto (Total)</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -210,15 +210,15 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                             ) : normalizedMovements.map((item: any) => {
                                 return (
                                     <tr key={item.id} className="hover:bg-white/5 transition-colors">
-                                        <td className="p-3 text-slate-400 whitespace-nowrap">{formatDate(item.date)}</td>
-                                        <td className="p-3 text-slate-300 font-medium">{item.projectName}</td>
-                                        <td className="p-3 text-slate-400">
+                                        <td className="p-2 md:p-3 text-slate-400 whitespace-nowrap text-xs md:text-sm">{formatDate(item.date)}</td>
+                                        <td className="p-2 md:p-3 text-slate-300 font-medium text-xs md:text-sm">{item.projectName}</td>
+                                        <td className="p-2 md:p-3 text-slate-400">
                                             <div className="flex flex-col">
-                                                <span>{item.title}</span>
-                                                {item.observations && <span className="text-xs text-slate-500">{item.observations}</span>}
+                                                <span className="text-xs md:text-sm">{item.title}</span>
+                                                {item.observations && <span className="text-[10px] md:text-xs text-slate-500 truncate max-w-[150px] md:max-w-none">{item.observations}</span>}
                                             </div>
                                         </td>
-                                        <td className={`p-3 text-right font-bold ${item.isIncome ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                        <td className={`p-2 md:p-3 text-right font-bold text-xs md:text-sm ${item.isIncome ? 'text-emerald-400' : 'text-rose-400'}`}>
                                             {formatCurrency(Math.abs(item.amount))}
                                         </td>
                                     </tr>

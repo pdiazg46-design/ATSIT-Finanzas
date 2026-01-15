@@ -12,7 +12,7 @@ call git add .
 
 :: 2. Commit
 echo Transformando filas de tabla en tarjetas apiladas para movil...
-call git commit -m "UI: ProjectTaskTable Mobile Cards & List Refinements"
+call git commit -m "UI: Responsive fonts/tables for Financial Reports"
 
 :: 3. Push
 echo.
