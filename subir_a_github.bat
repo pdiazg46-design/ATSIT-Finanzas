@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo FIX: PERMISOS DE ADMIN
+echo AJUSTES VISUALES MOVIL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,8 +11,8 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Corrigiendo script de Seed para asignar PERMISOS de verdad...
-call git commit -m "Fix: Seed script now enforces permissions for admin user (insert/update)"
+echo Ajustando tamanos de fuente y padding en Dashboard para movil...
+call git commit -m "UI: Reduce padding and font sizes on mobile dashboard"
 
 :: 3. Push
 echo.

@@ -57,85 +57,85 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header>
-        <h2 className="text-4xl font-extrabold text-white tracking-tight">Dashboard General</h2>
-        <p className="text-slate-400 mt-1">Resumen operacional de Tangente</p>
+        <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">Dashboard General</h2>
+        <p className="text-sm md:text-base text-slate-400 mt-1">Resumen operacional de Tangente</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-8 border-emerald-500/20 bg-emerald-500/5">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-500/10 rounded-2xl text-emerald-400">
-              <TrendingUp size={28} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="glass-card p-5 md:p-8 border-emerald-500/20 bg-emerald-500/5">
+          <div className="flex justify-between items-start mb-3 md:mb-4">
+            <div className="p-2 md:p-3 bg-emerald-500/10 rounded-2xl text-emerald-400">
+              <TrendingUp size={24} className="md:w-7 md:h-7" />
             </div>
-            <span className="text-xs font-bold text-emerald-500/60 uppercase tracking-widest">Ingresos Reales</span>
+            <span className="text-[10px] md:text-xs font-bold text-emerald-500/60 uppercase tracking-widest">Ingresos Reales</span>
           </div>
-          <p className="text-3xl font-black text-white">{formatCurrency(totalIncome)}</p>
-          <p className="text-sm text-slate-500 mt-2 font-medium">Basado en movimientos netos</p>
+          <p className="text-2xl md:text-3xl font-black text-white">{formatCurrency(totalIncome)}</p>
+          <p className="text-xs md:text-sm text-slate-500 mt-2 font-medium">Basado en movimientos netos</p>
         </div>
 
-        <div className="glass-card p-8 border-rose-500/20 bg-rose-500/5">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-rose-500/10 rounded-2xl text-rose-400">
-              <Wallet size={28} />
+        <div className="glass-card p-5 md:p-8 border-rose-500/20 bg-rose-500/5">
+          <div className="flex justify-between items-start mb-3 md:mb-4">
+            <div className="p-2 md:p-3 bg-rose-500/10 rounded-2xl text-rose-400">
+              <Wallet size={24} className="md:w-7 md:h-7" />
             </div>
-            <span className="text-xs font-bold text-rose-500/60 uppercase tracking-widest">Gastos Totales</span>
+            <span className="text-[10px] md:text-xs font-bold text-rose-500/60 uppercase tracking-widest">Gastos Totales</span>
           </div>
-          <p className="text-3xl font-black text-white">{formatCurrency(totalExpenses)}</p>
-          <p className="text-sm text-slate-500 mt-2 font-medium">Suma de salidas netas</p>
+          <p className="text-2xl md:text-3xl font-black text-white">{formatCurrency(totalExpenses)}</p>
+          <p className="text-xs md:text-sm text-slate-500 mt-2 font-medium">Suma de salidas netas</p>
         </div>
 
-        <div className="glass-card p-8 border-sky-500/20 bg-sky-500/5">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-sky-500/10 rounded-2xl text-sky-400">
-              <DollarSign size={28} />
+        <div className="glass-card p-5 md:p-8 border-sky-500/20 bg-sky-500/5">
+          <div className="flex justify-between items-start mb-3 md:mb-4">
+            <div className="p-2 md:p-3 bg-sky-500/10 rounded-2xl text-sky-400">
+              <DollarSign size={24} className="md:w-7 md:h-7" />
             </div>
-            <span className="text-xs font-bold text-sky-500/60 uppercase tracking-widest">Saldo Neto</span>
+            <span className="text-[10px] md:text-xs font-bold text-sky-500/60 uppercase tracking-widest">Saldo Neto</span>
           </div>
-          <p className={`text-3xl font-black ${netBalance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
+          <p className={`text-2xl md:text-3xl font-black ${netBalance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
             {formatCurrency(netBalance)}
           </p>
-          <p className="text-sm text-slate-500 mt-2 font-medium">Rentabilidad operacional</p>
+          <p className="text-xs md:text-sm text-slate-500 mt-2 font-medium">Rentabilidad operacional</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         <section className="lg:col-span-2 glass-card p-0 overflow-hidden">
-          <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/2 cursor-default">
-            <h3 className="text-xl font-bold flex items-center gap-3 text-white">
-              <Briefcase size={22} className="text-sky-400" />
+          <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-white/2 cursor-default">
+            <h3 className="text-lg md:text-xl font-bold flex items-center gap-2 md:gap-3 text-white">
+              <Briefcase size={20} className="md:w-[22px] md:h-[22px] text-sky-400" />
               Proyectos Activos
             </h3>
-            <Link href="/projects" className="text-xs font-bold text-sky-400 hover:text-white transition-colors uppercase tracking-widest flex items-center gap-1">
+            <Link href="/projects" className="text-[10px] md:text-xs font-bold text-sky-400 hover:text-white transition-colors uppercase tracking-widest flex items-center gap-1">
               Ver todos <ChevronRight size={14} />
             </Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 bg-white/1">
-                  <th className="px-6 py-4">Nombre</th>
-                  <th className="px-6 py-4 text-right">Ingreso Real</th>
-                  <th className="px-6 py-4 text-right">Saldo Neto</th>
-                  <th className="px-6 py-4 text-center">Estado</th>
+                <tr className="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 bg-white/1">
+                  <th className="px-4 py-3 md:px-6 md:py-4">Nombre</th>
+                  <th className="px-4 py-3 md:px-6 md:py-4 text-right">Ingreso Real</th>
+                  <th className="px-4 py-3 md:px-6 md:py-4 text-right">Saldo Neto</th>
+                  <th className="px-4 py-3 md:px-6 md:py-4 text-center">Estado</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {activeProjects.map((p: any) => (
                   <tr key={p.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="px-6 py-4">
-                      <Link href={`/projects/${p.id}`} className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors block">
+                    <td className="px-4 py-3 md:px-6 md:py-4">
+                      <Link href={`/projects/${p.id}`} className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors block truncate max-w-[120px] md:max-w-none">
                         {p.name}
                       </Link>
-                      <p className="text-[10px] text-slate-500 font-medium">Esperado: {formatCurrency(p.expected || 0)}</p>
+                      <p className="text-[9px] md:text-[10px] text-slate-500 font-medium">Esperado: {formatCurrency(p.expected || 0)}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-right text-emerald-400 font-bold">{formatCurrency(p.real)}</td>
-                    <td className={`px-6 py-4 text-sm text-right font-black ${p.balance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
+                    <td className="px-4 py-3 md:px-6 md:py-4 text-sm text-right text-emerald-400 font-bold whitespace-nowrap">{formatCurrency(p.real)}</td>
+                    <td className={`px-4 py-3 md:px-6 md:py-4 text-sm text-right font-black whitespace-nowrap ${p.balance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
                       {formatCurrency(p.balance)}
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="px-2 py-1 rounded text-[9px] font-black uppercase bg-white/5 text-slate-400 border border-white/10 group-hover:border-sky-500/50 transition-colors">
+                    <td className="px-4 py-3 md:px-6 md:py-4 text-center">
+                      <span className="px-2 py-1 rounded text-[8px] md:text-[9px] font-black uppercase bg-white/5 text-slate-400 border border-white/10 group-hover:border-sky-500/50 transition-colors">
                         {p.status}
                       </span>
                     </td>
@@ -146,13 +146,13 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        <section className="glass-card p-8 flex flex-col justify-center items-center text-center space-y-4">
-          <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mb-2">
-            <PieChart size={40} />
+        <section className="glass-card p-6 md:p-8 flex flex-col justify-center items-center text-center space-y-3 md:space-y-4">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mb-2">
+            <PieChart size={32} className="md:w-10 md:h-10" />
           </div>
-          <h3 className="text-2xl font-black text-white">IVA por Pagar</h3>
-          <p className="text-4xl font-black text-amber-400">{formatCurrency(pendingIva)}</p>
-          <div className="text-sm text-slate-500 font-medium">
+          <h3 className="text-xl md:text-2xl font-black text-white">IVA por Pagar</h3>
+          <p className="text-3xl md:text-4xl font-black text-amber-400">{formatCurrency(pendingIva)}</p>
+          <div className="text-xs md:text-sm text-slate-500 font-medium">
             <p>Acumulado: {formatCurrency(totalAccruedIva)}</p>
             <p className="text-emerald-500">Pagado: {formatCurrency(totalPaidIva)}</p>
           </div>
