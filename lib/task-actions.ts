@@ -4,8 +4,14 @@ import { db } from '@/lib/db';
 import { tasks, movements, projects, documents } from '@/lib/schema';
 import { revalidatePath } from 'next/cache';
 import { eq } from 'drizzle-orm';
+import { hasPermission } from '@/lib/user-actions';
+import { PERMISSIONS } from '@/lib/permissions';
 
 export async function createTask(data: any) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_TASKS)) {
+        return { success: false, message: 'No tienes permiso para crear tareas' };
+    }
+
     const { netValue, documentId, movementId, observations, ...rest } = data;
 
     // Fetch movement type to determine sign
@@ -82,9 +88,14 @@ export async function createTask(data: any) {
 
     revalidatePath(`/projects/${rest.projectId}`);
     revalidatePath('/');
+    return { success: true };
 }
 
 export async function updateTask(id: number, data: any) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_TASKS)) {
+        return { success: false, message: 'No tienes permiso para editar tareas' };
+    }
+
     const { netValue, documentId, movementId, observations, ...rest } = data;
 
     // Fetch movement type to determine sign
@@ -125,9 +136,14 @@ export async function updateTask(id: number, data: any) {
 
     revalidatePath(`/projects/${rest.projectId}`);
     revalidatePath('/');
+    return { success: true };
 }
 
 export async function deleteTask(id: number, projectId: number) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_TASKS)) {
+        return { success: false, message: 'No tienes permiso para eliminar tareas' };
+    }
+
     await db.delete(tasks).where(eq(tasks.id, id));
 
     // Update parent project last action
@@ -137,4 +153,5 @@ export async function deleteTask(id: number, projectId: number) {
 
     revalidatePath(`/projects/${projectId}`);
     revalidatePath('/');
+    return { success: true };
 }

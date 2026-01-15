@@ -3,6 +3,8 @@ import { projects, employees, tasks } from '@/lib/schema';
 import { eq, sql, desc } from 'drizzle-orm';
 import ProjectList from '@/components/ProjectList';
 import AddProjectButton from '@/components/AddProjectButton';
+import { hasPermission } from '@/lib/user-actions';
+import { PERMISSIONS } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +43,8 @@ export default async function ProjectsPage() {
     const totalNet = activeProjectStats.reduce((sum: any, p: any) => sum + (p.netBalance || 0), 0);
     // const totalTax = activeProjectStats.reduce((sum, p) => sum + (p.taxBalance || 0), 0);
 
+    const canManageProjects = await hasPermission(PERMISSIONS.MANAGE_PROJECTS);
+
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
     };
@@ -58,11 +62,11 @@ export default async function ProjectsPage() {
                         <p className="text-xl font-black text-sky-400">{formatCurrency(totalNet)}</p>
                     </div>
                     {/* Removed VAT display */}
-                    <AddProjectButton employees={allEmployees} />
+                    <AddProjectButton employees={allEmployees} canCreate={canManageProjects} />
                 </div>
             </header>
 
-            <ProjectList projects={allProjects as any[]} />
+            <ProjectList projects={allProjects as any[]} canManage={canManageProjects} />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo AJUSTES VISUALES MOVIL
+echo AJUSTES LISTA PROYECTOS MOVIL
 echo ==========================================
 
 :: Configurar identidad
@@ -11,8 +11,8 @@ call git config user.name "Patricio Díaz"
 call git add .
 
 :: 2. Commit
-echo Ajustando tamanos de fuente y padding en Dashboard para movil...
-call git commit -m "UI: Reduce padding and font sizes on mobile dashboard"
+echo Transformando filas de tabla en tarjetas apiladas para movil...
+call git commit -m "Sec: Read-only permissions & UI: Mobile Optimization for Modals"
 
 :: 3. Push
 echo.

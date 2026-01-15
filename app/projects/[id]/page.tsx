@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { archiveProject, activateProject } from '@/lib/project-actions';
 import ProjectTaskTable from '@/components/ProjectTaskTable';
 import EditProjectButton from '@/components/EditProjectButton';
+import { hasPermission } from '@/lib/user-actions';
+import { PERMISSIONS } from '@/lib/permissions';
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: idStr } = await params;
@@ -23,6 +25,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         db.select().from(movements).all(),
         db.select().from(documents).all(),
     ]);
+
+    const canManageProjects = await hasPermission(PERMISSIONS.MANAGE_PROJECTS);
+    const canManageTasks = await hasPermission(PERMISSIONS.MANAGE_TASKS);
 
     const projectTasks = await db.select({
         id: tasks.id,
@@ -79,23 +84,25 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </Link>
 
                 <div className="flex gap-3">
-                    <EditProjectButton project={project} employees={allEmployees} />
-                    <form action={async () => {
-                        'use server';
-                        if (project.isArchived) {
-                            await activateProject(id);
-                        } else {
-                            await archiveProject(id);
-                        }
-                    }}>
-                        <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all ${project.isArchived
-                            ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                            : "bg-slate-500/10 text-slate-400 hover:bg-slate-500/20"
-                            }`}>
-                            {project.isArchived ? <Play size={18} /> : <Archive size={18} />}
-                            {project.isArchived ? "Activar Proyecto" : "Archivar Proyecto"}
-                        </button>
-                    </form>
+                    <EditProjectButton project={project} employees={allEmployees} canEdit={canManageProjects} />
+                    {canManageProjects && (
+                        <form action={async () => {
+                            'use server';
+                            if (project.isArchived) {
+                                await activateProject(id);
+                            } else {
+                                await archiveProject(id);
+                            }
+                        }}>
+                            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all ${project.isArchived
+                                ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                                : "bg-slate-500/10 text-slate-400 hover:bg-slate-500/20"
+                                }`}>
+                                {project.isArchived ? <Play size={18} /> : <Archive size={18} />}
+                                {project.isArchived ? "Activar Proyecto" : "Archivar Proyecto"}
+                            </button>
+                        </form>
+                    )}
                 </div>
             </div>
 
@@ -187,6 +194,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     employees={allEmployees}
                     movements={allMovements}
                     documents={allDocuments}
+                    canManageTasks={canManageTasks}
                 />
             </section>
         </div>

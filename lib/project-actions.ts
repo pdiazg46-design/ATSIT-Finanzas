@@ -4,8 +4,14 @@ import { db } from '@/lib/db';
 import { projects, tasks } from '@/lib/schema';
 import { eq, count } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { hasPermission } from '@/lib/user-actions';
+import { PERMISSIONS } from '@/lib/permissions';
 
 export async function createProject(data: any) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para crear proyectos' };
+    }
+
     await db.insert(projects).values({
         ...data,
         lastActionAt: new Date().toISOString(),
@@ -13,9 +19,14 @@ export async function createProject(data: any) {
 
     revalidatePath('/projects');
     revalidatePath('/');
+    return { success: true };
 }
 
 export async function updateProject(id: number, data: any) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para editar proyectos' };
+    }
+
     await db.update(projects)
         .set({
             ...data,
@@ -29,6 +40,10 @@ export async function updateProject(id: number, data: any) {
 }
 
 export async function deleteProject(id: number) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para eliminar proyectos' };
+    }
+
     const taskCountResult = await db.select({ count: count() }).from(tasks).where(eq(tasks.projectId, id)).get();
     const taskCount = taskCountResult?.count || 0;
 
@@ -45,6 +60,10 @@ export async function deleteProject(id: number) {
 }
 
 export async function archiveProject(id: number) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para archivar proyectos' };
+    }
+
     await db.update(projects)
         .set({ isArchived: true, lastActionAt: new Date().toISOString() })
         .where(eq(projects.id, id));
@@ -56,6 +75,10 @@ export async function archiveProject(id: number) {
 }
 
 export async function activateProject(id: number) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para activar proyectos' };
+    }
+
     await db.update(projects)
         .set({ isArchived: false, lastActionAt: new Date().toISOString() })
         .where(eq(projects.id, id));
