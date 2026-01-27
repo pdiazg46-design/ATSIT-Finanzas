@@ -47,7 +47,7 @@ export default async function BalanceReportPage() {
         balance: acc.balance + (row.balance || 0),
     }), { expectedIncome: 0, realIncomeNet: 0, expensesNet: 0, totalTax: 0, balance: 0 });
 
-    const totalBank = totals.balance + totals.totalTax;
+    const totalBank = totals.balance + ivaPayable;
 
     const exportColumns = [
         { header: 'Proyecto', key: 'name' },
