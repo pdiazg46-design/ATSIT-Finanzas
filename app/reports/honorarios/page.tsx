@@ -13,6 +13,7 @@ export default async function HonorariosReportPage() {
         projectName: projects.name,
         totalNet: sql<number>`SUM(${tasks.netValue})`, // This is the Liquid Amount
         totalRetention: sql<number>`SUM(${tasks.taxValue})`, // This is the 15.25% Retention
+        totalGross: sql<number>`SUM(${tasks.totalValue})`,   // Total Bruto
         count: sql<number>`COUNT(${tasks.id})`
     })
         .from(tasks)
@@ -31,8 +32,9 @@ export default async function HonorariosReportPage() {
     const totals = reportData.reduce((acc, row) => ({
         net: acc.net + (row.totalNet || 0),
         retention: acc.retention + (row.totalRetention || 0),
+        gross: acc.gross + (row.totalGross || 0),
         count: acc.count + (row.count || 0)
-    }), { net: 0, retention: 0, count: 0 });
+    }), { net: 0, retention: 0, gross: 0, count: 0 });
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -43,6 +45,7 @@ export default async function HonorariosReportPage() {
         { header: 'Cant. Boletas', key: 'count' },
         { header: 'Total Líquido', key: 'totalNet', format: 'currency' as const },
         { header: 'Total Retención (15.25%)', key: 'totalRetention', format: 'currency' as const },
+        { header: 'Total Bruto', key: 'totalGross', format: 'currency' as const },
     ];
 
     const exportSummary = [
@@ -107,6 +110,7 @@ export default async function HonorariosReportPage() {
                                 <th className="px-3 py-3 md:px-6 md:py-4 text-center whitespace-nowrap">Cant. Boletas</th>
                                 <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap">Total Líquido</th>
                                 <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap text-purple-400">Retención (15.25%)</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap">Total Bruto</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -116,6 +120,7 @@ export default async function HonorariosReportPage() {
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-center text-slate-400 whitespace-nowrap">{row.count}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300 whitespace-nowrap">{formatCurrency(row.totalNet)}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-purple-400 font-bold whitespace-nowrap">{formatCurrency(row.totalRetention)}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400 font-bold whitespace-nowrap">{formatCurrency(row.totalGross)}</td>
                                 </tr>
                             ))}
                             {reportData.length === 0 && (
@@ -133,6 +138,7 @@ export default async function HonorariosReportPage() {
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-center text-white">{totals.count}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300">{formatCurrency(totals.net)}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-purple-400">{formatCurrency(totals.retention)}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400">{formatCurrency(totals.gross)}</td>
                                 </tr>
                             </tfoot>
                         )}

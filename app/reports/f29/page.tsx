@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { tasks, documents } from '@/lib/schema';
+import { tasks, documents, projects } from '@/lib/schema';
 import { eq, sql, and, like, desc } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -54,14 +54,18 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         ).all();
 
     // 3. HONORARIOS (Retenciones) - Boleta Honorarios (ID 44)
+    // 3. HONORARIOS (Retenciones) - Boleta Honorarios (ID 44)
     const honorariumData = await db.select({
         id: tasks.id,
         title: tasks.title,
         docNumber: tasks.docNumber,
         netValue: tasks.netValue, // Líquido
         taxValue: tasks.taxValue, // Retención
+        projectName: projects.name, // Add Project Name
+        totalValue: tasks.totalValue
     })
         .from(tasks)
+        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
         .where(
             and(
                 eq(tasks.documentId, 44), // Boleta Honorarios
@@ -269,18 +273,22 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                             <thead className="bg-white/5 text-slate-400">
                                 <tr>
                                     <th className="p-3">Doc</th>
+                                    <th className="p-3">Proyecto</th>
                                     <th className="p-3">Concepto</th>
                                     <th className="p-3 text-right">Líquido</th>
                                     <th className="p-3 text-right">Retención</th>
+                                    <th className="p-3 text-right">Total Bruto</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {honorariumData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
+                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(Math.abs(t.netValue || 0))}</td>
                                         <td className="p-3 text-right text-purple-400 font-bold">{formatCurrency(Math.abs(t.taxValue || 0))}</td>
+                                        <td className="p-3 text-right text-white font-bold">{formatCurrency(Math.abs(t.totalValue || 0))}</td>
                                     </tr>
                                 ))}
                             </tbody>
