@@ -25,9 +25,12 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
+        projectName: projects.name, // Add Project Name
+        totalValue: tasks.totalValue
     })
         .from(tasks)
         .leftJoin(documents, eq(tasks.documentId, documents.id))
+        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
         .where(
             and(
                 eq(tasks.documentId, 42), // Factura Electrónica
@@ -43,8 +46,11 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
+        projectName: projects.name, // Add Project Name
+        totalValue: tasks.totalValue
     })
         .from(tasks)
+        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
         .where(
             and(
                 eq(tasks.documentId, 42), // Factura Electrónica
@@ -217,18 +223,22 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                             <thead className="bg-white/5 text-slate-400">
                                 <tr>
                                     <th className="p-3">Doc</th>
+                                    <th className="p-3">Proyecto</th>
                                     <th className="p-3">Concepto</th>
                                     <th className="p-3 text-right">Neto</th>
                                     <th className="p-3 text-right">IVA</th>
+                                    <th className="p-3 text-right">Total Bruto</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {salesData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
+                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(t.netValue || 0)}</td>
                                         <td className="p-3 text-right text-emerald-400 font-bold">{formatCurrency(t.taxValue || 0)}</td>
+                                        <td className="p-3 text-right text-white font-bold">{formatCurrency(t.totalValue || 0)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -245,18 +255,22 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                             <thead className="bg-white/5 text-slate-400">
                                 <tr>
                                     <th className="p-3">Doc</th>
+                                    <th className="p-3">Proyecto</th>
                                     <th className="p-3">Concepto</th>
                                     <th className="p-3 text-right">Neto</th>
                                     <th className="p-3 text-right">IVA</th>
+                                    <th className="p-3 text-right">Total Bruto</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {purchasesData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
+                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(Math.abs(t.netValue || 0))}</td>
                                         <td className="p-3 text-right text-rose-400 font-bold">{formatCurrency(Math.abs(t.taxValue || 0))}</td>
+                                        <td className="p-3 text-right text-white font-bold">{formatCurrency(Math.abs(t.totalValue || 0))}</td>
                                     </tr>
                                 ))}
                             </tbody>
