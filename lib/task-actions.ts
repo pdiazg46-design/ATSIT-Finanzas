@@ -22,12 +22,19 @@ export async function createTask(data: any) {
     const absoluteValue = Math.round(Math.abs(netValue || 0));
     const adjustedNetValue = type === 'Ingreso' ? absoluteValue : -absoluteValue;
 
-    // Verify document type for IVA
+    // Verify document type for Tax
     const document = await db.select().from(documents).where(eq(documents.id, documentId)).get();
 
     let taxValue = 0;
-    if (document?.name === 'Factura Electrónica') {
-        taxValue = Math.round(adjustedNetValue * 0.19);
+    if (document) {
+        if (document.name === 'Factura Electrónica' || document.id === 42) {
+            taxValue = Math.round(adjustedNetValue * 0.19);
+        } else if (document.name === 'Boleta Honorarios' || document.id === 44) {
+            // Honorarium Logic (2026: 15.25%)
+            // Net (Liquid) -> Retention
+            const rate = 0.1525;
+            taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
+        }
     }
 
     const totalValue = adjustedNetValue + taxValue;
@@ -106,12 +113,19 @@ export async function updateTask(id: number, data: any) {
     const absoluteValue = Math.round(Math.abs(netValue || 0));
     const adjustedNetValue = type === 'Ingreso' ? absoluteValue : -absoluteValue;
 
-    // Verify document type for IVA
+    // Verify document type for Tax
     const document = await db.select().from(documents).where(eq(documents.id, documentId)).get();
 
     let taxValue = 0;
-    if (document?.name === 'Factura Electrónica') {
-        taxValue = Math.round(adjustedNetValue * 0.19);
+    if (document) {
+        if (document.name === 'Factura Electrónica' || document.id === 42) {
+            taxValue = Math.round(adjustedNetValue * 0.19);
+        } else if (document.name === 'Boleta Honorarios' || document.id === 44) {
+            // Honorarium Logic (2026: 15.25%)
+            // Net (Liquid) -> Retention
+            const rate = 0.1525;
+            taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
+        }
     }
 
     const totalValue = adjustedNetValue + taxValue;

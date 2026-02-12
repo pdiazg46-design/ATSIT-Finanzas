@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { projects, tasks } from '@/lib/schema';
 import { eq, sql } from 'drizzle-orm';
-import { BarChart3, PieChart, FileSpreadsheet, TrendingUp, Wallet } from 'lucide-react';
+import { BarChart3, PieChart, FileSpreadsheet, TrendingUp, Wallet, Banknote, Landmark } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function ReportsPage() {
@@ -51,6 +51,22 @@ export default async function ReportsPage() {
                     </div>
                     <h3 className="text-xl font-bold text-white">Tareas Pendientes</h3>
                     <p className="text-sm text-slate-400 mt-2">Listado detallado de todas las tareas con estado 'En curso' o 'Retrasado'.</p>
+                </Link>
+
+                <Link href="/reports/honorarios" className="glass-card p-6 hover:bg-white/5 transition-all group">
+                    <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+                        <Banknote size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Honorarios y Retenciones</h3>
+                    <p className="text-sm text-slate-400 mt-2">Detalle de boletas de honorarios y cálculo de retenciones (2da Categoría).</p>
+                </Link>
+
+                <Link href="/reports/f29" className="glass-card p-6 hover:bg-white/5 transition-all group">
+                    <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
+                        <Landmark size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Simulación F29</h3>
+                    <p className="text-sm text-slate-400 mt-2">Cálculo mensual de IVA (Débito/Crédito) y PPM para declaración de impuestos.</p>
                 </Link>
             </div>
         </div>

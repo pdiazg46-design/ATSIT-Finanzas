@@ -62,23 +62,8 @@ export default function AddTaskModal({
         if (!manualPaymentDate) setPaymentDate(newDate);
     };
 
-    // Tax Logic (2026 Update)
-    const isInvoice = documentId === 42; // Factura Electrónica
-    const isHonorarium = documentId === 44; // Boleta Honorarios
-
-    let taxValue = 0;
-    let taxLabel = '';
-
-    if (isInvoice) {
-        taxValue = netValue * 0.19;
-        taxLabel = 'IVA (19%)';
-    } else if (isHonorarium) {
-        // Tasa 2026: 15.25%
-        // Cálculo basado en Líquido -> Retención
-        const rate = 0.1525;
-        taxValue = netValue * (rate / (1 - rate));
-        taxLabel = `Retención (${(rate * 100).toFixed(2)}%)`;
-    }
+    // Vista previa IVA
+    const taxValue = documentId === 1 ? netValue * 0.19 : 0;
 
     if (!mounted) return null;
 
@@ -316,9 +301,7 @@ export default function AddTaskModal({
                         {/* TAB: FINANZAS */}
                         <div className={`space-y-4 ${activeTab === 'finanzas' ? 'block' : 'hidden'}`}>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
-                                    {isHonorarium ? 'Valor Líquido (CLP)' : 'Valor Neto (CLP)'}
-                                </label>
+                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Valor Neto (CLP)</label>
                                 <div className="relative">
                                     <input
                                         name="netValue"
@@ -338,7 +321,7 @@ export default function AddTaskModal({
                             {(taxValue !== 0) && (
                                 <div className={`p-6 rounded-xl border animate-in slide-in-from-top-2 duration-300 ${isIncome ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-xs font-bold uppercase opacity-60">{taxLabel}</span>
+                                        <span className="text-xs font-bold uppercase opacity-60">IVA Estimado (19%)</span>
                                         <span className="font-bold">{new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(taxValue)}</span>
                                     </div>
                                     <div className={`flex justify-between items-center text-xl font-black border-t pt-3 mt-1 ${isIncome ? 'border-emerald-500/20' : 'border-rose-500/20'}`}>
