@@ -9,31 +9,33 @@ export default async function HonorariosReportPage() {
     // Fetch all tasks that are "Boleta Honorarios" (ID 44)
     // We group by project to show the breakdown
     const reportData = await db.select({
+        id: tasks.id,
         projectId: projects.id,
         projectName: projects.name,
-        totalNet: sql<number>`SUM(${tasks.netValue})`, // This is the Liquid Amount
-        totalRetention: sql<number>`SUM(${tasks.taxValue})`, // This is the 15.25% Retention
-        totalGross: sql<number>`SUM(${tasks.totalValue})`,   // Total Bruto
-        count: sql<number>`COUNT(${tasks.id})`
+        docNumber: tasks.docNumber,
+        title: tasks.title,
+        netValue: tasks.netValue, // This is the Liquid Amount
+        taxValue: tasks.taxValue, // This is the 15.25% Retention
+        totalValue: tasks.totalValue   // Total Bruto
     })
         .from(tasks)
         .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
                 eq(tasks.documentId, 44), // Boleta Honorarios
-                eq(projects.isArchived, false) // Active projects only? Or all? Let's show all active for now.
+                eq(projects.isArchived, false) // Active projects only
             )
         )
-        .groupBy(projects.id)
-        .orderBy(desc(sql`SUM(${tasks.taxValue})`))
+        .orderBy(projects.name, desc(tasks.startDate))
         .all();
 
     // Calculate Global Totals
+    // Calculate Global Totals
     const totals = reportData.reduce((acc, row) => ({
-        net: acc.net + (row.totalNet || 0),
-        retention: acc.retention + (row.totalRetention || 0),
-        gross: acc.gross + (row.totalGross || 0),
-        count: acc.count + (row.count || 0)
+        net: acc.net + (row.netValue || 0),
+        retention: acc.retention + (row.taxValue || 0),
+        gross: acc.gross + (row.totalValue || 0),
+        count: acc.count + 1
     }), { net: 0, retention: 0, gross: 0, count: 0 });
 
     const formatCurrency = (val: number) => {
@@ -42,10 +44,11 @@ export default async function HonorariosReportPage() {
 
     const exportColumns = [
         { header: 'Proyecto', key: 'projectName' },
-        { header: 'Cant. Boletas', key: 'count' },
-        { header: 'Total Líquido', key: 'totalNet', format: 'currency' as const },
-        { header: 'Total Retención (15.25%)', key: 'totalRetention', format: 'currency' as const },
-        { header: 'Total Bruto', key: 'totalGross', format: 'currency' as const },
+        { header: 'N° Doc', key: 'docNumber' },
+        { header: 'Concepto', key: 'title' },
+        { header: 'Líquido', key: 'netValue', format: 'currency' as const },
+        { header: 'Retención (15.25%)', key: 'taxValue', format: 'currency' as const },
+        { header: 'Total Bruto', key: 'totalValue', format: 'currency' as const },
     ];
 
     const exportSummary = [
@@ -107,25 +110,27 @@ export default async function HonorariosReportPage() {
                         <thead>
                             <tr className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-white/5 bg-white/5">
                                 <th className="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">Proyecto</th>
-                                <th className="px-3 py-3 md:px-6 md:py-4 text-center whitespace-nowrap">Cant. Boletas</th>
-                                <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap">Total Líquido</th>
-                                <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap text-purple-400">Retención (15.25%)</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">N° Doc</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">Concepto</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap">Líquido</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap text-purple-400">Retención</th>
                                 <th className="px-3 py-3 md:px-6 md:py-4 text-right whitespace-nowrap">Total Bruto</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {reportData.map((row: any, i: number) => (
                                 <tr key={i} className="hover:bg-white/5 transition-colors">
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white font-medium whitespace-nowrap">{row.projectName}</td>
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-center text-slate-400 whitespace-nowrap">{row.count}</td>
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300 whitespace-nowrap">{formatCurrency(row.totalNet)}</td>
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-purple-400 font-bold whitespace-nowrap">{formatCurrency(row.totalRetention)}</td>
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400 font-bold whitespace-nowrap">{formatCurrency(row.totalGross)}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-sky-400 font-bold whitespace-nowrap">{row.projectName}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-slate-400 whitespace-nowrap">#{row.docNumber}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white whitespace-nowrap">{row.title}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300 whitespace-nowrap">{formatCurrency(row.netValue)}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-purple-400 font-bold whitespace-nowrap">{formatCurrency(row.taxValue)}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400 font-bold whitespace-nowrap">{formatCurrency(row.totalValue)}</td>
                                 </tr>
                             ))}
                             {reportData.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500 italic">
+                                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500 italic">
                                         No se encontraron boletas de honorarios registradas.
                                     </td>
                                 </tr>
@@ -134,8 +139,7 @@ export default async function HonorariosReportPage() {
                         {reportData.length > 0 && (
                             <tfoot>
                                 <tr className="bg-white/5 border-t border-white/10 font-bold">
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white uppercase tracking-wider">Totales</td>
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-center text-white">{totals.count}</td>
+                                    <td colSpan={3} className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white uppercase tracking-wider text-right">Totales Globales:</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300">{formatCurrency(totals.net)}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-purple-400">{formatCurrency(totals.retention)}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400">{formatCurrency(totals.gross)}</td>
