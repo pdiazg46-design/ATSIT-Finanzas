@@ -20,11 +20,19 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const owner = project.ownerId ? await db.select().from(employees).where(eq(employees.id, project.ownerId)).get() : null;
 
     // Lookup data for the AddTask form
-    const [allEmployees, allMovements, allDocuments] = await Promise.all([
+    const [allEmployees, allMovements, initialDocuments] = await Promise.all([
         db.select().from(employees).all(),
         db.select().from(movements).all(),
         db.select().from(documents).all(),
     ]);
+
+    // Self-healing: Ensure "Adelanto PPM" exists
+    let allDocuments = initialDocuments;
+    if (!allDocuments.find(d => d.name === 'Adelanto PPM')) {
+        console.log('⚡ Auto-seeding "Adelanto PPM" document type...');
+        const newDoc = await db.insert(documents).values({ name: 'Adelanto PPM' }).returning().get();
+        allDocuments = [...allDocuments, newDoc];
+    }
 
     const canManageProjects = await hasPermission(PERMISSIONS.MANAGE_PROJECTS);
     const canManageTasks = await hasPermission(PERMISSIONS.MANAGE_TASKS);
