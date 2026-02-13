@@ -323,6 +323,7 @@ export default function AddTaskModal({
                                     <input
                                         type="text"
                                         required
+                                        placeholder="Ej: 1.000.000"
                                         value={new Intl.NumberFormat('es-CL').format(netValue)}
                                         onChange={(e) => {
                                             // Remove dots/commas to get raw number
