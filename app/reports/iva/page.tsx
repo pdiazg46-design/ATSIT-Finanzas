@@ -1,7 +1,7 @@
 import { getIvaReportData, IvaItem } from '@/lib/report-actions';
 import { db } from '@/lib/db';
 import { vatPayments } from '@/lib/schema';
-import { ArrowLeft, Wallet } from 'lucide-react';
+import { ArrowLeft, Wallet, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import ExportButtons from '@/components/ExportButtons';
 
@@ -12,7 +12,7 @@ export default async function IVAReportPage() {
     const payments = await db.select().from(vatPayments);
 
     // Grouping Logic
-    const groupedByMonth: Record<string, { debito: IvaItem[], credito: IvaItem[], pagos: typeof payments }> = {};
+    const groupedByMonth: Record<string, { debito: IvaItem[], credito: IvaItem[], honorarios: IvaItem[], pagos: typeof payments }> = {};
 
     rawData.forEach((item: any) => {
         if (!item.date) return;
@@ -20,13 +20,18 @@ export default async function IVAReportPage() {
         const monthKey = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
 
         if (!groupedByMonth[monthKey]) {
-            groupedByMonth[monthKey] = { debito: [], credito: [], pagos: [] };
+            groupedByMonth[monthKey] = { debito: [], credito: [], honorarios: [], pagos: [] };
         }
 
         if (item.movementType === 'Ingreso') {
             groupedByMonth[monthKey].debito.push(item);
         } else {
-            groupedByMonth[monthKey].credito.push(item);
+            // Check if it is Honorarios (ID 44)
+            if (item.documentName === 'Boleta Honorarios' || item.documentId === 44) {
+                groupedByMonth[monthKey].honorarios.push(item);
+            } else {
+                groupedByMonth[monthKey].credito.push(item);
+            }
         }
     });
 
@@ -36,7 +41,7 @@ export default async function IVAReportPage() {
         const monthKey = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
 
         if (!groupedByMonth[monthKey]) {
-            groupedByMonth[monthKey] = { debito: [], credito: [], pagos: [] };
+            groupedByMonth[monthKey] = { debito: [], credito: [], honorarios: [], pagos: [] };
         }
         groupedByMonth[monthKey].pagos.push(p);
     });
@@ -58,21 +63,31 @@ export default async function IVAReportPage() {
 
     // Calculate Global Totals for Summary
     const globalDebito = rawData.filter((i: any) => i.movementType === 'Ingreso').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
-    const globalCredito = rawData.filter((i: any) => i.movementType !== 'Ingreso').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    // IVA Credit EXCLUDES Honorarios now
+    const globalCredito = rawData.filter((i: any) => i.movementType !== 'Ingreso' && i.documentId !== 44 && i.documentName !== 'Boleta Honorarios').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    const globalRetenciones = rawData.filter((i: any) => i.documentId === 44 || i.documentName === 'Boleta Honorarios').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
     const globalPagado = payments.reduce((acc: number, curr: any) => acc + curr.amount, 0);
-    const globalBalance = globalDebito + globalCredito - globalPagado; // If positive, payable. If negative, credit.
+
+    // Balance IVA = Debit - Credit - Paid (Strictly IVA)
+    const globalBalance = globalDebito + globalCredito - globalPagado;
 
     // Prepare Export Data (Flat List)
     const exportData = [
-        ...rawData.map((item: any) => ({
-            date: item.date,
-            project: item.projectName || 'Sin Proyecto',
-            type: item.movementType === 'Ingreso' ? 'Venta (IVA Débito)' : 'Compra (IVA Crédito)',
-            doc: `${item.documentName} #${item.docNumber || '-'}`,
-            net: item.netValue,
-            tax: item.taxValue,
-            total: (item.netValue || 0) + (item.taxValue || 0)
-        })),
+        ...rawData.map((item: any) => {
+            let typeLabel = 'Compra (IVA Crédito)';
+            if (item.movementType === 'Ingreso') typeLabel = 'Venta (IVA Débito)';
+            if (item.documentId === 44 || item.documentName === 'Boleta Honorarios') typeLabel = 'Honorarios (Retención)';
+
+            return {
+                date: item.date,
+                project: item.projectName || 'Sin Proyecto',
+                type: typeLabel,
+                doc: `${item.documentName} #${item.docNumber || '-'}`,
+                net: item.netValue,
+                tax: item.taxValue,
+                total: (item.netValue || 0) + (item.taxValue || 0)
+            };
+        }),
         ...payments.map((p: any) => ({
             date: p.paymentDate,
             project: 'Tesoreria',
@@ -90,15 +105,16 @@ export default async function IVAReportPage() {
         { header: 'Tipo', key: 'type' },
         { header: 'Documento', key: 'doc' },
         { header: 'Neto', key: 'net', format: 'currency' as const },
-        { header: 'IVA', key: 'tax', format: 'currency' as const },
+        { header: 'IVA/Ret', key: 'tax', format: 'currency' as const },
         { header: 'Total', key: 'total', format: 'currency' as const },
     ];
 
     const exportSummary = [
         { label: 'Total IVA Débito (Ventas)', value: formatCurrency(globalDebito) },
         { label: 'Total IVA Crédito (Compras)', value: formatCurrency(globalCredito) },
+        { label: 'Total Retenciones (Honorarios)', value: formatCurrency(globalRetenciones) },
         { label: 'Total IVA Pagado', value: formatCurrency(globalPagado) },
-        { label: 'IVA por Pagar (Actual)', value: formatCurrency(globalBalance) }
+        { label: 'Balance IVA por Pagar', value: formatCurrency(globalBalance) }
     ];
 
     return (
@@ -112,8 +128,8 @@ export default async function IVAReportPage() {
                     <ExportButtons
                         data={exportData}
                         columns={exportColumns}
-                        fileName="informe_iva"
-                        title="Informe de IVA (Débitos, Créditos y Pagos)"
+                        fileName="informe_iva_retenciones"
+                        title="Informe de IVA y Retenciones"
                         summary={exportSummary}
                     />
                 </div>
@@ -121,29 +137,39 @@ export default async function IVAReportPage() {
 
             <header>
                 <h2 className="text-xl md:text-3xl font-bold text-white">Resumen Mensual de IVA</h2>
-                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos y Débitos fiscales agrupados por mes</p>
+                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos, Débitos y Retenciones por mes (Separación estricta)</p>
             </header>
 
             {sortedMonths.length === 0 ? (
                 <div className="text-center py-20 bg-white/5 rounded-2xl">
-                    <p className="text-slate-400">No hay movimientos de IVA registrados aún.</p>
+                    <p className="text-slate-400">No hay movimientos registrados aún.</p>
                 </div>
             ) : (
                 <div className="space-y-12">
                     {sortedMonths.map((monthKey: string) => {
                         const monthData = groupedByMonth[monthKey];
                         const totalDebito = calculateTotalIva(monthData.debito);
-                        const totalCredito = calculateTotalIva(monthData.credito);
+                        const totalCredito = calculateTotalIva(monthData.credito); // Now excludes Honorarios
+                        const totalHonorarios = calculateTotalIva(monthData.honorarios); // Pure Retentions
                         const totalPagado = monthData.pagos.reduce((acc: number, curr: any) => acc + curr.amount, 0);
 
+                        // Balance only considers VAT, not Retentions
                         const balance = totalDebito + totalCredito - totalPagado;
 
                         return (
                             <section key={monthKey} className="space-y-6">
                                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-white/10 pb-4 gap-2 md:gap-0">
                                     <h3 className="text-xl md:text-2xl font-bold text-indigo-400 capitalize">{formatMonthName(monthKey)}</h3>
-                                    <div className={`px-4 py-2 md:px-6 md:py-3 rounded-full text-sm md:text-xl font-bold ${balance >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                                        Balance IVA: {formatCurrency(balance)} {balance > 0 ? '(Pagar)' : '(Remanente)'}
+                                    <div className="flex gap-4">
+                                        {/* Retentions Tag */}
+                                        {totalHonorarios !== 0 && (
+                                            <div className="px-4 py-2 rounded-full text-sm font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                                Retenciones: {formatCurrency(Math.abs(totalHonorarios))}
+                                            </div>
+                                        )}
+                                        <div className={`px-4 py-2 md:px-6 md:py-3 rounded-full text-sm md:text-xl font-bold ${balance >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                                            Balance IVA: {formatCurrency(balance)} {balance > 0 ? '(Pagar)' : '(Remanente)'}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -194,7 +220,7 @@ export default async function IVAReportPage() {
                                             <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(totalCredito)}</span>
                                         </div>
                                         {monthData.credito.length === 0 ? (
-                                            <p className="text-sm text-slate-500 italic">Sin movimientos.</p>
+                                            <p className="text-sm text-slate-500 italic">Sin movimientos (Excl. Honorarios).</p>
                                         ) : (
                                             <div className="overflow-x-auto">
                                                 <table className="w-full text-sm text-left">
@@ -226,6 +252,47 @@ export default async function IVAReportPage() {
                                         )}
                                     </div>
 
+                                    {/* RETENCIONES (HONORARIOS) */}
+                                    {monthData.honorarios.length > 0 && (
+                                        <div className="glass-card p-4 md:p-6 border-purple-500/10 bg-purple-500/5">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <div className="flex items-center gap-2">
+                                                    <GraduationCap size={20} className="text-purple-400" />
+                                                    <h4 className="text-base md:text-lg font-bold text-purple-400">Retenciones (Honorarios)</h4>
+                                                </div>
+                                                <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(Math.abs(totalHonorarios))}</span>
+                                            </div>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-sm text-left">
+                                                    <thead>
+                                                        <tr className="text-[10px] md:text-xs text-slate-500 border-b border-white/10">
+                                                            <th className="py-2 whitespace-nowrap">Fecha</th>
+                                                            <th className="py-2 whitespace-nowrap">Doc/N°</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">Líquido</th>
+                                                            <th className="py-2 text-right whitespace-nowrap">Retención</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-white/5">
+                                                        {monthData.honorarios.map((item: any) => (
+                                                            <tr key={item.id}>
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm whitespace-nowrap">{item.date}</td>
+                                                                <td className="py-2 text-slate-300 text-xs md:text-sm">
+                                                                    <div className="flex flex-col">
+                                                                        <span className="truncate max-w-[120px] md:max-w-none">{item.documentName}</span>
+                                                                        <span className="text-[10px] md:text-xs text-slate-500">#{item.docNumber || '-'}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="py-2 text-right text-slate-400 text-xs md:text-sm whitespace-nowrap">{formatCurrency(item.netValue)}</td>
+                                                                <td className="py-2 text-right text-purple-400 font-medium text-xs md:text-sm whitespace-nowrap">{formatCurrency(Math.abs(item.taxValue))}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+
+
                                     {/* PAGOS REALIZADOS */}
                                     <div className="glass-card p-4 md:p-6 xl:col-span-2 border-sky-500/10 bg-sky-500/5">
                                         <div className="flex justify-between items-center mb-4">
@@ -236,7 +303,7 @@ export default async function IVAReportPage() {
                                             <span className="text-white font-mono font-bold text-sm md:text-base">{formatCurrency(totalPagado)}</span>
                                         </div>
                                         {monthData.pagos.length === 0 ? (
-                                            <p className="text-sm text-slate-500 italic">No se registraron pagos este mes.</p>
+                                            <p className="text-sm text-slate-500 italic">No se registraron pagos de IVA este mes.</p>
                                         ) : (
                                             <div className="overflow-x-auto">
                                                 <table className="w-full text-sm text-left">
