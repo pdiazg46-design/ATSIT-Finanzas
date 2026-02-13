@@ -60,7 +60,6 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         ).all();
 
     // 3. HONORARIOS (Retenciones) - Boleta Honorarios (ID 44)
-    // 3. HONORARIOS (Retenciones) - Boleta Honorarios (ID 44)
     const honorariumData = await db.select({
         id: tasks.id,
         title: tasks.title,
@@ -79,21 +78,45 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
             )
         ).all();
 
+    // 4. ADELANTO PPM (Credito contra Renta) - Adelanto PPM
+    const ppmPrepaidData = await db.select({
+        id: tasks.id,
+        title: tasks.title,
+        docNumber: tasks.docNumber,
+        netValue: tasks.netValue,
+        taxValue: tasks.taxValue,
+        projectName: projects.name,
+        totalValue: tasks.totalValue
+    })
+        .from(tasks)
+        .leftJoin(documents, eq(tasks.documentId, documents.id))
+        .leftJoin(projects, eq(tasks.projectId, projects.id))
+        .where(
+            and(
+                eq(documents.name, "Adelanto PPM"), // Fix: use eq()
+                like(tasks.startDate, monthLike)
+            )
+        ).all();
+
     // --- CALCULATIONS ---
     const totalDebit = salesData.reduce((acc, t) => acc + (t.taxValue || 0), 0);
     const totalCredit = Math.abs(purchasesData.reduce((acc, t) => acc + (t.taxValue || 0), 0));
     const totalWithholding = Math.abs(honorariumData.reduce((acc, t) => acc + (t.taxValue || 0), 0));
+    const totalPpmPrepaid = Math.abs(ppmPrepaidData.reduce((acc, t) => acc + (t.totalValue || 0), 0));
 
     // NET INCOME for PPM Calculation
     const totalNetSales = salesData.reduce((acc, t) => acc + (t.netValue || 0), 0);
     const ppmRate = 0.015; // 1.5% Configurable later
-    const ppmValue = Math.round(totalNetSales * ppmRate);
+    const ppmDetermined = Math.round(totalNetSales * ppmRate);
 
     // F29 RESULT
-    // Payable = (Debit - Credit) + Withholdings + PPM
+    // Payable = (Debit - Credit) + Withholdings + PPM Determined - PPM Prepaid
     // If Credit > Debit, Remnant remains.
     const vatPayable = Math.max(0, totalDebit - totalCredit);
-    const totalPayable = vatPayable + totalWithholding + ppmValue;
+    const subtotalTaxes = vatPayable + totalWithholding + ppmDetermined;
+    const totalPayable = Math.max(0, subtotalTaxes - totalPpmPrepaid);
+    const ppmRemnant = Math.max(0, totalPpmPrepaid - subtotalTaxes); // Surplus PPM if any (rare but possible)
+
     const vatCreditRemnant = Math.max(0, totalCredit - totalDebit);
 
     const formatCurrency = (val: number) => {
@@ -107,7 +130,8 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         { label: 'Crédito Fiscal (IVA Compras)', value: formatCurrency(totalCredit) },
         { label: 'Impuesto a Pagar (IVA)', value: formatCurrency(vatPayable) },
         { label: 'Retención Honorarios (15.25%)', value: formatCurrency(totalWithholding) },
-        { label: 'PPM Obligatorio (1.5%)', value: formatCurrency(ppmValue) },
+        { label: 'PPM Determinado (1.5%)', value: formatCurrency(ppmDetermined) },
+        { label: 'Menos: PPM Pagado (Adelantos)', value: `(${formatCurrency(totalPpmPrepaid)})` },
         { label: 'TOTAL A PAGAR F29', value: formatCurrency(totalPayable) },
     ];
 
@@ -190,11 +214,21 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                         </div>
                         <div className="flex justify-between items-center">
                             <div className="flex flex-col">
-                                <span className="text-sm text-slate-400">PPM Obligatorio (+)</span>
+                                <span className="text-sm text-slate-400">PPM Determinado (+)</span>
                                 <span className="text-[10px] text-slate-500">Tasa 1.5% sobre Ventas Netas</span>
                             </div>
-                            <span className="font-bold text-white">{formatCurrency(ppmValue)}</span>
+                            <span className="font-bold text-white">{formatCurrency(ppmDetermined)}</span>
                         </div>
+                        {/* PPM ADELANTADO */}
+                        {totalPpmPrepaid > 0 && (
+                            <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                                <div className="flex flex-col">
+                                    <span className="text-sm text-emerald-400">Menos: PPM Pagado (-)</span>
+                                    <span className="text-[10px] text-slate-500">Pagos Provisionales realizados</span>
+                                </div>
+                                <span className="font-bold text-emerald-400">({formatCurrency(totalPpmPrepaid)})</span>
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -303,6 +337,34 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(Math.abs(t.netValue || 0))}</td>
                                         <td className="p-3 text-right text-purple-400 font-bold">{formatCurrency(Math.abs(t.taxValue || 0))}</td>
                                         <td className="p-3 text-right text-white font-bold">{formatCurrency(Math.abs(t.totalValue || 0))}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            )}
+
+            {ppmPrepaidData.length > 0 && (
+                <section>
+                    <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-3">Detalle PPM Pagado (Adelantos)</h3>
+                    <div className="glass-card overflow-x-auto p-0 border-emerald-500/20 bg-emerald-500/5">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-white/5 text-slate-400">
+                                <tr>
+                                    <th className="p-3">Doc</th>
+                                    <th className="p-3">Proyecto</th>
+                                    <th className="p-3">Concepto</th>
+                                    <th className="p-3 text-right">Monto Pagado</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {ppmPrepaidData.map(t => (
+                                    <tr key={t.id}>
+                                        <td className="p-3 text-slate-300">#{t.docNumber || 'S/N'}</td>
+                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
+                                        <td className="p-3 text-white">{t.title}</td>
+                                        <td className="p-3 text-right text-emerald-400 font-bold">{formatCurrency(Math.abs(t.totalValue || 0))}</td>
                                     </tr>
                                 ))}
                             </tbody>
