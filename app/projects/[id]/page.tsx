@@ -111,7 +111,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     <h1 className="text-4xl font-bold text-white">{project.name}</h1>
                     <div className="flex flex-wrap gap-4 mt-2 text-slate-400">
                         <span className="flex items-center gap-1"><User size={16} /> {owner ? `${owner.firstName} ${owner.lastName}` : 'Sin propietario'}</span>
-                        <span className="flex items-center gap-1"><Calendar size={16} /> {project.startDate}</span>
+                        <span className="flex items-center gap-1"><Calendar size={16} /> {project.startDate ? project.startDate.split('-').reverse().join('/') : ''}</span>
                         <span className="bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded text-xs font-bold uppercase">{project.category}</span>
                         {owner?.city && <span className="flex items-center gap-1"><MapPin size={16} /> {owner.city}{owner.stateProvince ? `, ${owner.stateProvince}` : ''}</span>}
                     </div>

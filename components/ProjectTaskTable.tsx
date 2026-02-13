@@ -108,7 +108,7 @@ export default function ProjectTaskTable({
                                 </td>
                                 <td className="px-2 md:px-6 py-1 md:py-4 text-center text-xs text-slate-500 flex justify-between md:table-cell items-center">
                                     <span className="md:hidden text-slate-500 uppercase font-bold">Fecha</span>
-                                    {t.startDate ? t.startDate.split('-').reverse().join('-') : '-'}
+                                    {t.startDate ? t.startDate.split('-').reverse().join('/') : '-'}
                                 </td>
                                 {canManage && (
                                     <td className="px-2 md:px-6 py-4 md:py-4 text-right flex justify-end gap-2 md:table-cell mt-2 md:mt-0 pt-4 md:pt-4 border-t md:border-t-0 border-white/5">

@@ -321,18 +321,24 @@ export default function AddTaskModal({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        name="netValue"
-                                        type="number"
-                                        step="0.01"
+                                        type="text"
                                         required
-                                        min="0"
-                                        value={netValue}
-                                        onChange={(e) => setNetValue(Math.round(Math.abs(parseFloat(e.target.value)) || 0))}
+                                        placeholder="Ej: 1.000.000"
+                                        value={new Intl.NumberFormat('es-CL').format(netValue)}
+                                        onChange={(e) => {
+                                            // Remove dots/commas to get raw number
+                                            const rawValue = e.target.value.replace(/\./g, '').replace(/,/g, '');
+                                            if (rawValue === '' || /^\d+$/.test(rawValue)) {
+                                                setNetValue(parseInt(rawValue || '0', 10));
+                                            }
+                                        }}
                                         onFocus={(e) => (e.target as HTMLInputElement).select()}
                                         className={`w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-xl font-bold focus:outline-none transition-all ${isIncome ? 'text-emerald-400 focus:border-emerald-500' : 'text-rose-400 focus:border-rose-500'}`}
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 tracking-tighter">CLP</span>
                                 </div>
+                                {/* Hidden input to send raw number to server action */}
+                                <input type="hidden" name="netValue" value={netValue} />
                             </div>
 
                             {(taxValue !== 0) && (
