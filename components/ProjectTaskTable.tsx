@@ -53,7 +53,7 @@ export default function ProjectTaskTable({
                             <th className="px-6 py-4">Movimiento</th>
                             <th className="px-6 py-4">Documento</th>
                             <th className="px-6 py-4 text-right">Valor Neto</th>
-                            <th className="px-6 py-4 text-center">IVA (19%)</th>
+                            <th className="px-6 py-4 text-center">Impuesto</th>
                             <th className="px-6 py-4 text-right">Total</th>
                             <th className="px-6 py-4">Estado</th>
                             <th className="px-6 py-4 text-center">Fecha Doc.</th>
@@ -84,8 +84,17 @@ export default function ProjectTaskTable({
                                     {formatCurrency(t.netValue || 0)}
                                 </td>
                                 <td className="px-2 md:px-6 py-1 md:py-4 text-sm md:text-center text-slate-500 flex justify-between md:table-cell items-center">
-                                    <span className="md:hidden text-xs text-slate-500 uppercase font-bold">IVA</span>
-                                    {t.taxValue ? formatCurrency(t.taxValue) : '-'}
+                                    <span className="md:hidden text-xs text-slate-500 uppercase font-bold">
+                                        {t.documentId === 44 ? 'Retención' : 'IVA'}
+                                    </span>
+                                    {t.taxValue ? (
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-xs font-bold text-slate-600">
+                                                {t.documentId === 44 ? 'Ret:' : 'IVA:'}
+                                            </span>
+                                            {formatCurrency(t.taxValue)}
+                                        </div>
+                                    ) : '-'}
                                 </td>
                                 <td className={`px-2 md:px-6 py-1 md:py-4 text-sm md:text-right font-bold flex justify-between md:table-cell items-center ${(t.totalValue || 0) >= 0 ? 'text-emerald-200' : 'text-rose-200'}`}>
                                     <span className="md:hidden text-xs text-slate-500 uppercase font-bold">Total</span>

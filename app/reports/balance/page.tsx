@@ -20,20 +20,33 @@ export default async function BalanceReportPage() {
         .groupBy(projects.id)
         .all();
 
-    // Calculate Global VAT (Payable)
-    // We need total tax from ALL tasks (not just project-linked ones, although currently most should be linked)
-    // and total VAT payments made.
-    const globalTaxParams = await db.select({
-        totalTax: sql<number>`SUM(${tasks.taxValue})`
+    // Calculate Global Tax Payable (F29 Estimate)
+    // Formula: (VAT Debit - VAT Credit) + Withholding Tax - Payments Made
+    // VAT Debit: Tax from Sales (Ingresos, netValue > 0)
+    // VAT Credit: Tax from Purchases (Gastos, netValue < 0) EXCEPT Honorarios (id 44)
+    // Withholding Tax: Tax from Honorarios (id 44)
+
+    const globalTaxComponents = await db.select({
+        vatDebit: sql<number>`SUM(CASE WHEN ${tasks.netValue} > 0 THEN ${tasks.taxValue} ELSE 0 END)`,
+        vatCredit: sql<number>`SUM(CASE WHEN ${tasks.netValue} < 0 AND ${tasks.documentId} != 44 THEN ${tasks.taxValue} ELSE 0 END)`,
+        retentions: sql<number>`SUM(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.taxValue} ELSE 0 END)`
     }).from(tasks);
 
     const globalPaymentsParams = await db.select({
         totalPaid: sql<number>`SUM(${vatPayments.amount})`
     }).from(vatPayments);
 
-    const globalTax = globalTaxParams[0]?.totalTax || 0;
+    const vatDebit = globalTaxComponents[0]?.vatDebit || 0;
+    const vatCredit = globalTaxComponents[0]?.vatCredit || 0;
+    const retentions = globalTaxComponents[0]?.retentions || 0;
     const globalPaid = globalPaymentsParams[0]?.totalPaid || 0;
-    const ivaPayable = globalTax - globalPaid;
+
+    // Logic:
+    // Debit (You owe this)
+    // Credit (You deduce this)
+    // Retention (You owe this)
+    // Paid (You already paid this)
+    const taxPayable = (vatDebit - vatCredit) + retentions - globalPaid;
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -47,7 +60,7 @@ export default async function BalanceReportPage() {
         balance: acc.balance + (row.balance || 0),
     }), { expectedIncome: 0, realIncomeNet: 0, expensesNet: 0, totalTax: 0, balance: 0 });
 
-    const totalBank = totals.balance + ivaPayable;
+    const totalBank = totals.balance + taxPayable; // This approximation assumes taxPayable is currently held in bank
 
     const exportColumns = [
         { header: 'Proyecto', key: 'name' },
@@ -59,8 +72,8 @@ export default async function BalanceReportPage() {
 
     const exportSummary = [
         { label: 'Total Neto en Caja', value: formatCurrency(totals.balance) },
-        { label: 'IVA por Pagar (Global)', value: formatCurrency(ivaPayable) },
-        { label: 'Total Real Disponible (Banco)', value: formatCurrency(totals.balance + ivaPayable) }
+        { label: 'Impuestos por Pagar (Est. F29)', value: formatCurrency(taxPayable) },
+        { label: 'Total Real Disponible (Banco)', value: formatCurrency(totalBank) }
     ];
 
     return (
