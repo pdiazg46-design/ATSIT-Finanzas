@@ -254,43 +254,64 @@ export default function AddTaskModal({
                             <div className="space-y-4 pt-2">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Fecha Documento</label>
-                                    <input
-                                        type="date"
-                                        name="startDate"
-                                        value={startDate}
-                                        onChange={handleStartDateChange}
-                                        onClick={(e) => e.currentTarget.showPicker()}
-                                        className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer"
-                                    />
+                                    <div className="relative group">
+                                        <div className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white flex items-center justify-between group-focus-within:border-sky-500 transition-colors">
+                                            <span className="font-medium">
+                                                {startDate ? startDate.split('-').reverse().join('/') : 'dd/mm/aaaa'}
+                                            </span>
+                                            <Calendar size={18} className="text-slate-400" />
+                                        </div>
+                                        <input
+                                            type="date"
+                                            name="startDate"
+                                            value={startDate}
+                                            onChange={handleStartDateChange}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Vencimiento</label>
-                                        <input
-                                            type="date"
-                                            name="dueDate"
-                                            value={dueDate}
-                                            onChange={(e) => {
-                                                setDueDate(e.target.value);
-                                                setManualDueDate(true);
-                                            }}
-                                            onClick={(e) => e.currentTarget.showPicker()}
-                                            className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer"
-                                        />
+                                        <div className="relative group">
+                                            <div className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white flex items-center justify-between group-focus-within:border-sky-500 transition-colors">
+                                                <span className="font-medium">
+                                                    {dueDate ? dueDate.split('-').reverse().join('/') : 'dd/mm/aaaa'}
+                                                </span>
+                                                <Calendar size={18} className="text-slate-400" />
+                                            </div>
+                                            <input
+                                                type="date"
+                                                name="dueDate"
+                                                value={dueDate}
+                                                onChange={(e) => {
+                                                    setDueDate(e.target.value);
+                                                    setManualDueDate(true);
+                                                }}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            />
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Fecha Pago</label>
-                                        <input
-                                            type="date"
-                                            name="paymentDate"
-                                            value={paymentDate}
-                                            onChange={(e) => {
-                                                setPaymentDate(e.target.value);
-                                                setManualPaymentDate(true);
-                                            }}
-                                            onClick={(e) => e.currentTarget.showPicker()}
-                                            className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer"
-                                        />
+                                        <div className="relative group">
+                                            <div className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white flex items-center justify-between group-focus-within:border-sky-500 transition-colors">
+                                                <span className="font-medium">
+                                                    {paymentDate ? paymentDate.split('-').reverse().join('/') : 'dd/mm/aaaa'}
+                                                </span>
+                                                <Calendar size={18} className="text-slate-400" />
+                                            </div>
+                                            <input
+                                                type="date"
+                                                name="paymentDate"
+                                                value={paymentDate}
+                                                onChange={(e) => {
+                                                    setPaymentDate(e.target.value);
+                                                    setManualPaymentDate(true);
+                                                }}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
