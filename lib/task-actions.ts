@@ -60,7 +60,7 @@ export async function createTask(data: any) {
             const targetProject = await db.select().from(projects).where(eq(projects.name, targetProjectName)).get();
 
             if (targetProject) {
-                // Determine source project name for the description
+                // Placeholder - waiting to find the fetch location
                 const sourceProject = await db.select().from(projects).where(eq(projects.id, rest.projectId)).get();
                 const sourceName = sourceProject ? sourceProject.name : 'Proyecto desconocido';
 
