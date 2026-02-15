@@ -1,8 +1,8 @@
 import { db } from '@/lib/db';
-import { projects, tasks } from '@/lib/schema';
-import { eq, sql, desc, and } from 'drizzle-orm';
+import { projects, tasks, vatPayments } from '@/lib/schema';
+import { eq, sql, desc, and, isNotNull, not } from 'drizzle-orm';
 import Link from 'next/link';
-import { Briefcase, CreditCard, Clock, ArrowRight, DollarSign } from 'lucide-react';
+import { Briefcase, CreditCard, Clock, ArrowRight, DollarSign, TrendingUp, Wallet, Scale, ChevronRight } from 'lucide-react';
 
 export default async function DashboardPage() {
     // Fetch summary data
@@ -11,15 +11,42 @@ export default async function DashboardPage() {
         .where(and(eq(projects.isArchived, false), sql`${projects.status} != 'Completado'`))
         .get();
 
-    const stats = await db.select({
-        totalIncome: sql<number>`SUM(CASE WHEN ${tasks.netValue} > 0 THEN ${tasks.netValue} ELSE 0 END)`,
-        totalExpenses: sql<number>`SUM(CASE WHEN ${tasks.netValue} < 0 THEN ABS(${tasks.netValue}) ELSE 0 END)`,
-        pendingTasks: sql<number>`count(*)`
+    // 2. CASH BASIS CALCULATION (Real Money in Bank) - MIRRORED FROM MAIN PAGE
+    // Income: Tasks with paymentDate (Gross Value)
+    const cashIncomeResult = await db.select({
+        amount: sql<number>`SUM(${tasks.totalValue})`
     })
         .from(tasks)
-        .leftJoin(projects, eq(tasks.projectId, projects.id))
-        .where(eq(projects.isArchived, false))
+        .where(and(
+            isNotNull(tasks.paymentDate),
+            not(eq(tasks.paymentDate, '')),
+            sql`${tasks.netValue} > 0`
+        ))
         .get();
+
+    // Expenses: Tasks with paymentDate (Gross Value)
+    const cashExpensesResult = await db.select({
+        amount: sql<number>`SUM(${tasks.totalValue})`
+    })
+        .from(tasks)
+        .where(and(
+            isNotNull(tasks.paymentDate),
+            not(eq(tasks.paymentDate, '')),
+            sql`${tasks.netValue} < 0`
+        ))
+        .get();
+
+    // VAT Payments (Always paid)
+    const totalVatPaymentsResult = await db.select({
+        amount: sql<number>`SUM(${vatPayments.amount})`
+    }).from(vatPayments).get();
+
+    const cashIncome = cashIncomeResult?.amount || 0;
+    const cashExpensesCommon = Math.abs(cashExpensesResult?.amount || 0);
+    const cashVatPayments = totalVatPaymentsResult?.amount || 0;
+
+    const totalCashExpenses = cashExpensesCommon + cashVatPayments;
+    const cashBalance = cashIncome - totalCashExpenses;
 
     // Fetch recent projects
     const recentProjects = await db.select({
@@ -47,15 +74,11 @@ export default async function DashboardPage() {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
     };
 
-    const income = stats?.totalIncome || 0;
-    const expenses = stats?.totalExpenses || 0;
-    const balance = income - expenses;
-
     return (
         <div className="space-y-6 md:space-y-8">
             <header>
                 <h2 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h2>
-                <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión</p>
+                <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (Criterio: Percibido)</p>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -73,47 +96,47 @@ export default async function DashboardPage() {
                     </Link>
                 </div>
 
-                {/* Income */}
+                {/* Income (Cash) */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-500">
-                        <CreditCard size={48} className="md:w-16 md:h-16" />
+                        <TrendingUp size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Ingresos</p>
-                        <h3 className="text-xl md:text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(income)}</h3>
+                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Ingresos Percibidos</p>
+                        <h3 className="text-xl md:text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(cashIncome)}</h3>
                     </div>
                     <Link href="/reports" className="inline-flex items-center text-emerald-400 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
                         Ver detalles <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
 
-                {/* Expenses */}
+                {/* Expenses (Cash) */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-rose-500/20 bg-rose-500/5">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-rose-500">
-                        <CreditCard size={48} className="md:w-16 md:h-16" />
+                        <Wallet size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-rose-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Gastos</p>
-                        <h3 className="text-xl md:text-2xl font-bold text-rose-400 mt-1">{formatCurrency(expenses)}</h3>
+                        <p className="text-rose-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Gastos Reales</p>
+                        <h3 className="text-xl md:text-2xl font-bold text-rose-400 mt-1">{formatCurrency(totalCashExpenses)}</h3>
                     </div>
                     <Link href="/reports" className="inline-flex items-center text-rose-400 text-[10px] md:text-xs font-bold hover:text-rose-300 transition-colors uppercase tracking-wider">
                         Ver detalles <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
 
-                {/* Balance */}
-                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
+                {/* Balance (Cash) */}
+                <Link href="/reports/bank-audit" className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5 hover:bg-sky-500/10 transition-colors cursor-pointer block">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
-                        <DollarSign size={48} className="md:w-16 md:h-16" />
+                        <Scale size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo Total</p>
-                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${balance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>{formatCurrency(balance)}</h3>
+                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo en Banco</p>
+                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${cashBalance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>{formatCurrency(cashBalance)}</h3>
                     </div>
-                    <span className="inline-flex items-center text-sky-400/50 text-[10px] md:text-xs font-bold uppercase tracking-wider cursor-default">
-                        Rentabilidad
+                    <span className="inline-flex items-center text-sky-400/50 text-[10px] md:text-xs font-bold uppercase tracking-wider group-hover:text-sky-300">
+                        Auditar <ChevronRight size={14} className="ml-1" />
                     </span>
-                </div>
+                </Link>
             </div>
 
             <section>
