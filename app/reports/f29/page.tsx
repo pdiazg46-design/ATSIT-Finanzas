@@ -276,6 +276,14 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                     </tr>
                                 ))}
                             </tbody>
+                            <tfoot>
+                                <tr className="border-t border-white/20 bg-white/5">
+                                    <td colSpan={3} className="p-3 text-xs font-bold text-slate-400">TOTALES</td>
+                                    <td className="p-3 text-right text-xs font-bold text-slate-300">{formatCurrency(salesData.reduce((acc, t) => acc + (t.netValue || 0), 0))}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-emerald-400">{formatCurrency(totalDebit)}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-white">{formatCurrency(salesData.reduce((acc, t) => acc + (t.totalValue || 0), 0))}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </section>
@@ -308,6 +316,14 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                     </tr>
                                 ))}
                             </tbody>
+                            <tfoot>
+                                <tr className="border-t border-white/20 bg-white/5">
+                                    <td colSpan={3} className="p-3 text-xs font-bold text-slate-400">TOTALES</td>
+                                    <td className="p-3 text-right text-xs font-bold text-slate-300">{formatCurrency(Math.abs(purchasesData.reduce((acc, t) => acc + (t.netValue || 0), 0)))}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-rose-400">{formatCurrency(totalCredit)}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-white">{formatCurrency(Math.abs(purchasesData.reduce((acc, t) => acc + (t.totalValue || 0), 0)))}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </section>
@@ -340,6 +356,14 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                     </tr>
                                 ))}
                             </tbody>
+                            <tfoot>
+                                <tr className="border-t border-white/20 bg-white/5">
+                                    <td colSpan={3} className="p-3 text-xs font-bold text-slate-400">TOTALES</td>
+                                    <td className="p-3 text-right text-xs font-bold text-slate-300">{formatCurrency(Math.abs(honorariumData.reduce((acc, t) => acc + (t.netValue || 0), 0)))}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-purple-400">{formatCurrency(totalWithholding)}</td>
+                                    <td className="p-3 text-right text-xs font-bold text-white">{formatCurrency(Math.abs(honorariumData.reduce((acc, t) => acc + (t.totalValue || 0), 0)))}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </section>
@@ -368,6 +392,12 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                     </tr>
                                 ))}
                             </tbody>
+                            <tfoot>
+                                <tr className="border-t border-white/20 bg-white/5">
+                                    <td colSpan={3} className="p-3 text-xs font-bold text-slate-400">TOTALES</td>
+                                    <td className="p-3 text-right text-xs font-bold text-emerald-400">{formatCurrency(totalPpmPrepaid)}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </section>
