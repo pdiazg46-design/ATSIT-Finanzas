@@ -98,31 +98,31 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Total Available in Projects */}
-                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
+                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-500">
                         <Scale size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo Total Neto</p>
-                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${totalAvailableInProjects >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
+                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo Total Neto</p>
+                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${totalAvailableInProjects >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {formatCurrency(totalAvailableInProjects)}
                         </h3>
                     </div>
-                    <Link href="/reports/balance" className="inline-flex items-center text-sky-400 text-[10px] md:text-xs font-bold hover:text-sky-300 transition-colors uppercase tracking-wider">
+                    <Link href="/reports/balance" className="inline-flex items-center text-emerald-400 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
                         Ver Balance <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
 
                 {/* Income (Cash) */}
-                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-500">
+                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
                         <TrendingUp size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Ingresos Percibidos</p>
-                        <h3 className="text-xl md:text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(cashIncome)}</h3>
+                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Ingresos Percibidos</p>
+                        <h3 className="text-xl md:text-2xl font-bold text-sky-400 mt-1">{formatCurrency(cashIncome)}</h3>
                     </div>
-                    <Link href="/reports" className="inline-flex items-center text-emerald-400 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
+                    <Link href="/reports" className="inline-flex items-center text-sky-400 text-[10px] md:text-xs font-bold hover:text-sky-300 transition-colors uppercase tracking-wider">
                         Ver detalles <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
