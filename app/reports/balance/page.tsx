@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { projects, tasks, vatPayments } from '@/lib/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and, not, isNotNull } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import ExportButtons from '@/components/ExportButtons';
@@ -16,7 +16,7 @@ export default async function BalanceReportPage() {
     })
         .from(projects)
         .leftJoin(tasks, eq(projects.id, tasks.projectId))
-        .where(eq(projects.isArchived, false))
+        .where(and(eq(projects.isArchived, false), not(eq(projects.status, 'Completado'))))
         .groupBy(projects.id)
         .all();
 
@@ -42,11 +42,27 @@ export default async function BalanceReportPage() {
     const globalPaid = globalPaymentsParams[0]?.totalPaid || 0;
 
     // Logic:
-    // Debit (You owe this)
-    // Credit (You deduce this)
-    // Retention (You owe this)
+    // Debit (You owe this, positive)
+    // Credit (You deduce this, negative in DB) -> We sum them: vd + vc
+    // Retention (You owe this, negative in DB) -> We sum absolute or vd + vc + ret
     // Paid (You already paid this)
-    const taxPayable = (vatDebit - vatCredit) + retentions - globalPaid;
+    const taxPayable = (vatDebit + vatCredit) + retentions - globalPaid;
+
+    // --- CASH BASIS CALCULATION (Matches Dashboard) ---
+    // Total in Bank = Sum of ALL TOTAL_VALUE of PAID tasks - VAT PAYMENTS
+    const cashIncomeResult = await db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
+        .from(tasks)
+        .where(and(isNotNull(tasks.paymentDate), not(eq(tasks.paymentDate, '')), sql`${tasks.netValue} > 0`))
+        .get();
+
+    const cashExpensesResult = await db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
+        .from(tasks)
+        .where(and(isNotNull(tasks.paymentDate), not(eq(tasks.paymentDate, '')), sql`${tasks.netValue} < 0`))
+        .get();
+
+    const cashIncome = cashIncomeResult?.amount || 0;
+    const cashExpenses = Math.abs(cashExpensesResult?.amount || 0);
+    const totalBank = cashIncome - (cashExpenses + globalPaid);
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -59,8 +75,6 @@ export default async function BalanceReportPage() {
         totalTax: acc.totalTax + (row.totalTax || 0),
         balance: acc.balance + (row.balance || 0),
     }), { expectedIncome: 0, realIncomeNet: 0, expensesNet: 0, totalTax: 0, balance: 0 });
-
-    const totalBank = totals.balance + taxPayable; // This approximation assumes taxPayable is currently held in bank
 
     const exportColumns = [
         { header: 'Proyecto', key: 'name' },

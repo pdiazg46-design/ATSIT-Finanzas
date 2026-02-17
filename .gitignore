@@ -46,3 +46,7 @@ migration_log.txt
 *.db
 *.sqlite
 *.sqlite3
+
+# auxiliary scripts
+/backups/
+/scripts/
