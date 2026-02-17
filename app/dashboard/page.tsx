@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
-import { projects, tasks, vatPayments } from '@/lib/schema';
+import { projects, tasks, vatPayments, documents, movements } from '@/lib/schema';
 export const dynamic = 'force-dynamic';
-import { eq, sql, desc, and, isNotNull, not } from 'drizzle-orm';
+import { eq, sql, desc, and, isNotNull, not, like } from 'drizzle-orm';
 import Link from 'next/link';
 import { Briefcase, CreditCard, Clock, ArrowRight, DollarSign, TrendingUp, Wallet, Scale, ChevronRight } from 'lucide-react';
 
@@ -69,7 +69,43 @@ export default async function DashboardPage() {
         )
         .all();
 
-    const totalAvailableInProjects = activeProjects.reduce((acc, p) => acc + (p.netBalance || 0), 0);
+    const totalAvailableInProjects = activeProjects.reduce((acc: number, p: any) => acc + (p.netBalance || 0), 0);
+
+    // --- F29 CURRENT MONTH CALCULATION (Dashboard Copy) ---
+    const currentMonth_f29 = new Date().toISOString().slice(0, 7);
+    const monthLike_f29 = `${currentMonth_f29}%`;
+
+    const f29Components_dash = await Promise.all([
+        // Sales (Invoices)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike_f29), sql`${tasks.netValue} > 0`))
+            .get(),
+        // Purchases (Invoices)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike_f29), sql`${tasks.netValue} < 0`))
+            .get(),
+        // Honorarios (Retentions)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 44), like(tasks.startDate, monthLike_f29)))
+            .get(),
+        // PPM Payments
+        db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
+            .from(tasks)
+            .leftJoin(movements, eq(tasks.movementId, movements.id))
+            .where(and(eq(movements.name, "Pago PPM"), like(tasks.startDate, monthLike_f29)))
+            .get()
+    ]);
+
+    const dash_f29Debit = f29Components_dash[0]?.amount || 0;
+    const dash_f29Credit = Math.abs(f29Components_dash[1]?.amount || 0);
+    const dash_f29Retentions = Math.abs(f29Components_dash[2]?.amount || 0);
+    const dash_f29Ppm = Math.abs(f29Components_dash[3]?.amount || 0);
+
+    const dash_f29VatPayable = Math.max(0, dash_f29Debit - dash_f29Credit);
+    const dash_totalF29 = dash_f29VatPayable + dash_f29Retentions + dash_f29Ppm;
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -83,7 +119,7 @@ export default async function DashboardPage() {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {/* Active Projects Count */}
+                {/* 1. Active Projects Count */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Briefcase size={48} className="md:w-16 md:h-16" />
@@ -97,23 +133,37 @@ export default async function DashboardPage() {
                     </Link>
                 </div>
 
-                {/* Total Available in Projects */}
-                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5">
+                {/* 2. Total Available in Projects -> TO PROJECTS */}
+                <Link href="/projects" className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors cursor-pointer block">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-500">
                         <Scale size={48} className="md:w-16 md:h-16" />
                     </div>
                     <div>
-                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo Total Neto</p>
+                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs group-hover:text-emerald-400">Saldo Total Neto</p>
                         <h3 className={`text-xl md:text-2xl font-bold mt-1 ${totalAvailableInProjects >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {formatCurrency(totalAvailableInProjects)}
                         </h3>
                     </div>
-                    <Link href="/reports/balance" className="inline-flex items-center text-emerald-400 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
-                        Ver Balance <ArrowRight size={14} className="ml-1" />
-                    </Link>
-                </div>
+                    <span className="inline-flex items-center text-emerald-400/50 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
+                        Ver Proyectos <ArrowRight size={14} className="ml-1" />
+                    </span>
+                </Link>
 
-                {/* Income (Cash) */}
+                {/* 3. F29 (INSERTED) -> TO F29 SIMULATOR */}
+                <Link href="/reports/f29" className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-colors cursor-pointer block text-left">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-amber-500">
+                        <DollarSign size={48} className="md:w-16 md:h-16" />
+                    </div>
+                    <div>
+                        <p className="text-amber-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs group-hover:text-amber-400">Formulario 29</p>
+                        <h3 className="text-xl md:text-2xl font-bold text-amber-400 mt-1">{formatCurrency(dash_totalF29)}</h3>
+                    </div>
+                    <span className="inline-flex items-center text-amber-400/50 text-[10px] md:text-xs font-bold hover:text-amber-300 transition-colors uppercase tracking-wider">
+                        Simulador F29 <ArrowRight size={14} className="ml-1" />
+                    </span>
+                </Link>
+
+                {/* 4. Income (Cash) */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
                         <TrendingUp size={48} className="md:w-16 md:h-16" />
@@ -123,20 +173,6 @@ export default async function DashboardPage() {
                         <h3 className="text-xl md:text-2xl font-bold text-sky-400 mt-1">{formatCurrency(cashIncome)}</h3>
                     </div>
                     <Link href="/reports" className="inline-flex items-center text-sky-400 text-[10px] md:text-xs font-bold hover:text-sky-300 transition-colors uppercase tracking-wider">
-                        Ver detalles <ArrowRight size={14} className="ml-1" />
-                    </Link>
-                </div>
-
-                {/* Expenses (Cash) */}
-                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-rose-500/20 bg-rose-500/5">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-rose-500">
-                        <Wallet size={48} className="md:w-16 md:h-16" />
-                    </div>
-                    <div>
-                        <p className="text-rose-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Gastos Reales</p>
-                        <h3 className="text-xl md:text-2xl font-bold text-rose-400 mt-1">{formatCurrency(totalCashExpenses)}</h3>
-                    </div>
-                    <Link href="/reports" className="inline-flex items-center text-rose-400 text-[10px] md:text-xs font-bold hover:text-rose-300 transition-colors uppercase tracking-wider">
                         Ver detalles <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
