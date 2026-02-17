@@ -82,7 +82,7 @@ export default async function DashboardPage() {
                 <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (v2.1)</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 {/* Active Projects */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -124,20 +124,6 @@ export default async function DashboardPage() {
                         Ver detalles <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
-
-                {/* Balance (Cash) */}
-                <Link href="/reports/bank-audit" className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5 hover:bg-sky-500/10 transition-colors cursor-pointer block">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
-                        <Scale size={48} className="md:w-16 md:h-16" />
-                    </div>
-                    <div>
-                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo en Banco</p>
-                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${cashBalance >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>{formatCurrency(cashBalance)}</h3>
-                    </div>
-                    <span className="inline-flex items-center text-sky-400/50 text-[10px] md:text-xs font-bold uppercase tracking-wider group-hover:text-sky-300">
-                        Auditar <ChevronRight size={14} className="ml-1" />
-                    </span>
-                </Link>
             </div>
 
             <section>
