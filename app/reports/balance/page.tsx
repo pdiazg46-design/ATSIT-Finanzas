@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 export const dynamic = 'force-dynamic';
-import { projects, tasks, vatPayments } from '@/lib/schema';
-import { eq, sql, and, not, isNotNull } from 'drizzle-orm';
+import { projects, tasks, vatPayments, movements } from '@/lib/schema';
+import { eq, sql, and, not, isNotNull, like } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import ExportButtons from '@/components/ExportButtons';
@@ -21,49 +21,42 @@ export default async function BalanceReportPage() {
         .groupBy(projects.id)
         .all();
 
-    // Calculate Global Tax Payable (F29 Estimate)
-    // Formula: (VAT Debit - VAT Credit) + Withholding Tax - Payments Made
-    // VAT Debit: Tax from Sales (Ingresos, netValue > 0)
-    // VAT Credit: Tax from Purchases (Gastos, netValue < 0) EXCEPT Honorarios (id 44)
-    // Withholding Tax: Tax from Honorarios (id 44)
+    // --- F29 CURRENT MONTH CALCULATION ---
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const monthLike = `${currentMonth}%`;
 
-    const globalTaxComponents = await db.select({
-        vatDebit: sql<number>`SUM(CASE WHEN ${tasks.netValue} > 0 THEN ${tasks.taxValue} ELSE 0 END)`,
-        vatCredit: sql<number>`SUM(CASE WHEN ${tasks.netValue} < 0 AND ${tasks.documentId} != 44 THEN ${tasks.taxValue} ELSE 0 END)`,
-        retentions: sql<number>`SUM(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.taxValue} ELSE 0 END)`
-    }).from(tasks);
+    // Fetch components for F29 of the current month
+    const f29Components = await Promise.all([
+        // Sales (Invoices)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike), sql`${tasks.netValue} > 0`))
+            .get(),
+        // Purchases (Invoices)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike), sql`${tasks.netValue} < 0`))
+            .get(),
+        // Honorarios (Retentions)
+        db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
+            .from(tasks)
+            .where(and(eq(tasks.documentId, 44), like(tasks.startDate, monthLike)))
+            .get(),
+        // PPM Payments
+        db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
+            .from(tasks)
+            .leftJoin(movements, eq(tasks.movementId, movements.id))
+            .where(and(eq(movements.name, "Pago PPM"), like(tasks.startDate, monthLike)))
+            .get()
+    ]);
 
-    const globalPaymentsParams = await db.select({
-        totalPaid: sql<number>`SUM(${vatPayments.amount})`
-    }).from(vatPayments);
+    const f29Debit = f29Components[0]?.amount || 0;
+    const f29Credit = Math.abs(f29Components[1]?.amount || 0);
+    const f29Retentions = Math.abs(f29Components[2]?.amount || 0);
+    const f29Ppm = Math.abs(f29Components[3]?.amount || 0);
 
-    const vatDebit = globalTaxComponents[0]?.vatDebit || 0;
-    const vatCredit = globalTaxComponents[0]?.vatCredit || 0;
-    const retentions = globalTaxComponents[0]?.retentions || 0;
-    const globalPaid = globalPaymentsParams[0]?.totalPaid || 0;
-
-    // Logic:
-    // Debit (You owe this, positive)
-    // Credit (You deduce this, negative in DB) -> We sum them: vd + vc
-    // Retention (You owe this, can be signed irregularly) -> Use Math.abs
-    // Paid (You already paid this)
-    const taxPayable = (vatDebit + vatCredit) + Math.abs(retentions) - globalPaid;
-
-    // --- CASH BASIS CALCULATION (Matches Dashboard) ---
-    // Total in Bank = Sum of ALL TOTAL_VALUE of PAID tasks - VAT PAYMENTS
-    const cashIncomeResult = await db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
-        .from(tasks)
-        .where(and(isNotNull(tasks.paymentDate), not(eq(tasks.paymentDate, '')), sql`${tasks.netValue} > 0`))
-        .get();
-
-    const cashExpensesResult = await db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
-        .from(tasks)
-        .where(and(isNotNull(tasks.paymentDate), not(eq(tasks.paymentDate, '')), sql`${tasks.netValue} < 0`))
-        .get();
-
-    const cashIncome = cashIncomeResult?.amount || 0;
-    const cashExpenses = Math.abs(cashExpensesResult?.amount || 0);
-    const totalBank = cashIncome - (cashExpenses + globalPaid);
+    const f29VatPayable = Math.max(0, f29Debit - f29Credit);
+    const totalF29 = f29VatPayable + f29Retentions + f29Ppm;
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -77,6 +70,8 @@ export default async function BalanceReportPage() {
         balance: acc.balance + (row.balance || 0),
     }), { expectedIncome: 0, realIncomeNet: 0, expensesNet: 0, totalTax: 0, balance: 0 });
 
+    const totalConsolidated = totals.balance + totalF29;
+
     const exportColumns = [
         { header: 'Proyecto', key: 'name' },
         { header: 'Esperado', key: 'expectedIncome', format: 'currency' as const },
@@ -86,9 +81,9 @@ export default async function BalanceReportPage() {
     ];
 
     const exportSummary = [
-        { label: 'Total Neto en Caja', value: formatCurrency(totals.balance) },
-        { label: 'Impuestos por Pagar (Est. F29)', value: formatCurrency(taxPayable) },
-        { label: 'Total Real Disponible (Banco)', value: formatCurrency(totalBank) }
+        { label: 'Total Saldo Neto Proyectos', value: formatCurrency(totals.balance) },
+        { label: 'Total F29 Mes Actual', value: formatCurrency(totalF29) },
+        { label: 'Total Consolidado (Saldo + F29)', value: formatCurrency(totalConsolidated) }
     ];
 
     return (
@@ -114,22 +109,27 @@ export default async function BalanceReportPage() {
                 <p className="text-sm md:text-base text-slate-400">Comparativa financiera de proyectos activos (v2.1)</p>
             </header>
 
-            {/* Bank Summary Card */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {/* Balance Summary Cards */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <div className="glass-card p-4 md:p-6 flex flex-col justify-between">
                     <div>
                         <p className="text-[10px] md:text-xs font-bold text-sky-400 uppercase tracking-widest mb-1">Total Saldo Neto</p>
                         <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totals.balance)}</p>
                     </div>
                 </div>
-                {/* Removed VAT Card */}
-                <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-emerald-500/20 bg-emerald-500/5 relative overflow-hidden">
-                    {/* Icon can be kept or removed if redundant with export buttons, keeping for UI consistency */}
+                <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-amber-500/20 bg-amber-500/5">
                     <div>
-                        <p className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Total en Banco</p>
-                        <p className="text-2xl md:text-3xl font-black text-white">{formatCurrency(totalBank)}</p>
+                        <p className="text-[10px] md:text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Total Formulario 29</p>
+                        <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totalF29)}</p>
                     </div>
-                    <p className="text-[10px] md:text-xs text-emerald-500/60 mt-2">Saldo Real Disponible</p>
+                    <p className="text-[10px] md:text-xs text-amber-500/60 mt-2 italic">Estimación mes actual</p>
+                </div>
+                <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-emerald-500/20 bg-emerald-500/5">
+                    <div>
+                        <p className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Total Consolidado</p>
+                        <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totalConsolidated)}</p>
+                    </div>
+                    <p className="text-[10px] md:text-xs text-emerald-500/60 mt-2 font-bold select-none whitespace-nowrap">Saldo Neto + F29</p>
                 </div>
             </section>
 
