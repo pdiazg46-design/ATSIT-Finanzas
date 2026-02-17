@@ -1,5 +1,6 @@
 import { getIvaReportData, IvaItem } from '@/lib/report-actions';
 import { db } from '@/lib/db';
+export const dynamic = 'force-dynamic';
 import { vatPayments } from '@/lib/schema';
 import { ArrowLeft, Wallet, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
@@ -137,7 +138,7 @@ export default async function IVAReportPage() {
 
             <header>
                 <h2 className="text-xl md:text-3xl font-bold text-white">Resumen Mensual de IVA</h2>
-                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos, Débitos y Retenciones por mes (Separación estricta)</p>
+                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos, Débitos y Retenciones por mes (v2.1)</p>
             </header>
 
             {sortedMonths.length === 0 ? (

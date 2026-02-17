@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+export const dynamic = 'force-dynamic';
 import { projects, tasks, vatPayments } from '@/lib/schema';
 import { eq, sql, and, not, isNotNull } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
@@ -110,7 +111,7 @@ export default async function BalanceReportPage() {
 
             <header>
                 <h2 className="text-xl md:text-3xl font-bold text-white">Balance de Proyectos</h2>
-                <p className="text-sm md:text-base text-slate-400">Comparativa financiera de proyectos activos (Desglose Neto + IVA)</p>
+                <p className="text-sm md:text-base text-slate-400">Comparativa financiera de proyectos activos (v2.1)</p>
             </header>
 
             {/* Bank Summary Card */}

@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { projects, tasks, vatPayments } from '@/lib/schema';
+export const dynamic = 'force-dynamic';
 import { eq, sql, desc, and, isNotNull, not } from 'drizzle-orm';
 import Link from 'next/link';
 import { Briefcase, CreditCard, Clock, ArrowRight, DollarSign, TrendingUp, Wallet, Scale, ChevronRight } from 'lucide-react';
@@ -78,7 +79,7 @@ export default async function DashboardPage() {
         <div className="space-y-6 md:space-y-8">
             <header>
                 <h2 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h2>
-                <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (Criterio: Percibido)</p>
+                <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (v2.1)</p>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
