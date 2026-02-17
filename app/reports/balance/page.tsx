@@ -111,19 +111,19 @@ export default async function BalanceReportPage() {
 
             {/* Balance Summary Cards */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="glass-card p-4 md:p-6 flex flex-col justify-between">
+                <Link href="/projects" className="glass-card p-4 md:p-6 flex flex-col justify-between hover:bg-white/5 transition-colors group cursor-pointer">
                     <div>
-                        <p className="text-[10px] md:text-xs font-bold text-sky-400 uppercase tracking-widest mb-1">Total Saldo Neto</p>
+                        <p className="text-[10px] md:text-xs font-bold text-sky-400 uppercase tracking-widest mb-1 group-hover:text-sky-300">Total Saldo Neto</p>
                         <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totals.balance)}</p>
                     </div>
-                </div>
-                <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-amber-500/20 bg-amber-500/5">
+                </Link>
+                <Link href="/reports/f29" className="glass-card p-4 md:p-6 flex flex-col justify-between border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-colors group cursor-pointer">
                     <div>
-                        <p className="text-[10px] md:text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Total Formulario 29</p>
+                        <p className="text-[10px] md:text-xs font-bold text-amber-400 uppercase tracking-widest mb-1 group-hover:text-amber-300">Total Formulario 29</p>
                         <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totalF29)}</p>
                     </div>
                     <p className="text-[10px] md:text-xs text-amber-500/60 mt-2 italic">Estimación mes actual</p>
-                </div>
+                </Link>
                 <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-emerald-500/20 bg-emerald-500/5">
                     <div>
                         <p className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Total Consolidado</p>
