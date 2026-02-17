@@ -49,8 +49,7 @@ export default async function DashboardPage() {
     const totalCashExpenses = cashExpensesCommon + cashVatPayments;
     const cashBalance = cashIncome - totalCashExpenses;
 
-    // Fetch recent projects
-    const recentProjects = await db.select({
+    const activeProjects = await db.select({
         id: projects.id,
         name: projects.name,
         category: projects.category,
@@ -68,8 +67,9 @@ export default async function DashboardPage() {
             END`,
             desc(projects.lastActionAt)
         )
-        .limit(4)
         .all();
+
+    const totalAvailableInProjects = activeProjects.reduce((acc, p) => acc + (p.netBalance || 0), 0);
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -82,8 +82,8 @@ export default async function DashboardPage() {
                 <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (v2.1)</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                {/* Active Projects */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {/* Active Projects Count */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Briefcase size={48} className="md:w-16 md:h-16" />
@@ -94,6 +94,22 @@ export default async function DashboardPage() {
                     </div>
                     <Link href="/projects" className="inline-flex items-center text-sky-400 text-[10px] md:text-xs font-bold hover:text-sky-300 transition-colors uppercase tracking-wider">
                         Ver todos <ArrowRight size={14} className="ml-1" />
+                    </Link>
+                </div>
+
+                {/* Total Available in Projects */}
+                <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
+                        <Scale size={48} className="md:w-16 md:h-16" />
+                    </div>
+                    <div>
+                        <p className="text-sky-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs">Saldo Total Neto</p>
+                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${totalAvailableInProjects >= 0 ? 'text-sky-400' : 'text-rose-400'}`}>
+                            {formatCurrency(totalAvailableInProjects)}
+                        </h3>
+                    </div>
+                    <Link href="/reports/balance" className="inline-flex items-center text-sky-400 text-[10px] md:text-xs font-bold hover:text-sky-300 transition-colors uppercase tracking-wider">
+                        Ver Balance <ArrowRight size={14} className="ml-1" />
                     </Link>
                 </div>
 
@@ -127,9 +143,9 @@ export default async function DashboardPage() {
             </div>
 
             <section>
-                <h3 className="text-lg md:text-xl font-bold text-white mb-4">Actividad Reciente</h3>
+                <h3 className="text-lg md:text-xl font-bold text-white mb-4">Proyectos Activos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                    {recentProjects.map((project: any) => (
+                    {activeProjects.map((project: any) => (
                         <Link
                             key={project.id}
                             href={`/projects/${project.id}`}
@@ -170,7 +186,7 @@ export default async function DashboardPage() {
                             </div>
                         </Link>
                     ))}
-                    {recentProjects.length === 0 && (
+                    {activeProjects.length === 0 && (
                         <p className="text-slate-500 italic text-sm">No hay actividad reciente.</p>
                     )}
                 </div>
