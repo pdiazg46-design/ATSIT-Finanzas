@@ -26,11 +26,18 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         db.select().from(documents).all(),
     ]);
 
-    // Self-healing: Ensure "Pago PPM (Gasto)" exists in movements
+    // Self-healing: Ensure "Pago PPM" exists in movements and cleanup old name
     let allMovements = initialMovements;
-    if (!allMovements.find(m => m.name === 'Pago PPM (Gasto)')) {
-        console.log('⚡ Auto-seeding "Pago PPM (Gasto)" movement type...');
-        const newMov = await db.insert(movements).values({ name: 'Pago PPM (Gasto)', type: 'Gasto' }).returning().get();
+    const oldPpm = allMovements.find(m => m.name === 'Pago PPM (Gasto)');
+    if (oldPpm) {
+        console.log('🧹 Cleaning up "Pago PPM (Gasto)" movement name...');
+        await db.update(movements).set({ name: 'Pago PPM' }).where(eq(movements.id, oldPpm.id));
+        allMovements = allMovements.map(m => m.id === oldPpm.id ? { ...m, name: 'Pago PPM' } : m);
+    }
+
+    if (!allMovements.find(m => m.name === 'Pago PPM')) {
+        console.log('⚡ Auto-seeding "Pago PPM" movement type...');
+        const newMov = await db.insert(movements).values({ name: 'Pago PPM', type: 'Gasto' }).returning().get();
         allMovements = [...allMovements, newMov];
     }
 

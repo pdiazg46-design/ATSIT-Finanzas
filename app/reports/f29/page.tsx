@@ -93,7 +93,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(movements.name, "Pago PPM (Gasto)"),
+                eq(movements.name, "Pago PPM"),
                 like(tasks.startDate, monthLike)
             )
         ).all();
