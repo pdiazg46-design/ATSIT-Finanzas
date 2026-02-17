@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { tasks, documents, projects } from '@/lib/schema';
+import { tasks, documents, projects, movements } from '@/lib/schema';
 import { eq, sql, and, like, desc } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -89,11 +89,11 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         totalValue: tasks.totalValue
     })
         .from(tasks)
-        .leftJoin(documents, eq(tasks.documentId, documents.id))
+        .leftJoin(movements, eq(tasks.movementId, movements.id))
         .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(documents.name, "Adelanto PPM"), // Fix: use eq()
+                eq(movements.name, "Pago PPM (Gasto)"),
                 like(tasks.startDate, monthLike)
             )
         ).all();
@@ -104,18 +104,14 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
     const totalWithholding = Math.abs(honorariumData.reduce((acc, t) => acc + (t.taxValue || 0), 0));
     const totalPpmPrepaid = Math.abs(ppmPrepaidData.reduce((acc, t) => acc + (t.totalValue || 0), 0));
 
-    // NET INCOME for PPM Calculation
+    // NET INCOME (Not used for automatic PPM now, but kept for reference if needed)
     const totalNetSales = salesData.reduce((acc, t) => acc + (t.netValue || 0), 0);
-    const ppmRate = 0.015; // 1.5% Configurable later
-    const ppmDetermined = Math.round(totalNetSales * ppmRate);
 
     // F29 RESULT
     // Payable = (Debit - Credit) + Withholdings + PPM Determined - PPM Prepaid
     // If Credit > Debit, Remnant remains.
     const vatPayable = Math.max(0, totalDebit - totalCredit);
-    const subtotalTaxes = vatPayable + totalWithholding + ppmDetermined;
-    const totalPayable = Math.max(0, subtotalTaxes - totalPpmPrepaid);
-    const ppmRemnant = Math.max(0, totalPpmPrepaid - subtotalTaxes); // Surplus PPM if any (rare but possible)
+    const totalPayable = vatPayable + totalWithholding + totalPpmPrepaid;
 
     const vatCreditRemnant = Math.max(0, totalCredit - totalDebit);
 
@@ -130,8 +126,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         { label: 'Crédito Fiscal (IVA Compras)', value: formatCurrency(totalCredit) },
         { label: 'Impuesto a Pagar (IVA)', value: formatCurrency(vatPayable) },
         { label: 'Retención Honorarios (15.25%)', value: formatCurrency(totalWithholding) },
-        { label: 'PPM Determinado (1.5%)', value: formatCurrency(ppmDetermined) },
-        { label: 'Menos: PPM Pagado (Adelantos)', value: `(${formatCurrency(totalPpmPrepaid)})` },
+        { label: 'Pago PPM (Registrado)', value: formatCurrency(totalPpmPrepaid) },
         { label: 'TOTAL A PAGAR F29', value: formatCurrency(totalPayable) },
     ];
 
@@ -214,21 +209,11 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                         </div>
                         <div className="flex justify-between items-center">
                             <div className="flex flex-col">
-                                <span className="text-sm text-slate-400">PPM Determinado (+)</span>
-                                <span className="text-[10px] text-slate-500">Tasa 1.5% sobre Ventas Netas</span>
+                                <span className="text-sm text-slate-400">Pago PPM (+)</span>
+                                <span className="text-[10px] text-slate-500">Monto registrado manualmente</span>
                             </div>
-                            <span className="font-bold text-white">{formatCurrency(ppmDetermined)}</span>
+                            <span className="font-bold text-white">{formatCurrency(totalPpmPrepaid)}</span>
                         </div>
-                        {/* PPM ADELANTADO */}
-                        {totalPpmPrepaid > 0 && (
-                            <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                                <div className="flex flex-col">
-                                    <span className="text-sm text-emerald-400">Menos: PPM Pagado (-)</span>
-                                    <span className="text-[10px] text-slate-500">Pagos Provisionales realizados</span>
-                                </div>
-                                <span className="font-bold text-emerald-400">({formatCurrency(totalPpmPrepaid)})</span>
-                            </div>
-                        )}
                     </div>
                 </section>
 

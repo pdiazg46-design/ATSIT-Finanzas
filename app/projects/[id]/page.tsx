@@ -20,19 +20,21 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const owner = project.ownerId ? await db.select().from(employees).where(eq(employees.id, project.ownerId)).get() : null;
 
     // Lookup data for the AddTask form
-    const [allEmployees, allMovements, initialDocuments] = await Promise.all([
+    const [allEmployees, initialMovements, initialDocuments] = await Promise.all([
         db.select().from(employees).all(),
         db.select().from(movements).all(),
         db.select().from(documents).all(),
     ]);
 
-    // Self-healing: Ensure "Adelanto PPM" exists
-    let allDocuments = initialDocuments;
-    if (!allDocuments.find(d => d.name === 'Adelanto PPM')) {
-        console.log('⚡ Auto-seeding "Adelanto PPM" document type...');
-        const newDoc = await db.insert(documents).values({ name: 'Adelanto PPM' }).returning().get();
-        allDocuments = [...allDocuments, newDoc];
+    // Self-healing: Ensure "Pago PPM (Gasto)" exists in movements
+    let allMovements = initialMovements;
+    if (!allMovements.find(m => m.name === 'Pago PPM (Gasto)')) {
+        console.log('⚡ Auto-seeding "Pago PPM (Gasto)" movement type...');
+        const newMov = await db.insert(movements).values({ name: 'Pago PPM (Gasto)', type: 'Gasto' }).returning().get();
+        allMovements = [...allMovements, newMov];
     }
+
+    const allDocuments = initialDocuments;
 
     const canManageProjects = await hasPermission(PERMISSIONS.MANAGE_PROJECTS);
     const canManageTasks = await hasPermission(PERMISSIONS.MANAGE_TASKS);
@@ -63,7 +65,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         .leftJoin(movements, eq(tasks.movementId, movements.id))
         .leftJoin(documents, eq(tasks.documentId, documents.id))
         .where(eq(tasks.projectId, id))
-        .orderBy(desc(tasks.lastActionAt))
+        .orderBy(desc(tasks.startDate))
         .all();
 
     const formatCurrency = (val: number) => {
