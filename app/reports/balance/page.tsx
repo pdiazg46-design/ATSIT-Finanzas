@@ -44,9 +44,9 @@ export default async function BalanceReportPage() {
     // Logic:
     // Debit (You owe this, positive)
     // Credit (You deduce this, negative in DB) -> We sum them: vd + vc
-    // Retention (You owe this, negative in DB) -> We sum absolute or vd + vc + ret
+    // Retention (You owe this, can be signed irregularly) -> Use Math.abs
     // Paid (You already paid this)
-    const taxPayable = (vatDebit + vatCredit) + retentions - globalPaid;
+    const taxPayable = (vatDebit + vatCredit) + Math.abs(retentions) - globalPaid;
 
     // --- CASH BASIS CALCULATION (Matches Dashboard) ---
     // Total in Bank = Sum of ALL TOTAL_VALUE of PAID tasks - VAT PAYMENTS

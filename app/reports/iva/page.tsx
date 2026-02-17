@@ -68,8 +68,8 @@ export default async function IVAReportPage() {
     const globalRetenciones = rawData.filter((i: any) => i.documentId === 44 || i.documentName === 'Boleta Honorarios').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
     const globalPagado = payments.reduce((acc: number, curr: any) => acc + curr.amount, 0);
 
-    // Balance IVA = Debit + Credit (neg) + Retentions (neg) - Paid
-    const globalBalance = globalDebito + globalCredito + globalRetenciones - globalPagado;
+    // Balance IVA = Debit + Credit (neg) + Abs(Retentions) - Paid
+    const globalBalance = globalDebito + globalCredito + Math.abs(globalRetenciones) - globalPagado;
 
     // Prepare Export Data (Flat List)
     const exportData = [
@@ -153,8 +153,8 @@ export default async function IVAReportPage() {
                         const totalHonorarios = calculateTotalIva(monthData.honorarios); // Pure Retentions
                         const totalPagado = monthData.pagos.reduce((acc: number, curr: any) => acc + curr.amount, 0);
 
-                        // Balance considers VAT and Retentions for F29 estimate
-                        const balance = totalDebito + totalCredito + totalHonorarios - totalPagado;
+                        // Balance considers VAT and Retentions for F29 estimate (adding absolute retentions)
+                        const balance = totalDebito + totalCredito + Math.abs(totalHonorarios) - totalPagado;
 
                         return (
                             <section key={monthKey} className="space-y-6">
