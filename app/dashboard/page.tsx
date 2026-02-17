@@ -107,6 +107,8 @@ export default async function DashboardPage() {
     const dash_f29VatPayable = Math.max(0, dash_f29Debit - dash_f29Credit);
     const dash_totalF29 = dash_f29VatPayable + dash_f29Retentions + dash_f29Ppm;
 
+    const totalConsolidated = totalAvailableInProjects + dash_totalF29;
+
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
     };
@@ -118,7 +120,7 @@ export default async function DashboardPage() {
                 <p className="text-sm md:text-base text-slate-400">Resumen general de tu gestión (v2.1)</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
                 {/* 1. Active Projects Count */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -163,7 +165,23 @@ export default async function DashboardPage() {
                     </span>
                 </Link>
 
-                {/* 4. Income (Cash) */}
+                {/* 4. Total Consolidated (NEW) -> TO BALANCE REPORT */}
+                <Link href="/reports/balance" className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors cursor-pointer block">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-500">
+                        <CreditCard size={48} className="md:w-16 md:h-16" />
+                    </div>
+                    <div>
+                        <p className="text-emerald-500/60 font-medium uppercase tracking-wider text-[10px] md:text-xs group-hover:text-emerald-400">Total Consolidado</p>
+                        <h3 className={`text-xl md:text-2xl font-bold mt-1 ${totalConsolidated >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {formatCurrency(totalConsolidated)}
+                        </h3>
+                    </div>
+                    <span className="inline-flex items-center text-emerald-400/50 text-[10px] md:text-xs font-bold hover:text-emerald-300 transition-colors uppercase tracking-wider">
+                        Ver Balance <ArrowRight size={14} className="ml-1" />
+                    </span>
+                </Link>
+
+                {/* 5. Income (Cash) */}
                 <div className="glass-card p-4 md:p-6 space-y-2 md:space-y-4 relative overflow-hidden group border-sky-500/20 bg-sky-500/5">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-sky-500">
                         <TrendingUp size={48} className="md:w-16 md:h-16" />
