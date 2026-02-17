@@ -209,6 +209,13 @@ export default async function IVAReportPage() {
                                                             </tr>
                                                         ))}
                                                     </tbody>
+                                                    <tfoot>
+                                                        <tr className="border-t border-white/20 bg-white/5">
+                                                            <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-slate-400">TOTALES</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-slate-300 whitespace-nowrap">{formatCurrency(monthData.debito.reduce((acc, curr) => acc + (curr.netValue || 0), 0))}</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-emerald-400 whitespace-nowrap">{formatCurrency(totalDebito)}</td>
+                                                        </tr>
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         )}
@@ -248,6 +255,13 @@ export default async function IVAReportPage() {
                                                             </tr>
                                                         ))}
                                                     </tbody>
+                                                    <tfoot>
+                                                        <tr className="border-t border-white/20 bg-white/5">
+                                                            <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-slate-400">TOTALES</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-slate-300 whitespace-nowrap">{formatCurrency(monthData.credito.reduce((acc, curr) => acc + (curr.netValue || 0), 0))}</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-amber-400 whitespace-nowrap">{formatCurrency(totalCredito)}</td>
+                                                        </tr>
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         )}
@@ -288,6 +302,13 @@ export default async function IVAReportPage() {
                                                             </tr>
                                                         ))}
                                                     </tbody>
+                                                    <tfoot>
+                                                        <tr className="border-t border-white/20 bg-white/5">
+                                                            <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-slate-400">TOTALES</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-slate-300 whitespace-nowrap">{formatCurrency(monthData.honorarios.reduce((acc, curr) => acc + (curr.netValue || 0), 0))}</td>
+                                                            <td className="py-2 text-right text-xs font-bold text-purple-400 whitespace-nowrap">{formatCurrency(Math.abs(totalHonorarios))}</td>
+                                                        </tr>
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         </div>
