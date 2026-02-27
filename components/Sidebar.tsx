@@ -37,7 +37,7 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                 Empleados
             </Link>
             <Link href="/pagos-iva" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/pagos-iva') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
-                Pagos IVA
+                Pagos F29
             </Link>
             <Link href="/reports" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/reports') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Informes
