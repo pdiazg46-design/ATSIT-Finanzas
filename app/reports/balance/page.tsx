@@ -59,7 +59,7 @@ export default async function BalanceReportPage() {
     const f29Ppm = Math.abs(f29Components[3]?.amount || 0);
 
     const f29VatPayable = Math.max(0, f29Debit - f29Credit);
-    const totalF29Raw = f29VatPayable + f29Retentions + f29Ppm;
+    const totalF29Raw = f29VatPayable + f29Retentions; // PPM paid from project directly
     const totalF29 = totalF29Raw - cashVatPayments;
 
     const formatCurrency = (val: number) => {

@@ -108,10 +108,10 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
     const totalNetSales = salesData.reduce((acc, t) => acc + (t.netValue || 0), 0);
 
     // F29 RESULT
-    // Payable = (Debit - Credit) + Withholdings + PPM Determined - PPM Prepaid
-    // If Credit > Debit, Remnant remains.
+    // Payable = (Debit - Credit) + Withholdings 
+    // PPM is paid via Task directly from a project, so we exclude it to avoid double bank deductions.
     const vatPayable = Math.max(0, totalDebit - totalCredit);
-    const totalPayable = vatPayable + totalWithholding + totalPpmPrepaid;
+    const totalPayable = vatPayable + totalWithholding;
 
     const vatCreditRemnant = Math.max(0, totalCredit - totalDebit);
 
@@ -126,8 +126,8 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         { label: 'Crédito Fiscal (IVA Compras)', value: formatCurrency(totalCredit) },
         { label: 'Impuesto a Pagar (IVA)', value: formatCurrency(vatPayable) },
         { label: 'Retención Honorarios (15.25%)', value: formatCurrency(totalWithholding) },
-        { label: 'Pago PPM (Registrado)', value: formatCurrency(totalPpmPrepaid) },
-        { label: 'TOTAL A PAGAR F29', value: formatCurrency(totalPayable) },
+        { label: 'Pago PPM (Registrado en Proyecto)', value: formatCurrency(totalPpmPrepaid) },
+        { label: 'TOTAL A TRANSFERIR (Sin PPM)', value: formatCurrency(totalPayable) },
     ];
 
 
@@ -207,12 +207,12 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                             </div>
                             <span className="font-bold text-white">{formatCurrency(totalWithholding)}</span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center opacity-50">
                             <div className="flex flex-col">
-                                <span className="text-sm text-slate-400">Pago PPM (+)</span>
-                                <span className="text-[10px] text-slate-500">Monto registrado manualmente</span>
+                                <span className="text-sm text-slate-400">Pago PPM</span>
+                                <span className="text-[10px] text-slate-500">Abonado vía Proyecto (No suma al F29 Virtual)</span>
                             </div>
-                            <span className="font-bold text-white">{formatCurrency(totalPpmPrepaid)}</span>
+                            <span className="font-bold text-white line-through decoration-rose-500/50">{formatCurrency(totalPpmPrepaid)}</span>
                         </div>
                     </div>
                 </section>
@@ -223,10 +223,10 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                         3. Total a Pagar
                     </div>
                     <div className="p-6 flex flex-col justify-center items-center flex-1 text-center">
-                        <p className="text-sm text-orange-300/60 uppercase tracking-widest mb-2 font-bold">Total Formulario 29</p>
+                        <p className="text-sm text-orange-300/60 uppercase tracking-widest mb-2 font-bold">Total a Transferir F29</p>
                         <p className="text-4xl font-black text-white drop-shadow-lg">{formatCurrency(totalPayable)}</p>
                         <p className="text-xs text-slate-400 mt-4 max-w-[200px]">
-                            Este monto debe ser pagado antes del día 20 del mes siguiente.
+                            Se excluye el PPM ya que es debitado como gasto individual en Proyectos.
                         </p>
                     </div>
                 </section>

@@ -104,7 +104,7 @@ export default async function DashboardPage() {
 
     const dash_f29VatPayable = Math.max(0, dash_f29Debit - dash_f29Credit);
     // The outstanding universal pool is the sum of all liabilities minus all payments made to the state
-    const dash_totalF29Raw = dash_f29VatPayable + dash_f29Retentions + dash_f29Ppm;
+    const dash_totalF29Raw = dash_f29VatPayable + dash_f29Retentions; // PPM is paid from a project directly
     const dash_totalF29 = dash_totalF29Raw - cashVatPayments;
 
     const totalConsolidated = totalAvailableInProjects + dash_totalF29;
