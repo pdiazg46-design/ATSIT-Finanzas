@@ -54,7 +54,7 @@ export default async function DashboardPage() {
         name: projects.name,
         category: projects.category,
         lastActionAt: projects.lastActionAt,
-        netBalance: sql<number>`COALESCE(SUM(${tasks.netValue}), 0)`
+        netBalance: sql<number>`COALESCE(SUM(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.totalValue} ELSE ${tasks.netValue} END), 0)`
     })
         .from(projects)
         .leftJoin(tasks, eq(projects.id, tasks.projectId))

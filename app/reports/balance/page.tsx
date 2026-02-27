@@ -11,9 +11,9 @@ export default async function BalanceReportPage() {
         name: projects.name,
         expectedIncome: projects.expectedIncome,
         realIncomeNet: sql<number>`SUM(CASE WHEN ${tasks.netValue} > 0 THEN ${tasks.netValue} ELSE 0 END)`,
-        expensesNet: sql<number>`SUM(CASE WHEN ${tasks.netValue} < 0 THEN ABS(${tasks.netValue}) ELSE 0 END)`,
+        expensesNet: sql<number>`SUM(CASE WHEN ${tasks.netValue} < 0 THEN ABS(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.totalValue} ELSE ${tasks.netValue} END) ELSE 0 END)`,
         totalTax: sql<number>`SUM(${tasks.taxValue})`,
-        balance: sql<number>`SUM(${tasks.netValue})`
+        balance: sql<number>`SUM(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.totalValue} ELSE ${tasks.netValue} END)`
     })
         .from(projects)
         .leftJoin(tasks, eq(projects.id, tasks.projectId))

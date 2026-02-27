@@ -83,11 +83,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const realIncome = projectTasks.filter((t: any) => (t.netValue || 0) > 0).reduce((acc: any, t: any) => acc + (t.netValue || 0), 0);
     const pendingBalance = (project.expectedIncome || 0) - realIncome;
 
-    const totalNetIncome = projectTasks.reduce((acc: any, t: any) => acc + (t.netValue || 0), 0);
+    const totalNetIncome = projectTasks.reduce((acc: any, t: any) => {
+        const val = t.documentId === 44 ? (t.totalValue || 0) : (t.netValue || 0);
+        return acc + val;
+    }, 0);
     const totalTaxBalance = projectTasks.reduce((acc: any, t: any) => acc + (t.taxValue || 0), 0);
     // const totalCashBalance = projectTasks.reduce((acc: any, t: any) => acc + (t.totalValue || 0), 0);
 
-    const totalExpenses = Math.abs(projectTasks.filter((t: any) => (t.netValue || 0) < 0).reduce((acc: any, t: any) => acc + (t.netValue || 0), 0));
+    const totalExpenses = Math.abs(projectTasks.filter((t: any) => (t.netValue || 0) < 0).reduce((acc: any, t: any) => {
+        const val = t.documentId === 44 ? (t.totalValue || 0) : (t.netValue || 0);
+        return acc + val;
+    }, 0));
 
     // const totalCostDays = projectTasks.reduce((acc, t) => acc + (t.costDays || 0), 0);
     // const balanceDays = (project.budgetDays || 0) - totalCostDays;
@@ -147,7 +153,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="glass-card p-6">
                     <div className="flex items-center gap-3 text-emerald-400 mb-2">
                         <DollarSign size={20} />
@@ -166,6 +172,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                         {pendingBalance > 0 ? 'Falta: ' : 'A Favor: '}
                         {formatCurrency(Math.abs(pendingBalance))}
                     </div>
+                </div>
+
+                <div className="glass-card p-6 border-rose-500/20 bg-rose-500/5">
+                    <div className="flex items-center gap-3 text-rose-400 mb-2">
+                        <DollarSign size={20} />
+                        <p className="text-sm font-medium">Gasto Total</p>
+                    </div>
+                    <p className="text-2xl font-bold text-rose-400">{formatCurrency(totalExpenses)}</p>
                 </div>
 
                 <div className="glass-card p-6 bg-sky-500/5">
