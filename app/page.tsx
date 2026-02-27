@@ -72,13 +72,13 @@ export default async function DashboardPage() {
     id: projects.id,
     name: projects.name,
     expected: projects.expectedIncome,
-    // Real Income: Only paid tasks
-    real: sql<number>`COALESCE(SUM(CASE WHEN ${tasks.netValue} > 0 AND ${tasks.paymentDate} IS NOT NULL AND ${tasks.paymentDate} != '' THEN ${tasks.totalValue} ELSE 0 END), 0)`,
-    // Balance: Income - Expenses (Paid)
+    // Real Income: Only paid tasks (Neto, sin IVA de facturas emitidas)
+    real: sql<number>`COALESCE(SUM(CASE WHEN ${tasks.netValue} > 0 AND ${tasks.paymentDate} IS NOT NULL AND ${tasks.paymentDate} != '' THEN ${tasks.netValue} ELSE 0 END), 0)`,
+    // Balance: Income - Expenses (Paid) -> Efectivo libre
     balance: sql<number>`COALESCE(SUM(
       CASE 
         WHEN ${tasks.paymentDate} IS NOT NULL AND ${tasks.paymentDate} != '' 
-        THEN ${tasks.totalValue} 
+        THEN (CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.totalValue} ELSE ${tasks.netValue} END)
         ELSE 0 
       END
     ), 0)`,

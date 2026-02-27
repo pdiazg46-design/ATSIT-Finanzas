@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
         lastActionAt: projects.lastActionAt,
         ownerName: sql<string>`${employees.firstName} || ' ' || ${employees.lastName}`,
         balance: sql<number>`COALESCE(SUM(${tasks.totalValue}), 0)`,
-        netBalance: sql<number>`COALESCE(SUM(${tasks.netValue}), 0)`,
+        netBalance: sql<number>`COALESCE(SUM(CASE WHEN ${tasks.documentId} = 44 THEN ${tasks.totalValue} ELSE ${tasks.netValue} END), 0)`,
         taxBalance: sql<number>`COALESCE(SUM(${tasks.taxValue}), 0)`,
     })
         .from(projects)
