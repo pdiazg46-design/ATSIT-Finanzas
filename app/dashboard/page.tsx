@@ -71,31 +71,29 @@ export default async function DashboardPage() {
 
     const totalAvailableInProjects = activeProjects.reduce((acc: number, p: any) => acc + (p.netBalance || 0), 0);
 
-    // --- F29 CURRENT MONTH CALCULATION (Dashboard Copy) ---
-    const currentMonth_f29 = new Date().toISOString().slice(0, 7);
-    const monthLike_f29 = `${currentMonth_f29}%`;
-
+    // --- F29 UNIVERSAL TAX POOL (Dashboard Copy) ---
+    // Instead of filtering by month, we load ALL historical debts and subtract ALL payments.
     const f29Components_dash = await Promise.all([
-        // Sales (Invoices)
+        // Sales (Invoices) Debt
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike_f29), sql`${tasks.netValue} > 0`))
+            .where(and(eq(tasks.documentId, 42), sql`${tasks.netValue} > 0`))
             .get(),
-        // Purchases (Invoices)
+        // Purchases (Invoices) Credit
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike_f29), sql`${tasks.netValue} < 0`))
+            .where(and(eq(tasks.documentId, 42), sql`${tasks.netValue} < 0`))
             .get(),
-        // Honorarios (Retentions)
+        // Honorarios (Retentions) Debt
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 44), like(tasks.startDate, monthLike_f29)))
+            .where(eq(tasks.documentId, 44))
             .get(),
         // PPM Payments
         db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
             .from(tasks)
             .leftJoin(movements, eq(tasks.movementId, movements.id))
-            .where(and(eq(movements.name, "Pago PPM"), like(tasks.startDate, monthLike_f29)))
+            .where(eq(movements.name, "Pago PPM"))
             .get()
     ]);
 
@@ -105,7 +103,9 @@ export default async function DashboardPage() {
     const dash_f29Ppm = Math.abs(f29Components_dash[3]?.amount || 0);
 
     const dash_f29VatPayable = Math.max(0, dash_f29Debit - dash_f29Credit);
-    const dash_totalF29 = dash_f29VatPayable + dash_f29Retentions + dash_f29Ppm;
+    // The outstanding universal pool is the sum of all liabilities minus all payments made to the state
+    const dash_totalF29Raw = dash_f29VatPayable + dash_f29Retentions + dash_f29Ppm;
+    const dash_totalF29 = dash_totalF29Raw - cashVatPayments;
 
     const totalConsolidated = totalAvailableInProjects + dash_totalF29;
 

@@ -21,32 +21,35 @@ export default async function BalanceReportPage() {
         .groupBy(projects.id)
         .all();
 
-    // --- F29 CURRENT MONTH CALCULATION ---
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    const monthLike = `${currentMonth}%`;
+    // --- F29 UNIVERSAL TAX POOL ---
+    // Fetch total VAT Payments
+    const totalVatPaymentsResult = await db.select({
+        amount: sql<number>`SUM(${vatPayments.amount})`
+    }).from(vatPayments).get();
+    const cashVatPayments = totalVatPaymentsResult?.amount || 0;
 
-    // Fetch components for F29 of the current month
+    // Fetch historical F29 debt
     const f29Components = await Promise.all([
         // Sales (Invoices)
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike), sql`${tasks.netValue} > 0`))
+            .where(and(eq(tasks.documentId, 42), sql`${tasks.netValue} > 0`))
             .get(),
         // Purchases (Invoices)
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 42), like(tasks.startDate, monthLike), sql`${tasks.netValue} < 0`))
+            .where(and(eq(tasks.documentId, 42), sql`${tasks.netValue} < 0`))
             .get(),
         // Honorarios (Retentions)
         db.select({ amount: sql<number>`SUM(${tasks.taxValue})` })
             .from(tasks)
-            .where(and(eq(tasks.documentId, 44), like(tasks.startDate, monthLike)))
+            .where(eq(tasks.documentId, 44))
             .get(),
         // PPM Payments
         db.select({ amount: sql<number>`SUM(${tasks.totalValue})` })
             .from(tasks)
             .leftJoin(movements, eq(tasks.movementId, movements.id))
-            .where(and(eq(movements.name, "Pago PPM"), like(tasks.startDate, monthLike)))
+            .where(eq(movements.name, "Pago PPM"))
             .get()
     ]);
 
@@ -56,7 +59,8 @@ export default async function BalanceReportPage() {
     const f29Ppm = Math.abs(f29Components[3]?.amount || 0);
 
     const f29VatPayable = Math.max(0, f29Debit - f29Credit);
-    const totalF29 = f29VatPayable + f29Retentions + f29Ppm;
+    const totalF29Raw = f29VatPayable + f29Retentions + f29Ppm;
+    const totalF29 = totalF29Raw - cashVatPayments;
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(val || 0);
@@ -82,7 +86,7 @@ export default async function BalanceReportPage() {
 
     const exportSummary = [
         { label: 'Total Saldo Neto Proyectos', value: formatCurrency(totals.balance) },
-        { label: 'Total F29 Mes Actual', value: formatCurrency(totalF29) },
+        { label: 'Total F29 e Impuestos Pendientes', value: formatCurrency(totalF29) },
         { label: 'Total Consolidado (Saldo + F29)', value: formatCurrency(totalConsolidated) }
     ];
 
@@ -119,10 +123,10 @@ export default async function BalanceReportPage() {
                 </Link>
                 <Link href="/reports/f29" className="glass-card p-4 md:p-6 flex flex-col justify-between border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-colors group cursor-pointer">
                     <div>
-                        <p className="text-[10px] md:text-xs font-bold text-amber-400 uppercase tracking-widest mb-1 group-hover:text-amber-300">Total Formulario 29</p>
+                        <p className="text-[10px] md:text-xs font-bold text-amber-400 uppercase tracking-widest mb-1 group-hover:text-amber-300">Impuestos Pendientes F29</p>
                         <p className="text-xl md:text-2xl font-black text-white">{formatCurrency(totalF29)}</p>
                     </div>
-                    <p className="text-[10px] md:text-xs text-amber-500/60 mt-2 italic">Estimación mes actual</p>
+                    <p className="text-[10px] md:text-xs text-amber-500/60 mt-2 italic">Histórico acumulado libre de F29</p>
                 </Link>
                 <div className="glass-card p-4 md:p-6 flex flex-col justify-between border-emerald-500/20 bg-emerald-500/5">
                     <div>

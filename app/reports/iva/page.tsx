@@ -137,8 +137,8 @@ export default async function IVAReportPage() {
             </div>
 
             <header>
-                <h2 className="text-xl md:text-3xl font-bold text-white">Resumen Mensual de IVA</h2>
-                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos, Débitos y Retenciones por mes (v2.1)</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white">Resumen Mensual de Impuestos (F29)</h2>
+                <p className="text-sm md:text-base text-slate-400">Detalle de Créditos, Débitos y Retenciones por mes (v2.2)</p>
             </header>
 
             {sortedMonths.length === 0 ? (
