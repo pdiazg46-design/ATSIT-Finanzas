@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { archiveProject, activateProject } from '@/lib/project-actions';
 import ProjectTaskTable from '@/components/ProjectTaskTable';
 import EditProjectButton from '@/components/EditProjectButton';
+import ExportProjectButtons from './ExportProjectButtons';
 import { hasPermission } from '@/lib/user-actions';
 import { PERMISSIONS } from '@/lib/permissions';
 
@@ -107,6 +108,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </Link>
 
                 <div className="flex gap-3">
+                    <ExportProjectButtons
+                        fileName={`Proyecto_${project.name.replace(/\s+/g, '_')}`}
+                        title={`Histórico: ${project.name}`}
+                        summary={[
+                            { label: 'Ingreso Esperado', value: formatCurrency(project.expectedIncome || 0) },
+                            { label: 'Ingreso Real', value: formatCurrency(realIncome) },
+                            { label: 'Gasto Total', value: formatCurrency(totalExpenses) },
+                            { label: 'Saldo Neto (Sin IVA)', value: formatCurrency(totalNetIncome) }
+                        ]}
+                        tasksData={projectTasks}
+                    />
                     <EditProjectButton project={project} employees={allEmployees} canEdit={canManageProjects} />
                     {canManageProjects && (
                         <form action={async () => {

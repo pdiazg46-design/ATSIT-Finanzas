@@ -1,0 +1,76 @@
+[❌ NO EXISTE] 02/01 - Transf de FRA ($37300) -> FALTA CREAR
+[✅ OK] 02/01 - Transf a Andrea ($90000)
+[✅ OK] 02/01 - Transf a DIAZ ($90000)
+[✅ OK] 02/01 - Compra WIX.COM ($39563)
+[❌ NO EXISTE] 06/01 - MASPLOTTER ($12400) -> FALTA CREAR
+[✅ OK] 06/01 - UBER ($2841)
+[❌ NO EXISTE] 06/01 - TECNISUR ($1300) -> FALTA CREAR
+[✅ OK] 07/01 - UBER ($2726)
+[✅ OK] 07/01 - UBER ($2515)
+[✅ OK] 08/01 - UBER ($3671)
+[✅ OK] 09/01 - DISENO PUBLICID ($119000)
+[✅ OK] 13/01 - PEREZ TAPIA ($6000)
+[✅ OK] 13/01 - PAGO S.I.I. (ENE) ($128349)
+[❌ NO EXISTE] 13/01 - Transf a Andrea (Correction: 45000?) ($4500) -> FALTA CREAR
+[✅ OK] 13/01 - Transf a Andrea ($45000)
+[✅ OK] 13/01 - Transf a DIAZ ($4500--- REPORTE AUDITORÍA COMPLETA (ENE + FEB 2026) ---
+
+0)
+[❌ NO EXISTE] 13/01 - KELLY RAQUEL ($12000) -> FALTA CREAR
+[✅ OK] 13/01 - UBER ($10531)
+[✅ OK] 16/01 - RedGlobal ($10463)
+[✅ OK] 20/01 - Transf de FRA ($87458)
+[❌ NO EXISTE] 20/01 - Transf a Karina ($50000) -> FALTA CREAR
+[✅ OK] 20/01 - FARM VANIA ($5590)
+[✅ OK] 21/01 - BELLAS ARTES ($2700)
+[✅ OK] 22/01 - CITY PARTNERS ($24163)
+[✅ OK] 22/01 - UBER ($3235)
+[✅ OK] 23/01 - BELLAS ARTES ($3400)
+[❌ NO EXISTE] 23/01 - UBER ($3330) -> FALTA CREAR
+[❌ NO EXISTE] 23/01 - Reverso WebPay ($3330) -> FALTA CREAR
+[✅ OK] 26/01 - Transf a Andrea ($20000)
+[✅ OK] 26/01 - UBER ($1931)
+[✅ OK] 27/01 - CITY PARTNERS ($238000)
+[✅ OK] 28/01 - Transf Andrea ($20000)
+[✅ OK] 28/01 - Transf a Andrea ($90000)
+[✅ OK] 28/01 - Transf a DIAZ ($90000)
+[✅ OK] 28/01 - COM.MANTENCION ($39327)
+[❌ NO EXISTE] 29/01 - Reverso WebPay ($3330) -> FALTA CREAR
+[✅ OK] 29/01 - BELLAS ARTES ($12100)
+[✅ OK] 29/01 - UBER ($7797)
+[✅ OK] 29/01 - REPARADORA ($2000)
+[❌ NO EXISTE] 30/01 - Anulacion Rev. ($3330) -> FALTA CREAR
+[✅ OK] 03/02 - Nicolas Alonso ($73862)
+[✅ OK] 03/02 - UBER ($2794)
+[✅ OK] 04/02 - BELLAS ARTES ($14110)
+[✅ OK] 05/02 - UBER ($3296)
+[✅ OK] 06/02 - UBER ($8476)
+[✅ OK] 06/02 - WIX.COM ($88635)
+[✅ OK] 10/02 - Ozeta SpA ($333200)
+[❌ NO EXISTE] 10/02 - Karina Rojas ($50000) -> FALTA CREAR
+[✅ OK] 10/02 - Andrea Rodrigu ($66322)
+[✅ OK] 10/02 - DIAZ ARIAS ($66322)
+[✅ OK] 10/02 - Nicolas Alonso ($29545)
+[✅ OK] 10/02 - WIX.COM ($87965)
+[✅ OK] 11/02 - Reverso WebPay ($5695)
+[✅ OK] 13/02 - PROVEEDOR LTS ($2380000)
+[⚠️ FALTA FECHA] 13/02 - Erlea Construc ($714000).
+[✅ OK] 16/02 - KENNYNSON ($11900)
+[❌ NO EXISTE] 16/02 - PAGO S.I.I. (FEB) ($60017) -> FALTA CREAR
+[✅ OK] 16/02 - Andrea Alejandr ($10000)
+[✅ OK] 16/02 - HOMECENTER ($55440)
+[✅ OK] 16/02 - Andrea Rodrigu ($270000)
+[✅ OK] 16/02 - DIAZ ARIAS ($270000)
+[❌ NO EXISTE] 16/02 - BOREAL MEDIA ($900000) -> FALTA CREAR
+[❌ NO EXISTE] 16/02 - BOREAL MEDIA ($171000) -> FALTA CREAR
+[✅ OK] 16/02 - Erlea Construc ($952000)
+
+RESUMEN FINAL:
+- Total Movimientos Cartola: 64
+- Encontrados OK: 49
+- Faltan Fecha: 1
+- Faltan Crear: 14
+
+SALDO CALCULADO EN APP HOY: $1763215.0300000003
+SALDO META (CARTOLA):       $1.432.914
+DIFERENCIA:                 $330301.03000000026
