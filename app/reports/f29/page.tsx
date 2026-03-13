@@ -4,7 +4,7 @@ import { eq, sql, and, like, desc } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import MonthFilter from '@/components/MonthFilter';
-import ExportButtons from '@/components/ExportButtons';
+import ExportF29Buttons from './ExportF29Buttons';
 
 export default async function F29ReportPage({ searchParams }: { searchParams: Promise<{ month?: string }> }) {
     const { month } = await searchParams;
@@ -140,9 +140,11 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                 </Link>
                 <div className="flex gap-3">
                     <MonthFilter />
-                    <ExportButtons
-                        data={[]} // We don't have a single flattened list, so maybe just export summary?
-                        columns={[]}
+                    <ExportF29Buttons
+                        salesData={salesData}
+                        purchasesData={purchasesData}
+                        honorariumData={honorariumData}
+                        ppmData={ppmPrepaidData}
                         fileName={`f29_${currentMonth}`}
                         title={`Informe F29 - ${currentMonth}`}
                         summary={exportSummary}
