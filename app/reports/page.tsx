@@ -29,6 +29,15 @@ export default async function ReportsPage() {
                     <p className="text-sm text-slate-400 mt-2">Seguimiento de ingresos y gastos mensuales para control de liquidez.</p>
                 </Link>
 
+                <Link href="/reports/cashflow-annual" className="glass-card p-6 hover:bg-white/5 transition-all group">
+                    <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 transition-transform">
+                        <TrendingUp size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Flujo de Caja Anual</h3>
+                    <p className="text-sm text-slate-400 mt-2">Consolidado anual de ingresos y egresos para análisis y proyección de liquidez.</p>
+                </Link>
+
+
                 <Link href="/reports/iva" className="glass-card p-6 hover:bg-white/5 transition-all group">
                     <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400 mb-4 group-hover:scale-110 transition-transform">
                         <PieChart size={24} />

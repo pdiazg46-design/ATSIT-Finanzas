@@ -133,12 +133,17 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
 
     return (
         <div className="space-y-8 pb-10">
-            <div className="flex justify-between items-center">
-                <Link href="/reports" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-                    <ArrowLeft size={20} />
-                    Volver a Informes
-                </Link>
-                <div className="flex gap-4 items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                    <Link href="/reports" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+                        <ArrowLeft size={18} />
+                        Volver a Informes
+                    </Link>
+                    <Link href="/reports/cashflow-annual" className="flex items-center gap-2 text-violet-400 hover:text-violet-300 transition-colors text-sm">
+                        Ver Flujo de Caja Anual
+                    </Link>
+                </div>
+                <div className="flex gap-4 items-center w-full sm:w-auto justify-end">
                     <MonthFilter />
                     <ExportButtons
                         data={normalizedMovements}
