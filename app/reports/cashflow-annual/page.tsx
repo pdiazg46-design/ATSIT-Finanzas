@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { projects, tasks, vatPayments } from '@/lib/schema';
+import { projects, tasks, vatPayments, movements } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { ArrowLeft, TrendingDown, TrendingUp, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -15,6 +15,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
     const allMovements = await db.select()
         .from(tasks)
         .leftJoin(projects, eq(tasks.projectId, projects.id))
+        .leftJoin(movements, eq(tasks.movementId, movements.id))
         .all();
 
     // 2. Fetch VAT Payments
@@ -55,6 +56,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
     // Process Movements - Aggregate by month for the selected year
     allMovements.forEach((row: any) => {
         const m = row.tasks;
+        const mov = row.movements;
         if (!m.startDate) return;
 
         const date = new Date(m.startDate);
@@ -66,15 +68,23 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
         const monthKey = `${year}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
         const val = m.netValue ?? m.totalValue ?? 0;
+        const absVal = Math.abs(val);
+
+        let isIncome = false;
+        if (mov && mov.type) {
+            isIncome = mov.type.toLowerCase() === 'ingreso';
+        } else {
+            isIncome = val > 0;
+        }
 
         if (!monthlyFlow[monthKey]) {
             monthlyFlow[monthKey] = { income: 0, expense: 0 };
         }
 
-        if (val > 0) {
-            monthlyFlow[monthKey].income += val;
+        if (isIncome) {
+            monthlyFlow[monthKey].income += absVal;
         } else {
-            monthlyFlow[monthKey].expense += Math.abs(val);
+            monthlyFlow[monthKey].expense += absVal;
         }
     });
 
@@ -114,16 +124,26 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
         ...allMovements.map((row: any) => {
             const t = row.tasks;
             const p = row.projects;
+            const mov = row.movements;
             const val = t.netValue ?? t.totalValue ?? 0;
+
+            let isIncome = false;
+            if (mov && mov.type) {
+                isIncome = mov.type.toLowerCase() === 'ingreso';
+            } else {
+                isIncome = val > 0;
+            }
+
             return {
                 id: `task-${t.id}`,
                 date: t.startDate ? new Date(t.startDate) : null,
                 projectName: p?.name || 'Sin Proyecto',
+                movementName: mov?.name || 'Sin Especificar',
                 title: t.title,
                 observations: t.observations,
                 amount: val,
-                isIncome: val > 0,
-                typeLabel: val > 0 ? 'Ingreso' : 'Egreso'
+                isIncome: isIncome,
+                typeLabel: isIncome ? 'Ingreso' : 'Egreso'
             };
         }),
         ...allPayments.map((p: any) => {
@@ -131,6 +151,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
                 id: `payment-${p.id}`,
                 date: new Date(p.paymentDate),
                 projectName: 'Impuestos (SII)',
+                movementName: 'Pago IVA',
                 title: 'Pago IVA Mensual',
                 observations: p.notes,
                 amount: -p.amount,
@@ -172,7 +193,8 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
     const exportColumns = [
         { header: 'Fecha', key: 'date', format: 'date' as const },
         { header: 'Proyecto', key: 'projectName' },
-        { header: 'Descripción', key: 'title' },
+        { header: 'Tipo Movimiento', key: 'movementName' },
+        { header: 'Concepto/Título', key: 'title' },
         { header: 'Tipo', key: 'typeLabel' },
         { header: 'Monto', key: 'amount', format: 'currency' as const },
     ];
@@ -310,20 +332,22 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
                                 <tr>
                                     <th className="p-3 text-xs md:text-sm">Fecha</th>
                                     <th className="p-3 text-xs md:text-sm">Proyecto</th>
-                                    <th className="p-3 text-xs md:text-sm">Descripción</th>
-                                    <th className="p-3 text-right text-xs md:text-sm">Monto (Total)</th>
+                                    <th className="p-3 text-xs md:text-sm">Tipo Movimiento</th>
+                                    <th className="p-3 text-xs md:text-sm">Concepto</th>
+                                    <th className="p-3 text-right text-xs md:text-sm">Monto (Neto)</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5 bg-slate-950/20">
                                 {normalizedMovements.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="p-4 text-center text-slate-500">Sin movimientos registrados este año</td>
+                                        <td colSpan={5} className="p-4 text-center text-slate-500">Sin movimientos registrados este año</td>
                                     </tr>
                                 ) : normalizedMovements.map((item: any) => {
                                     return (
                                         <tr key={item.id} className="hover:bg-white/5 transition-colors">
                                             <td className="p-3 text-slate-400 whitespace-nowrap text-xs md:text-sm">{formatDate(item.date)}</td>
                                             <td className="p-3 text-slate-300 font-medium text-xs md:text-sm">{item.projectName}</td>
+                                            <td className="p-3 text-slate-400 text-xs md:text-sm">{item.movementName}</td>
                                             <td className="p-3 text-slate-400">
                                                 <div className="flex flex-col">
                                                     <span className="text-xs md:text-sm">{item.title}</span>
