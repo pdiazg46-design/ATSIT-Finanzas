@@ -68,30 +68,12 @@ export default function DashboardPBI({
 
   // Listas con elementos virtuales integrados (SII para IVA)
   const projectsList = useMemo(() => {
-    const list = [...initialProjects];
-    if (initialVatPayments.length > 0) {
-      list.push({
-        id: -99,
-        name: 'Impuestos (SII)',
-        status: 'Completado',
-        isArchived: false,
-        expectedIncome: 0
-      });
-    }
-    return list;
-  }, [initialProjects, initialVatPayments]);
+    return [...initialProjects];
+  }, [initialProjects]);
 
   const movementsList = useMemo(() => {
-    const list = [...initialMovements];
-    if (initialVatPayments.length > 0) {
-      list.push({
-        id: -99,
-        name: 'Pago IVA',
-        type: 'Gasto'
-      });
-    }
-    return list;
-  }, [initialMovements, initialVatPayments]);
+    return [...initialMovements];
+  }, [initialMovements]);
 
   // Selección de IDs para los filtros reactivos (Set vacío = Mostrar Todos por defecto)
   const [selectedProjects, setSelectedProjects] = useState<Set<number>>(new Set());
@@ -126,27 +108,10 @@ export default function DashboardPBI({
           isIncome: isInc,
           typeLabel: isInc ? 'Ingreso' : 'Egreso'
         };
-      }),
-      ...initialVatPayments.map((p: any) => {
-        return {
-          id: `payment-${p.id}`,
-          dateStr: p.paymentDate || '',
-          date: p.paymentDate ? new Date(p.paymentDate) : null,
-          projectId: -99,
-          projectName: 'Impuestos (SII)',
-          projectIsArchived: false,
-          movementId: -99,
-          movementName: 'Pago IVA',
-          title: 'Pago IVA Mensual',
-          observations: p.notes || '',
-          amount: -p.amount,
-          isIncome: false,
-          typeLabel: 'Egreso'
-        };
       })
     ];
     return items;
-  }, [initialTasks, initialVatPayments]);
+  }, [initialTasks]);
 
   // --- Filtrado Reactivo ---
   const filteredMovements = useMemo(() => {
