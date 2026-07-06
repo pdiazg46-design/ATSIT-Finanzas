@@ -24,6 +24,9 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
 
     const NavLinks = () => (
         <nav className="flex-1 space-y-2 overflow-y-auto min-h-0">
+            <Link href="/" className={`block p-3 rounded-lg transition-colors ${pathname === '/' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+                Dashboard General
+            </Link>
             <Link href="/dashboard" className={`block p-3 rounded-lg transition-colors ${pathname === '/dashboard' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Dashboard
             </Link>
