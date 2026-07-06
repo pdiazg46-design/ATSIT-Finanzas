@@ -70,12 +70,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
         const val = m.netValue ?? m.totalValue ?? 0;
         const absVal = Math.abs(val);
 
-        let isIncome = false;
-        if (mov && mov.type) {
-            isIncome = mov.type.toLowerCase() === 'ingreso';
-        } else {
-            isIncome = val > 0;
-        }
+        const isIncome = val > 0;
 
         if (!monthlyFlow[monthKey]) {
             monthlyFlow[monthKey] = { income: 0, expense: 0 };
@@ -127,12 +122,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
             const mov = row.movements;
             const val = t.netValue ?? t.totalValue ?? 0;
 
-            let isIncome = false;
-            if (mov && mov.type) {
-                isIncome = mov.type.toLowerCase() === 'ingreso';
-            } else {
-                isIncome = val > 0;
-            }
+            const isIncome = val > 0;
 
             return {
                 id: `task-${t.id}`,
