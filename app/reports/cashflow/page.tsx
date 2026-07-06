@@ -140,7 +140,7 @@ export default async function CashFlowPage({ searchParams }: { searchParams: Pro
                         Volver a Informes
                     </Link>
                     <Link href="/reports/cashflow-annual" className="flex items-center gap-2 text-violet-400 hover:text-violet-300 transition-colors text-sm">
-                        Ver Flujo de Caja Anual
+                        Ver Flujo Anual Neto
                     </Link>
                 </div>
                 <div className="flex gap-4 items-center w-full sm:w-auto justify-end">

@@ -33,8 +33,8 @@ export default async function ReportsPage() {
                     <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 transition-transform">
                         <TrendingUp size={24} />
                     </div>
-                    <h3 className="text-xl font-bold text-white">Flujo de Caja Anual</h3>
-                    <p className="text-sm text-slate-400 mt-2">Consolidado anual de ingresos y egresos para análisis y proyección de liquidez.</p>
+                    <h3 className="text-xl font-bold text-white">Flujo Anual Neto</h3>
+                    <p className="text-sm text-slate-400 mt-2">Consolidado anual neto de ingresos y egresos operacionales (sin IVA).</p>
                 </Link>
 
 

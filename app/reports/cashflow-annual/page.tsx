@@ -65,7 +65,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
 
         const monthKey = `${year}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
-        const val = m.totalValue || m.netValue || 0;
+        const val = m.netValue ?? m.totalValue ?? 0;
 
         if (!monthlyFlow[monthKey]) {
             monthlyFlow[monthKey] = { income: 0, expense: 0 };
@@ -114,7 +114,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
         ...allMovements.map((row: any) => {
             const t = row.tasks;
             const p = row.projects;
-            const val = t.totalValue || t.netValue || 0;
+            const val = t.netValue ?? t.totalValue ?? 0;
             return {
                 id: `task-${t.id}`,
                 date: t.startDate ? new Date(t.startDate) : null,
@@ -178,8 +178,8 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
     ];
 
     const exportSummary = [
-        { label: 'Total Ingresos del Año', value: formatCurrency(totalAnnualIncome) },
-        { label: 'Total Egresos del Año', value: formatCurrency(totalAnnualExpense) },
+        { label: 'Total Ingresos Netos del Año', value: formatCurrency(totalAnnualIncome) },
+        { label: 'Total Egresos Netos del Año', value: formatCurrency(totalAnnualExpense) },
         { label: 'Saldo Neto del Año', value: formatCurrency(totalAnnualNet) }
     ];
 
@@ -202,23 +202,23 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
                     <ExportButtons
                         data={normalizedMovements}
                         columns={exportColumns}
-                        fileName={`flujo_caja_anual_${selectedYear}`}
-                        title={`Flujo de Caja Anual - Año ${selectedYear}`}
+                        fileName={`flujo_anual_neto_${selectedYear}`}
+                        title={`Flujo Anual Neto - Año ${selectedYear}`}
                         summary={exportSummary}
                     />
                 </div>
             </div>
 
             <header>
-                <h2 className="text-xl md:text-3xl font-bold text-white">Flujo de Caja Anual</h2>
-                <p className="text-sm md:text-base text-slate-400">Ingresos y egresos consolidados del año {selectedYear}</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white">Flujo Anual Neto</h2>
+                <p className="text-sm md:text-base text-slate-400">Ingresos y egresos netos reales del año {selectedYear}</p>
             </header>
 
             {/* Resumen Anual Global */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="glass-card p-6 flex items-center justify-between">
                     <div>
-                        <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Ingresos del Año</p>
+                        <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Ingresos Netos del Año</p>
                         <h3 className="text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(totalAnnualIncome)}</h3>
                     </div>
                     <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400">
@@ -228,7 +228,7 @@ export default async function CashFlowAnnualPage({ searchParams }: { searchParam
 
                 <div className="glass-card p-6 flex items-center justify-between">
                     <div>
-                        <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Egresos del Año</p>
+                        <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Egresos Netos del Año</p>
                         <h3 className="text-2xl font-bold text-rose-400 mt-1">{formatCurrency(totalAnnualExpense)}</h3>
                     </div>
                     <div className="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-400">
