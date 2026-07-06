@@ -93,15 +93,9 @@ export default function DashboardPBI({
     return list;
   }, [initialMovements, initialVatPayments]);
 
-  // Selección de IDs para los filtros reactivos
-  const [selectedProjects, setSelectedProjects] = useState<Set<number>>(() => {
-    // Por defecto, seleccionar proyectos no archivados + impuestos
-    return new Set(projectsList.filter(p => !p.isArchived).map(p => p.id));
-  });
-
-  const [selectedMovements, setSelectedMovements] = useState<Set<number>>(() => {
-    return new Set(movementsList.map(m => m.id));
-  });
+  // Selección de IDs para los filtros reactivos (Set vacío = Mostrar Todos por defecto)
+  const [selectedProjects, setSelectedProjects] = useState<Set<number>>(new Set());
+  const [selectedMovements, setSelectedMovements] = useState<Set<number>>(new Set());
 
   // --- Paginación y Ordenamiento ---
   const [currentPage, setCurrentPage] = useState(1);
@@ -339,8 +333,8 @@ export default function DashboardPBI({
 
   const handleResetAllFilters = () => {
     setShowArchived(false);
-    setSelectedProjects(new Set(projectsList.filter(p => !p.isArchived).map(p => p.id)));
-    setSelectedMovements(new Set(movementsList.map(m => m.id)));
+    setSelectedProjects(new Set());
+    setSelectedMovements(new Set());
     setStartDate(`${currentYear}-01-01`);
     setEndDate(`${currentYear}-12-31`);
     setSearchQuery('');
@@ -455,14 +449,7 @@ export default function DashboardPBI({
                 type="checkbox" 
                 checked={showArchived}
                 onChange={(e) => {
-                  const check = e.target.checked;
-                  setShowArchived(check);
-                  // Auto-seleccionar los proyectos archivados si se activan
-                  if (check) {
-                    setSelectedProjects(new Set(projectsList.map(p => p.id)));
-                  } else {
-                    setSelectedProjects(new Set(projectsList.filter(p => !p.isArchived).map(p => p.id)));
-                  }
+                  setShowArchived(e.target.checked);
                   setCurrentPage(1);
                 }}
                 className="sr-only peer" 
