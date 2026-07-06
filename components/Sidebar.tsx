@@ -23,34 +23,37 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
     }, [pathname]);
 
     const NavLinks = () => (
-        <nav className="flex-1 space-y-2 overflow-y-auto min-h-0">
-            <Link href="/" className={`block p-3 rounded-lg transition-colors ${pathname === '/' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+        <nav 
+            className="flex-1 space-y-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+            <Link href="/" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Dashboard General
             </Link>
-            <Link href="/dashboard" className={`block p-3 rounded-lg transition-colors ${pathname === '/dashboard' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/dashboard" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/dashboard' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Dashboard
             </Link>
-            <Link href="/projects" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/projects') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/projects" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/projects') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Proyectos
             </Link>
-            <Link href="/history" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/history') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/history" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/history') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Historial
             </Link>
-            <Link href="/employees" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/employees') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/employees" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/employees') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Empleados
             </Link>
-            <Link href="/pagos-iva" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/pagos-iva') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/pagos-iva" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/pagos-iva') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Pagos F29
             </Link>
-            <Link href="/reports" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/reports') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/reports" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/reports') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Informes
             </Link>
         </nav>
     );
 
     const UserSection = () => (
-        <div className="pt-4 border-t border-white/5 mt-4 shrink-0 space-y-3">
-            <Link href="/settings" className={`block p-3 rounded-lg transition-colors ${pathname.startsWith('/settings') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+        <div className="pt-3 border-t border-white/5 mt-3 shrink-0 space-y-2">
+            <Link href="/settings" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/settings') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Configuración
             </Link>
 
@@ -114,9 +117,9 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
             )}
 
             {/* Desktop Sidebar */}
-            <aside className="w-64 glass-card m-4 p-6 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
-                <div className="flex flex-col items-center gap-3 mb-6 w-full shrink-0">
-                    <div className="relative w-full h-32 hover:scale-105 transition-transform duration-300">
+            <aside className="w-64 glass-card m-4 p-5 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
+                <div className="flex flex-col items-center gap-2 mb-4 w-full shrink-0">
+                    <div className="relative w-full h-24 hover:scale-105 transition-transform duration-300">
                         <Image
                             src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
                             alt="Company Logo"
@@ -126,7 +129,7 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
                             unoptimized
                         />
                     </div>
-                    <h1 className="text-xl font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
+                    <h1 className="text-lg font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
                 </div>
 
                 <NavLinks />
