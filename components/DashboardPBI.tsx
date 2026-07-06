@@ -107,7 +107,9 @@ export default function DashboardPBI({
   const normalizedMovements = useMemo(() => {
     const items = [
       ...initialTasks.map((t: any) => {
-        const val = t.netValue ?? t.totalValue ?? 0;
+        // Para Boletas de Honorarios (documentId === 44), el costo neto real para la empresa es el valor Bruto (totalValue)
+        // ya que la retención de impuestos es parte del costo que la empresa paga al SII en el F29.
+        const val = t.documentId === 44 ? (t.totalValue || 0) : (t.netValue ?? t.totalValue ?? 0);
         const isInc = t.movementType ? t.movementType.toLowerCase() === 'ingreso' : val > 0;
         return {
           id: `task-${t.id}`,
