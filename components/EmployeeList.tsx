@@ -26,7 +26,7 @@ export default function EmployeeList({ initialEmployees }: { initialEmployees: a
             <header className="flex justify-between items-center">
                 <div>
                     <h2 className="text-3xl font-bold text-white">Directorio de Empleados</h2>
-                    <p className="text-slate-400">Equipo de trabajo de Tangente</p>
+                    <p className="text-slate-400">Equipo de trabajo de la empresa</p>
                 </div>
                 <button
                     onClick={() => { setEditingEmployee(null); setIsModalOpen(true); }}

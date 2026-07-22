@@ -3,13 +3,15 @@ import { projects, tasks } from '@/lib/schema';
 import { eq, sql } from 'drizzle-orm';
 import { BarChart3, PieChart, FileSpreadsheet, TrendingUp, Wallet, Banknote, Landmark } from 'lucide-react';
 import Link from 'next/link';
+import { getCompanySettings } from '@/lib/company-data';
 
 export default async function ReportsPage() {
+    const settings = await getCompanySettings();
     return (
         <div className="space-y-8">
             <header>
                 <h2 className="text-3xl font-bold text-white">Informes Financieros</h2>
-                <p className="text-slate-400">Análisis detallado de Tangente 2026</p>
+                <p className="text-slate-400">Análisis detallado de {settings.name} 2026</p>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,7 +61,15 @@ export default async function ReportsPage() {
                         <FileSpreadsheet size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-white">Tareas Pendientes</h3>
-                    <p className="text-sm text-slate-400 mt-2">Listado detallado de todas las tareas con estado 'En curso' o 'Retrasado'.</p>
+                    <p className="text-sm text-slate-400 mt-2">Listado detallado de todas las tareas con estado 'Pendiente', 'En curso' o 'Retrasado'.</p>
+                </Link>
+
+                <Link href="/reports/pending-payments" className="glass-card p-6 hover:bg-white/5 transition-all group">
+                    <div className="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-400 mb-4 group-hover:scale-110 transition-transform">
+                        <Banknote size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Cobros y Pagos Pendientes</h3>
+                    <p className="text-sm text-slate-400 mt-2">Control de ingresos y egresos sin fecha de pago registrada para ingresar la fecha real.</p>
                 </Link>
 
                 <Link href="/reports/honorarios" className="glass-card p-6 hover:bg-white/5 transition-all group">

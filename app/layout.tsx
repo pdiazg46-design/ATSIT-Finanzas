@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getCompanySettings } from '@/lib/company-data';
+import { initializeDatabase } from '@/lib/db';
 import Sidebar from "@/components/Sidebar";
 import { auth } from '@/auth';
 import { SessionProvider } from 'next-auth/react';
@@ -25,6 +26,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await initializeDatabase();
   const settings = await getCompanySettings();
   const session = await auth();
 

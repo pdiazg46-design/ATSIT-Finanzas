@@ -11,8 +11,9 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const secret = searchParams.get('secret');
+        const allowedSecret = process.env.SEED_SECRET || 'PatricioStandard2026';
 
-        if (secret !== 'PatricioTangente2026') {
+        if (secret !== allowedSecret && secret !== 'PatricioATSIT2026') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -128,11 +129,11 @@ export async function GET(request: Request) {
             );
         `);
 
-        const email = 'pdiazg46@gmail.com';
-        const password = await bcrypt.hash('123456', 10);
+        const username = 'Pdiaz';
+        const password = await bcrypt.hash('Pdiaz', 10);
 
         // Check if user exists
-        const existingUser = await db.select().from(users).where(eq(users.email, email)).get();
+        const existingUser = await db.select().from(users).where(eq(users.email, username)).get();
 
         const adminPermissions = JSON.stringify(['ADMIN', 'MANAGE_PROJECTS', 'MANAGE_TASKS', 'MANAGE_EMPLOYEES']);
 
@@ -143,14 +144,14 @@ export async function GET(request: Request) {
                     password,
                     permissions: adminPermissions
                 })
-                .where(eq(users.email, email));
+                .where(eq(users.email, username));
             return NextResponse.json({ message: 'Database initialized. Admin restored (Password + Permissions).', user: existingUser });
         }
 
         // Create user
         const newUser = await db.insert(users).values({
             name: 'Patricio Díaz',
-            email,
+            email: username,
             password,
             role: 'admin',
             permissions: adminPermissions

@@ -120,7 +120,11 @@ export default async function HonorariosReportPage() {
                         <tbody className="divide-y divide-white/5">
                             {reportData.map((row: any, i: number) => (
                                 <tr key={i} className="hover:bg-white/5 transition-colors">
-                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-sky-400 font-bold whitespace-nowrap">{row.projectName}</td>
+                                    <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm font-bold whitespace-nowrap">
+                                        <Link href={`/projects/${row.projectId}`} className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+                                            {row.projectName}
+                                        </Link>
+                                    </td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-slate-400 whitespace-nowrap">#{row.docNumber}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white whitespace-nowrap">{row.title}</td>
                                     <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-300 whitespace-nowrap">{formatCurrency(row.netValue)}</td>

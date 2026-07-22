@@ -25,6 +25,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
+        projectId: projects.id,
         projectName: projects.name, // Add Project Name
         totalValue: tasks.totalValue
     })
@@ -46,6 +47,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
+        projectId: projects.id,
         projectName: projects.name, // Add Project Name
         totalValue: tasks.totalValue
     })
@@ -66,6 +68,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue, // Líquido
         taxValue: tasks.taxValue, // Retención
+        projectId: projects.id,
         projectName: projects.name, // Add Project Name
         totalValue: tasks.totalValue
     })
@@ -85,6 +88,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         docNumber: tasks.docNumber,
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
+        projectId: projects.id,
         projectName: projects.name,
         totalValue: tasks.totalValue
     })
@@ -255,7 +259,15 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                 {salesData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
-                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
+                                        <td className="p-3 font-bold">
+                                            {t.projectId ? (
+                                                <Link href={`/projects/${t.projectId}`} className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+                                                    {t.projectName}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-sky-400">{t.projectName}</span>
+                                            )}
+                                        </td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(t.netValue || 0)}</td>
                                         <td className="p-3 text-right text-emerald-400 font-bold">{formatCurrency(t.taxValue || 0)}</td>
@@ -295,7 +307,15 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                 {purchasesData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
-                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
+                                        <td className="p-3 font-bold">
+                                            {t.projectId ? (
+                                                <Link href={`/projects/${t.projectId}`} className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+                                                    {t.projectName}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-sky-400">{t.projectName}</span>
+                                            )}
+                                        </td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(Math.abs(t.netValue || 0))}</td>
                                         <td className="p-3 text-right text-rose-400 font-bold">{formatCurrency(Math.abs(t.taxValue || 0))}</td>
@@ -335,7 +355,15 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                 {honorariumData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber}</td>
-                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
+                                        <td className="p-3 font-bold">
+                                            {t.projectId ? (
+                                                <Link href={`/projects/${t.projectId}`} className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+                                                    {t.projectName}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-sky-400">{t.projectName}</span>
+                                            )}
+                                        </td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-slate-400">{formatCurrency(Math.abs(t.netValue || 0))}</td>
                                         <td className="p-3 text-right text-purple-400 font-bold">{formatCurrency(Math.abs(t.taxValue || 0))}</td>
@@ -373,7 +401,15 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
                                 {ppmPrepaidData.map(t => (
                                     <tr key={t.id}>
                                         <td className="p-3 text-slate-300">#{t.docNumber || 'S/N'}</td>
-                                        <td className="p-3 text-sky-400 font-bold">{t.projectName}</td>
+                                        <td className="p-3 font-bold">
+                                            {t.projectId ? (
+                                                <Link href={`/projects/${t.projectId}`} className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+                                                    {t.projectName}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-sky-400">{t.projectName}</span>
+                                            )}
+                                        </td>
                                         <td className="p-3 text-white">{t.title}</td>
                                         <td className="p-3 text-right text-emerald-400 font-bold">{formatCurrency(Math.abs(t.totalValue || 0))}</td>
                                     </tr>

@@ -1,7 +1,7 @@
 'use client';
 
 import { addVatPayment, updateVatPayment } from '@/lib/vat-actions';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 interface VatPayment {
@@ -36,13 +36,24 @@ function SubmitButton({ isEditing }: { isEditing: boolean }) {
 
 export default function VatPaymentForm({ editingPayment, onSuccess }: VatPaymentFormProps) {
     const formRef = useRef<HTMLFormElement>(null);
+    const [amountInput, setAmountInput] = useState('');
 
-    // Reset form when switching between edit/create modes
+    // Reset/Sync form when switching editingPayment
     useEffect(() => {
         if (formRef.current) {
             formRef.current.reset();
         }
+        setAmountInput(editingPayment?.amount ? new Intl.NumberFormat('es-CL').format(editingPayment.amount) : '');
     }, [editingPayment]);
+
+    const handleAmountChange = (val: string) => {
+        const cleanVal = val.replace(/\D/g, '');
+        if (cleanVal === '') {
+            setAmountInput('');
+            return;
+        }
+        setAmountInput(new Intl.NumberFormat('es-CL').format(parseInt(cleanVal, 10)));
+    };
 
     async function action(formData: FormData) {
         if (editingPayment) {
@@ -52,6 +63,7 @@ export default function VatPaymentForm({ editingPayment, onSuccess }: VatPayment
         }
 
         formRef.current?.reset();
+        setAmountInput('');
         if (onSuccess) {
             onSuccess();
         }
@@ -66,7 +78,8 @@ export default function VatPaymentForm({ editingPayment, onSuccess }: VatPayment
                     name="date"
                     required
                     defaultValue={editingPayment?.paymentDate || new Date().toISOString().split('T')[0]}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                    onClick={(e) => e.currentTarget.showPicker()}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors cursor-pointer"
                 />
             </div>
             <div>
@@ -74,14 +87,14 @@ export default function VatPaymentForm({ editingPayment, onSuccess }: VatPayment
                 <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">$</span>
                     <input
-                        type="number"
-                        name="amount"
+                        type="text"
                         required
-                        min="1"
-                        defaultValue={editingPayment?.amount}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 pl-8 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                        value={amountInput}
+                        onChange={(e) => handleAmountChange(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 pl-8 text-white focus:outline-none focus:border-sky-500 transition-colors font-mono"
                         placeholder="0"
                     />
+                    <input type="hidden" name="amount" value={amountInput.replace(/\D/g, '') || '0'} />
                 </div>
             </div>
             <div>

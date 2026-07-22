@@ -13,8 +13,15 @@ export default async function DashboardPage() {
     expectedIncome: projects.expectedIncome
   }).from(projects).all();
 
-  // Query all movement types
-  const allMovements = await db.select().from(movements).all();
+  // Query only movement types that are actually used in tasks
+  const allMovements = await db.selectDistinct({
+    id: movements.id,
+    name: movements.name,
+    type: movements.type
+  })
+    .from(movements)
+    .innerJoin(tasks, eq(tasks.movementId, movements.id))
+    .all();
 
   // Query all individual movements (tasks) with their joins
   const allTasks = await db.select({

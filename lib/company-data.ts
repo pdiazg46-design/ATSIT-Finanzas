@@ -14,8 +14,8 @@ export interface CompanySettings {
 }
 
 const defaultSettings: CompanySettings = {
-    name: 'Tangente',
-    businessName: 'Tangente SpA',
+    name: 'ATSIT Finanzas',
+    businessName: 'ATSIT SpA',
     rut: '',
     address: '',
     phone: '',

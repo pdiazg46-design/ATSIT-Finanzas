@@ -32,9 +32,10 @@ interface ExportButtonsProps {
     fileName: string;
     title: string;
     summary?: SummaryItem[];
+    companyName?: string;
 }
 
-export default function ExportButtons({ data, columns, fileName, title, summary }: ExportButtonsProps) {
+export default function ExportButtons({ data, columns, fileName, title, summary, companyName = 'Sistema Financiero' }: ExportButtonsProps) {
 
     const handleExcelExport = () => {
         // Prepare data for Excel
@@ -95,21 +96,22 @@ export default function ExportButtons({ data, columns, fileName, title, summary 
             });
         };
 
-        const logoDataUrl = await loadImage('/logo-pdf.png');
+        const logoDataUrl = await loadImage(`/logo.png?v=${Date.now()}`);
 
         if (logoDataUrl) {
-            doc.addImage(logoDataUrl, 'PNG', 14, 10, 30, 30);
+            doc.addImage(logoDataUrl, 'PNG', 14, 8, 38, 20);
+            doc.setFontSize(18);
+            doc.text(title, 56, 20);
+            doc.setFontSize(9);
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-CL')}`, 56, 27);
         } else {
-            // Fallback text if logo fails
             doc.setFontSize(12);
-            doc.text("Tangente", 14, 25);
+            doc.text(companyName, 14, 20);
+            doc.setFontSize(18);
+            doc.text(title, 14, 28);
+            doc.setFontSize(9);
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-CL')}`, 14, 35);
         }
-
-        doc.setFontSize(20);
-        doc.text(title, 50, 25);
-
-        doc.setFontSize(10);
-        doc.text(`Fecha: ${new Date().toLocaleDateString('es-CL')}`, 50, 32);
 
         // Table Data
         const tableBody = data.map(item => {

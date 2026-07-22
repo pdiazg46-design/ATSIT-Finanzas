@@ -41,25 +41,27 @@ export default function AddTaskModal({
     const currentMovement = movements.find(m => m.id === movementId);
     const isIncome = currentMovement?.type === 'Ingreso';
 
+    const ingresos = movements.filter(m => m.type === 'Ingreso');
+    const gastos = movements.filter(m => m.type === 'Gasto');
+
     // Date Logic
     const getTodayStr = () => new Date().toISOString().split('T')[0];
     const initialDate = task?.startDate ? task.startDate : getTodayStr();
 
     const [startDate, setStartDate] = useState(initialDate);
     const [dueDate, setDueDate] = useState(task?.dueDate || initialDate);
-    const [paymentDate, setPaymentDate] = useState(task?.paymentDate || initialDate);
+    const [paymentDate, setPaymentDate] = useState(task?.paymentDate || '');
 
     // Track if user manually changed dates to stop auto-sync
     const [manualDueDate, setManualDueDate] = useState(false);
-    const [manualPaymentDate, setManualPaymentDate] = useState(false);
+    const [manualPaymentDate, setManualPaymentDate] = useState(!!task?.paymentDate);
 
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = e.target.value;
         setStartDate(newDate);
 
-        // Auto-sync if not manually changed
+        // Auto-sync if not manually changed (only for due date)
         if (!manualDueDate) setDueDate(newDate);
-        if (!manualPaymentDate) setPaymentDate(newDate);
     };
 
     // Tax Logic (2026 Update)
@@ -191,14 +193,31 @@ export default function AddTaskModal({
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Tipo Movimiento</label>
                                     <div className="relative">
-                                        <select
-                                            name="movementId"
-                                            value={movementId}
-                                            onChange={(e) => setMovementId(parseInt(e.target.value))}
-                                            className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none"
-                                        >
-                                            {movements.map(m => <option key={m.id} value={m.id} className="bg-slate-900">{m.name} ({m.type})</option>)}
-                                        </select>
+                                         <select
+                                             name="movementId"
+                                             value={movementId}
+                                             onChange={(e) => setMovementId(parseInt(e.target.value))}
+                                             className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none font-medium"
+                                         >
+                                             {ingresos.length > 0 && (
+                                                 <optgroup label="INGRESOS ↗" className="bg-slate-900 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                                                     {ingresos.map(m => (
+                                                         <option key={m.id} value={m.id} className="bg-slate-900 text-white font-medium text-sm normal-case">
+                                                             {m.name}
+                                                         </option>
+                                                     ))}
+                                                 </optgroup>
+                                             )}
+                                             {gastos.length > 0 && (
+                                                 <optgroup label="GASTOS ↘" className="bg-slate-900 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                                                     {gastos.map(m => (
+                                                         <option key={m.id} value={m.id} className="bg-slate-900 text-white font-medium text-sm normal-case">
+                                                             {m.name}
+                                                         </option>
+                                                     ))}
+                                                 </optgroup>
+                                             )}
+                                         </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
                                             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                                         </div>
@@ -266,6 +285,7 @@ export default function AddTaskModal({
                                             name="startDate"
                                             value={startDate}
                                             onChange={handleStartDateChange}
+                                            onClick={(e) => e.currentTarget.showPicker()}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         />
                                     </div>
@@ -288,6 +308,7 @@ export default function AddTaskModal({
                                                     setDueDate(e.target.value);
                                                     setManualDueDate(true);
                                                 }}
+                                                onClick={(e) => e.currentTarget.showPicker()}
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                             />
                                         </div>
@@ -296,8 +317,15 @@ export default function AddTaskModal({
                                         <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Fecha Pago</label>
                                         <div className="relative group">
                                             <div className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white flex items-center justify-between group-focus-within:border-sky-500 transition-colors">
-                                                <span className="font-medium">
-                                                    {paymentDate ? paymentDate.split('-').reverse().join('/') : 'dd/mm/aaaa'}
+                                                <span className={paymentDate ? "font-medium" : "text-amber-500 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5"}>
+                                                    {paymentDate ? (
+                                                        paymentDate.split('-').reverse().join('/')
+                                                    ) : (
+                                                        <>
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                            Pendiente de Pago
+                                                        </>
+                                                    )}
                                                 </span>
                                                 <Calendar size={18} className="text-slate-400" />
                                             </div>
@@ -309,6 +337,7 @@ export default function AddTaskModal({
                                                     setPaymentDate(e.target.value);
                                                     setManualPaymentDate(true);
                                                 }}
+                                                onClick={(e) => e.currentTarget.showPicker()}
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                             />
                                         </div>

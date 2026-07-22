@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Edit } from 'lucide-react';
 import ProjectModal from './ProjectModal';
 
-export default function EditProjectButton({ project, employees, canEdit = false }: { project: any, employees: any[], canEdit?: boolean }) {
+export default function EditProjectButton({ project, employees, canEdit = false, categories = [], currentUser }: { project: any, employees: any[], canEdit?: boolean, categories?: string[], currentUser?: any }) {
     const [isOpen, setIsOpen] = useState(false);
 
     if (!canEdit) return null;
@@ -23,6 +23,8 @@ export default function EditProjectButton({ project, employees, canEdit = false 
                 <ProjectModal
                     project={project}
                     employees={employees}
+                    categories={categories}
+                    currentUser={currentUser}
                     onClose={() => setIsOpen(false)}
                 />
             )}

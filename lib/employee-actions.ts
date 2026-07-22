@@ -8,14 +8,16 @@ import { revalidatePath } from 'next/cache';
 export async function upsertEmployee(data: any) {
     const { id, ...rest } = data;
 
+    let result;
     if (id) {
-        await db.update(employees).set(rest).where(eq(employees.id, id));
+        result = await db.update(employees).set(rest).where(eq(employees.id, id)).returning().get();
     } else {
-        await db.insert(employees).values(rest);
+        result = await db.insert(employees).values(rest).returning().get();
     }
 
     revalidatePath('/employees');
     revalidatePath('/projects'); // In case owner names are displayed
+    return result;
 }
 
 export async function deleteEmployee(id: number) {

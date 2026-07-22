@@ -19,9 +19,11 @@ export async function uploadLogo(formData: FormData) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Save to public directory
-        const path = join(process.cwd(), 'public', 'logo.png');
-        await writeFile(path, buffer);
+        // Save to public directory (both logo.png and logo-pdf.png for full compatibility)
+        const pathLogo = join(process.cwd(), 'public', 'logo.png');
+        const pathPdfLogo = join(process.cwd(), 'public', 'logo-pdf.png');
+        await writeFile(pathLogo, buffer);
+        await writeFile(pathPdfLogo, buffer);
 
         revalidatePath('/', 'layout');
         return { success: true, message: 'Logo updated successfully' };

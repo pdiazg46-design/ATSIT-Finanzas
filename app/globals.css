@@ -35,3 +35,16 @@ body {
     -webkit-text-fill-color: transparent;
   }
 }
+
+/* Hacer visible el indicador del picker del calendario nativo en inputs tipo date en fondo oscuro */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.5) contrast(0.9);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}

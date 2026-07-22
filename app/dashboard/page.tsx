@@ -30,10 +30,12 @@ export default async function DashboardPage() {
         amount: sql<number>`SUM(${tasks.totalValue})`
     })
         .from(tasks)
+        .leftJoin(movements, eq(tasks.movementId, movements.id))
         .where(and(
             isNotNull(tasks.paymentDate),
             not(eq(tasks.paymentDate, '')),
-            sql`${tasks.netValue} < 0`
+            sql`${tasks.netValue} < 0`,
+            sql`(${movements.name} IS NULL OR ${movements.name} NOT LIKE 'Retiro%')`
         ))
         .get();
 
@@ -61,10 +63,6 @@ export default async function DashboardPage() {
         .where(eq(projects.isArchived, false))
         .groupBy(projects.id)
         .orderBy(
-            sql`CASE 
-                WHEN ${projects.name} IN ('Gastos Comunes', 'Ahorro 10%') THEN 0 
-                ELSE 1 
-            END`,
             desc(projects.lastActionAt)
         )
         .all();

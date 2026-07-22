@@ -8,7 +8,7 @@ import { LogOut, User as UserIcon } from 'lucide-react';
 import { logout } from '@/lib/actions';
 import LogoutButton from './LogoutButton';
 
-export default function Sidebar({ companyName = 'Tangente', user }: { companyName?: string, user?: { name?: string | null, email?: string | null } }) {
+export default function Sidebar({ companyName = 'Sistema Financiero', user }: { companyName?: string, user?: { name?: string | null, email?: string | null } }) {
     const pathname = usePathname();
     const [logoVersion, setLogoVersion] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,6 +56,15 @@ export default function Sidebar({ companyName = 'Tangente', user }: { companyNam
             <Link href="/settings" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/settings') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Configuración
             </Link>
+            
+            <a 
+                href="https://www.atsit.cl/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="block py-2 px-3 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-white/5 transition-colors font-medium"
+            >
+                Soporte y Mejoras
+            </a>
 
             {user && (
                 <div className="bg-white/5 rounded-xl p-3">

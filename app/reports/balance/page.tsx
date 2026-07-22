@@ -8,6 +8,7 @@ import ExportButtons from '@/components/ExportButtons';
 
 export default async function BalanceReportPage() {
     const reportData = await db.select({
+        id: projects.id,
         name: projects.name,
         expectedIncome: projects.expectedIncome,
         realIncomeNet: sql<number>`SUM(CASE WHEN ${tasks.netValue} > 0 THEN ${tasks.netValue} ELSE 0 END)`,
@@ -156,7 +157,11 @@ export default async function BalanceReportPage() {
                                 const perc = row.expectedIncome ? (row.realIncomeNet / row.expectedIncome) * 100 : 0;
                                 return (
                                     <tr key={i} className="hover:bg-white/5 transition-colors">
-                                        <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-white font-medium whitespace-nowrap">{row.name}</td>
+                                        <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm font-medium whitespace-nowrap">
+                                            <Link href={`/projects/${row.id}`} className="text-sky-400 hover:text-sky-300 font-bold hover:underline transition-colors">
+                                                {row.name}
+                                            </Link>
+                                        </td>
                                         <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-slate-400 whitespace-nowrap">{formatCurrency(row.expectedIncome || 0)}</td>
                                         <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-emerald-400 font-bold whitespace-nowrap">{formatCurrency(row.realIncomeNet)}</td>
                                         <td className="px-3 py-3 md:px-6 md:py-4 text-xs md:text-sm text-right text-rose-400 font-bold whitespace-nowrap">{formatCurrency(row.expensesNet)}</td>

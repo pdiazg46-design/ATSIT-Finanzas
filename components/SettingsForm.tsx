@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { uploadLogo, saveCompanyDetails } from '@/lib/settings-actions';
 import { CompanySettings } from '@/lib/company-data';
-import { Upload, Save, AlertCircle, CheckCircle2, Building2 } from 'lucide-react';
+import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: CompanySettings }) {
     const [preview, setPreview] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                 <form onSubmit={handleDetailsSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-400">Nombre de Fantasía (App)</label>
-                        <input name="name" defaultValue={initialSettings.name} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors" placeholder="Ej: Tangente" />
+                        <input name="name" defaultValue={initialSettings.name} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors" placeholder="Ej: ATSIT Finanzas" />
                     </div>
 
                     <div className="space-y-2">
@@ -183,6 +183,57 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                         )}
                     </button>
                 </form>
+            </section>
+
+            {/* Privacy and Support Section */}
+            <section className="glass-card p-8">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <ShieldCheck size={24} className="text-emerald-400" />
+                    Privacidad y Soporte Comercial
+                </h3>
+                <p className="text-slate-400 text-sm mb-6">
+                    Información relevante sobre el uso, la propiedad de los datos y el soporte técnico de la herramienta.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 text-xs leading-relaxed">
+                    <div className="space-y-3 bg-white/5 p-5 rounded-xl border border-white/5">
+                        <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Privacidad Local Asegurada
+                        </h4>
+                        <p>
+                            Esta aplicación funciona de manera <strong>estrictamente local</strong>. Toda la información de sus proyectos, finanzas, movimientos y nómina de empleados se almacena únicamente en su dispositivo en el archivo local de base de datos.
+                        </p>
+                        <p className="text-slate-400">
+                            Ningún dato financiero ni credencial es transmitido, recolectado ni auditado por servidores externos o por el creador del sistema.
+                        </p>
+                    </div>
+
+                    <div className="space-y-3 bg-white/5 p-5 rounded-xl border border-white/5 flex flex-col justify-between">
+                        <div>
+                            <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                Responsabilidad y Soporte
+                            </h4>
+                            <p className="mb-2">
+                                La aplicación se entrega "tal cual" para su uso autónomo. El desarrollador no mantiene ningún vínculo operativo ni se hace responsable por errores de cálculo financiero, pérdidas de datos o inconsistencias impositivas.
+                            </p>
+                        </div>
+                        <div className="pt-4 border-t border-white/5">
+                            <p className="text-[11px] text-slate-400 mb-2">
+                                ¿Deseas solicitar mejoras personalizadas o llevar el sistema a la web?
+                            </p>
+                            <a
+                                href="https://www.atsit.cl/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors text-center"
+                            >
+                                Visitar ATSIT (atsit.cl)
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     );

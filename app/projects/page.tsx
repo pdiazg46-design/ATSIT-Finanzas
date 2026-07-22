@@ -5,10 +5,16 @@ import ProjectList from '@/components/ProjectList';
 import AddProjectButton from '@/components/AddProjectButton';
 import { hasPermission } from '@/lib/user-actions';
 import { PERMISSIONS } from '@/lib/permissions';
+import { getCompanySettings } from '@/lib/company-data';
+import { auth } from '@/auth';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage() {
+    const session = await auth();
+    const currentUser = session?.user || { name: 'Pdiaz', email: 'Pdiaz' };
+
+    const settings = await getCompanySettings();
     const allProjects = await db.select({
         id: projects.id,
         name: projects.name,
@@ -29,15 +35,14 @@ export default async function ProjectsPage() {
         .leftJoin(tasks, eq(projects.id, tasks.projectId))
         .groupBy(projects.id)
         .orderBy(
-            sql`CASE 
-                WHEN ${projects.name} IN ('Gastos Comunes', 'Ahorro 10%') THEN 0 
-                ELSE 1 
-            END`,
             desc(projects.lastActionAt)
         )
         .all();
 
     const allEmployees = await db.select().from(employees).all();
+
+    const allCategories = allProjects.map((p: any) => p.category).filter((c: any) => c && c.trim() !== '');
+    const uniqueCategories = Array.from(new Set(allCategories));
 
     const activeProjectStats = allProjects.filter((p: any) => !p.isArchived);
     const totalNet = activeProjectStats.reduce((sum: any, p: any) => sum + (p.netBalance || 0), 0);
@@ -54,7 +59,7 @@ export default async function ProjectsPage() {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-white">Proyectos</h2>
-                    <p className="text-slate-400">Panel de control y gestión de portafolio de Tangente</p>
+                    <p className="text-slate-400">Panel de control y gestión de portafolio de {settings.name}</p>
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="text-right hidden md:block">
@@ -62,7 +67,7 @@ export default async function ProjectsPage() {
                         <p className="text-xl font-black text-sky-400">{formatCurrency(totalNet)}</p>
                     </div>
                     {/* Removed VAT display */}
-                    <AddProjectButton employees={allEmployees} canCreate={canManageProjects} />
+                    <AddProjectButton employees={allEmployees} canCreate={canManageProjects} categories={uniqueCategories} currentUser={currentUser} />
                 </div>
             </header>
 

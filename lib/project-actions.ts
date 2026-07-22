@@ -88,3 +88,21 @@ export async function activateProject(id: number) {
     revalidatePath('/');
     revalidatePath('/history');
 }
+
+export async function updateProjectObservations(id: number, observationsJson: string) {
+    if (!await hasPermission(PERMISSIONS.MANAGE_PROJECTS)) {
+        return { success: false, message: 'No tienes permiso para actualizar observaciones' };
+    }
+
+    await db.update(projects)
+        .set({
+            observations: observationsJson,
+            lastActionAt: new Date().toISOString()
+        })
+        .where(eq(projects.id, id));
+
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${id}`);
+    revalidatePath('/');
+    return { success: true };
+}

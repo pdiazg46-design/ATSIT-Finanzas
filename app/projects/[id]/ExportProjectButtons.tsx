@@ -81,13 +81,44 @@ export default function ExportProjectButtons({
         const autoTable = (await import('jspdf-autotable')).default;
         const doc = new jsPDF('landscape'); // Landscape is better for so many columns
 
-        // --- HEADER ---
-        doc.setFontSize(20);
-        doc.text(title, 14, 20);
-        doc.setFontSize(10);
-        doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-CL')}`, 14, 28);
+        // Helper to load image
+        const loadImage = (url: string): Promise<string | null> => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = url;
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/png'));
+                    } else {
+                        resolve(null);
+                    }
+                };
+                img.onerror = () => resolve(null);
+            });
+        };
 
-        let currentY = 35;
+        const logoDataUrl = await loadImage(`/logo.png?v=${Date.now()}`);
+
+        if (logoDataUrl) {
+            doc.addImage(logoDataUrl, 'PNG', 14, 8, 38, 20);
+            doc.setFontSize(18);
+            doc.text(title, 56, 18);
+            doc.setFontSize(9);
+            doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-CL')}`, 56, 25);
+        } else {
+            doc.setFontSize(18);
+            doc.text(title, 14, 18);
+            doc.setFontSize(9);
+            doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-CL')}`, 14, 25);
+        }
+
+        let currentY = 40;
 
         // --- SUMMARY ---
         if (summary && summary.length > 0) {

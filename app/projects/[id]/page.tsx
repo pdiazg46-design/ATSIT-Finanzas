@@ -10,8 +10,13 @@ import EditProjectButton from '@/components/EditProjectButton';
 import ExportProjectButtons from './ExportProjectButtons';
 import { hasPermission } from '@/lib/user-actions';
 import { PERMISSIONS } from '@/lib/permissions';
+import { auth } from '@/auth';
+import ProjectObservationsManager from '@/components/ProjectObservationsManager';
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const session = await auth();
+    const currentUser = session?.user || { name: 'Pdiaz', email: 'Pdiaz' };
+
     const { id: idStr } = await params;
     const id = parseInt(idStr);
 
@@ -21,11 +26,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const owner = project.ownerId ? await db.select().from(employees).where(eq(employees.id, project.ownerId)).get() : null;
 
     // Lookup data for the AddTask form
-    const [allEmployees, initialMovements, initialDocuments] = await Promise.all([
+    const [allEmployees, initialMovements, initialDocuments, allProjectsForCategories] = await Promise.all([
         db.select().from(employees).all(),
         db.select().from(movements).all(),
         db.select().from(documents).all(),
+        db.select({ category: projects.category }).from(projects).all()
     ]);
+
+    const uniqueCategories = Array.from(new Set(allProjectsForCategories.map(p => p.category).filter(c => c && c.trim() !== ''))) as string[];
 
     // Self-healing: Ensure "Pago PPM" exists in movements and cleanup old name
     let allMovements = initialMovements;
@@ -73,7 +81,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         .leftJoin(movements, eq(tasks.movementId, movements.id))
         .leftJoin(documents, eq(tasks.documentId, documents.id))
         .where(eq(tasks.projectId, id))
-        .orderBy(desc(tasks.startDate))
+        .orderBy(desc(tasks.id))
         .all();
 
     const formatCurrency = (val: number) => {
@@ -119,7 +127,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                         ]}
                         tasksData={projectTasks}
                     />
-                    <EditProjectButton project={project} employees={allEmployees} canEdit={canManageProjects} />
+                    <EditProjectButton project={project} employees={allEmployees} canEdit={canManageProjects} categories={uniqueCategories} currentUser={currentUser} />
                     {canManageProjects && (
                         <form action={async () => {
                             'use server';
@@ -206,17 +214,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </div>
             </div>
 
-            {project.observations && (
-                <section className="glass-card p-8 border-sky-500/20">
-                    <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
-                        <FileText size={20} className="text-sky-400" />
-                        Observaciones del Proyecto
-                    </h3>
-                    <div className="bg-slate-900/50 p-6 rounded-xl border border-white/5 white-space-pre-wrap text-slate-300 leading-relaxed italic">
-                        {project.observations}
-                    </div>
-                </section>
-            )}
+            <ProjectObservationsManager
+                projectId={id}
+                initialObservations={project.observations}
+                currentUser={currentUser}
+            />
 
             <section className="glass-card p-0 overflow-hidden relative">
                 <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
