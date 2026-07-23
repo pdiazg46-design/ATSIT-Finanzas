@@ -20,8 +20,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "ATSIT Finance Pro",
-  description: "Modern Finance Management System",
+  title: "ATSIT Finanzas",
+  description: "Sistema de Gestión Financiera",
 };
 
 export default async function RootLayout({

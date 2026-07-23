@@ -84,7 +84,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
-          name: "ATSIT Finanzas Pro v1.0.0"
+          name: "ATSIT Finanzas v1.0.0"
           body: "Descargas oficiales directas para Windows (.exe) y Mac (.dmg)."
           files: release-files/*
         env:
