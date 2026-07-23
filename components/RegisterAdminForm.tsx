@@ -12,6 +12,7 @@ export default function RegisterAdminForm() {
     const [showPassword, setShowPassword] = useState(false);
     
     const [isPending, setIsPending] = useState(false);
+    const [acceptedPolicy, setAcceptedPolicy] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
@@ -145,9 +146,28 @@ export default function RegisterAdminForm() {
                 </div>
             </div>
 
+            {/* Mandatory Policy Checkbox */}
+            <div className="pt-2">
+                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-300 group">
+                    <input
+                        type="checkbox"
+                        checked={acceptedPolicy}
+                        onChange={(e) => setAcceptedPolicy(e.target.checked)}
+                        className="mt-0.5 rounded border-white/20 bg-white/5 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
+                        required
+                    />
+                    <span>
+                        Declaro que he leído y acepto la{' '}
+                        <span className="text-emerald-400 font-semibold underline">
+                            Política de Responsabilidad Local
+                        </span>
+                    </span>
+                </label>
+            </div>
+
             <button
-                className="mt-6 w-full flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 py-3 text-white hover:from-emerald-500 hover:to-indigo-500 transition-all font-semibold shadow-lg shadow-emerald-600/20 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none gap-2"
-                disabled={isPending || success}
+                className="mt-4 w-full flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 py-3 text-white hover:from-emerald-500 hover:to-indigo-500 transition-all font-semibold shadow-lg shadow-emerald-600/20 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none gap-2"
+                disabled={isPending || success || !acceptedPolicy}
             >
                 {isPending ? 'Inicializando...' : success ? '¡Listo!' : 'Registrar Admin e Iniciar'}
                 <ArrowRight className="h-5 w-5 text-indigo-100" />

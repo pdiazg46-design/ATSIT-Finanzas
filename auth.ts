@@ -4,11 +4,14 @@ import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 async function getUser(email: string) {
-    const user = await db.select().from(users).where(eq(users.email, email)).get();
+    const trimmed = email.trim();
+    const user = await db.select().from(users)
+        .where(sql`LOWER(${users.email}) = LOWER(${trimmed})`)
+        .get();
     return user;
 }
 

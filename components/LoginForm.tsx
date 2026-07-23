@@ -5,12 +5,13 @@ import { authenticate } from '@/lib/actions';
 import { ArrowRight, Key, AtSign, CircleAlert, Eye, EyeOff, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
-export default function LoginForm() {
+export default function LoginForm({ onToggleRegister }: { onToggleRegister?: () => void }) {
     const [errorMessage, formAction, isPending] = useFormState(
         authenticate,
         undefined
     );
     const [showPassword, setShowPassword] = useState(false);
+    const [acceptedPolicy, setAcceptedPolicy] = useState(false);
     const [isPolicyOpen, setIsPolicyOpen] = useState(false);
 
     return (
@@ -64,9 +65,33 @@ export default function LoginForm() {
                     </button>
                 </div>
             </div>
+
+            {/* Mandatory Policy Checkbox */}
+            <div className="pt-2">
+                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-300 group">
+                    <input
+                        type="checkbox"
+                        checked={acceptedPolicy}
+                        onChange={(e) => setAcceptedPolicy(e.target.checked)}
+                        className="mt-0.5 rounded border-white/20 bg-white/5 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900"
+                        required
+                    />
+                    <span>
+                        Declaro que he leído y acepto la{' '}
+                        <button
+                            type="button"
+                            onClick={() => setIsPolicyOpen(true)}
+                            className="text-indigo-400 font-semibold hover:underline"
+                        >
+                            Política de Responsabilidad Local
+                        </button>
+                    </span>
+                </label>
+            </div>
+
             <button
-                className="mt-6 w-full flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 py-3 text-white hover:from-indigo-500 hover:to-sky-500 transition-all font-semibold shadow-lg shadow-indigo-600/20 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none gap-2"
-                disabled={isPending}
+                className="mt-4 w-full flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 py-3 text-white hover:from-indigo-500 hover:to-sky-500 transition-all font-semibold shadow-lg shadow-indigo-600/20 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none gap-2"
+                disabled={isPending || !acceptedPolicy}
             >
                 {isPending ? 'Ingresando...' : 'Ingresar'}
                 <ArrowRight className="h-5 w-5 text-indigo-100" />

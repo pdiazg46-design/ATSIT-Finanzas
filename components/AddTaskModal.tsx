@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createTask, updateTask } from '@/lib/task-actions';
-import { X, FileText, Calendar, DollarSign, User, Tag } from 'lucide-react';
+import { createMovementAction, createDocumentAction } from '@/lib/catalog-actions';
+import { X, FileText, Calendar, DollarSign, User, Tag, Plus, Check } from 'lucide-react';
 
 type Tab = 'concepto' | 'fechas' | 'finanzas';
 
@@ -22,27 +23,40 @@ export default function AddTaskModal({
     onClose: () => void,
     task?: any
 }) {
-    // We use absolute value for input, backend handles the sign
+    // Dynamic catalog lists allowing on-the-fly additions
+    const [movementsList, setMovementsList] = useState<any[]>(movements);
+    const [documentsList, setDocumentsList] = useState<any[]>(documents);
+
+    // Inputs
     const [netValue, setNetValue] = useState(task ? Math.abs(task.netValue) : 0);
-    const [movementId, setMovementId] = useState(task?.movementId || movements[0]?.id);
-    const [documentId, setDocumentId] = useState(task?.documentId || documents[0]?.id || 1);
+    const [movementId, setMovementId] = useState(task?.movementId || movementsList[0]?.id);
+    const [documentId, setDocumentId] = useState(task?.documentId || documentsList[0]?.id || 1);
     const [mounted, setMounted] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('concepto');
 
+    // Mini modal states for quick creation
+    const [showQuickMovModal, setShowQuickMovModal] = useState(false);
+    const [quickMovName, setQuickMovName] = useState('');
+    const [quickMovType, setQuickMovType] = useState<'Ingreso' | 'Gasto'>('Gasto');
+    const [isCreatingMov, setIsCreatingMov] = useState(false);
+
+    const [showQuickDocModal, setShowQuickDocModal] = useState(false);
+    const [quickDocName, setQuickDocName] = useState('');
+    const [isCreatingDoc, setIsCreatingDoc] = useState(false);
+
     useEffect(() => {
         setMounted(true);
-        // Evitar scroll en el fondo
         document.body.style.overflow = 'hidden';
         return () => {
             document.body.style.overflow = 'auto';
         };
     }, []);
 
-    const currentMovement = movements.find(m => m.id === movementId);
+    const currentMovement = movementsList.find(m => m.id === movementId);
     const isIncome = currentMovement?.type === 'Ingreso';
 
-    const ingresos = movements.filter(m => m.type === 'Ingreso');
-    const gastos = movements.filter(m => m.type === 'Gasto');
+    const ingresos = movementsList.filter(m => m.type === 'Ingreso');
+    const gastos = movementsList.filter(m => m.type === 'Gasto');
 
     // Date Logic
     const getTodayStr = () => new Date().toISOString().split('T')[0];
@@ -52,35 +66,77 @@ export default function AddTaskModal({
     const [dueDate, setDueDate] = useState(task?.dueDate || initialDate);
     const [paymentDate, setPaymentDate] = useState(task?.paymentDate || '');
 
-    // Track if user manually changed dates to stop auto-sync
     const [manualDueDate, setManualDueDate] = useState(false);
     const [manualPaymentDate, setManualPaymentDate] = useState(!!task?.paymentDate);
 
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = e.target.value;
         setStartDate(newDate);
-
-        // Auto-sync if not manually changed (only for due date)
         if (!manualDueDate) setDueDate(newDate);
     };
 
-    // Tax Logic (2026 Update)
-    const isInvoice = documentId === 42; // Factura Electrónica
-    const isHonorarium = documentId === 44; // Boleta Honorarios
+    // Dynamic Tax Matching Logic (matching by document name)
+    const selectedDoc = documentsList.find(d => d.id === documentId);
+    const docName = (selectedDoc?.name || '').toLowerCase();
+    const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
+    const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
+    const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote) && !docName.includes('exenta');
+    const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
 
     let taxValue = 0;
     let taxLabel = '';
 
     if (isInvoice) {
         taxValue = netValue * 0.19;
-        taxLabel = 'IVA (19%)';
+        taxLabel = isCreditNote ? 'IVA a Descontar (19%)' : 'IVA (19%)';
     } else if (isHonorarium) {
-        // Tasa 2026: 15.25%
-        // Cálculo basado en Líquido -> Retención
         const rate = 0.1525;
         taxValue = netValue * (rate / (1 - rate));
         taxLabel = `Retención (${(rate * 100).toFixed(2)}%)`;
     }
+
+    // Quick Add Movement Handler
+    const handleQuickAddMovement = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!quickMovName.trim()) return;
+        setIsCreatingMov(true);
+
+        const formData = new FormData();
+        formData.append('name', quickMovName.trim());
+        formData.append('type', quickMovType);
+
+        const res = await createMovementAction(formData);
+        if (res.success && res.movement) {
+            setMovementsList(prev => [...prev, res.movement]);
+            setMovementId(res.movement.id);
+            setQuickMovName('');
+            setShowQuickMovModal(false);
+        } else {
+            alert(res.message);
+        }
+        setIsCreatingMov(false);
+    };
+
+    // Quick Add Document Handler
+    const handleQuickAddDocument = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!quickDocName.trim()) return;
+        setIsCreatingDoc(true);
+
+        const formData = new FormData();
+        formData.append('name', quickDocName.trim());
+
+        const res = await createDocumentAction(formData);
+        if (res.success && res.document) {
+            setDocumentsList(prev => [...prev, res.document]);
+            setDocumentId(res.document.id);
+            setQuickDocName('');
+            setShowQuickDocModal(false);
+        } else {
+            alert(res.message);
+        }
+        setIsCreatingDoc(false);
+    };
 
     if (!mounted) return null;
 
@@ -190,14 +246,26 @@ export default function AddTaskModal({
                                         </div>
                                     </div>
                                 </div>
+
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Tipo Movimiento</label>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest">Tipo Movimiento</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowQuickMovModal(true)}
+                                            className="text-sky-400 hover:text-sky-300 text-[11px] font-bold flex items-center gap-1 hover:underline"
+                                            title="Crear un nuevo tipo de movimiento"
+                                        >
+                                            <Plus size={12} />
+                                            Nuevo Tipo
+                                        </button>
+                                    </div>
                                     <div className="relative">
                                          <select
                                              name="movementId"
                                              value={movementId}
                                              onChange={(e) => setMovementId(parseInt(e.target.value))}
-                                             className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none font-medium"
+                                             className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none font-medium pr-10"
                                          >
                                              {ingresos.length > 0 && (
                                                  <optgroup label="INGRESOS ↗" className="bg-slate-900 text-emerald-400 font-bold text-xs uppercase tracking-wider">
@@ -238,7 +306,6 @@ export default function AddTaskModal({
                             </div>
                         </div>
 
-
                         {/* TAB: FECHAS Y DOC */}
                         <div className={`space-y-4 ${activeTab === 'fechas' ? 'block' : 'hidden'}`}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -251,7 +318,7 @@ export default function AddTaskModal({
                                             onChange={(e) => setDocumentId(parseInt(e.target.value))}
                                             className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none"
                                         >
-                                            {documents.map(d => <option key={d.id} value={d.id} className="bg-slate-900">{d.name}</option>)}
+                                            {documentsList.map(d => <option key={d.id} value={d.id} className="bg-slate-900">{d.name}</option>)}
                                         </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
                                             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
@@ -376,7 +443,6 @@ export default function AddTaskModal({
                                         placeholder="Ej: 1.000.000"
                                         value={new Intl.NumberFormat('es-CL').format(netValue)}
                                         onChange={(e) => {
-                                            // Remove dots/commas to get raw number
                                             const rawValue = e.target.value.replace(/\./g, '').replace(/,/g, '');
                                             if (rawValue === '' || /^\d+$/.test(rawValue)) {
                                                 setNetValue(parseInt(rawValue || '0', 10));
@@ -387,9 +453,19 @@ export default function AddTaskModal({
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black opacity-30 tracking-tighter">CLP</span>
                                 </div>
-                                {/* Hidden input to send raw number to server action */}
                                 <input type="hidden" name="netValue" value={netValue} />
                             </div>
+
+                            {isCreditNote && (
+                                <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-medium space-y-1">
+                                    <div className="font-bold flex items-center gap-1.5 text-amber-400">
+                                        <span>⚠️ DOCUMENTO: NOTA DE CRÉDITO</span>
+                                    </div>
+                                    <p>
+                                        Este registro se guardará como <strong>descuento / anulación</strong>, restando {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(netValue + taxValue)} del acumulado y ajustando tu F29.
+                                    </p>
+                                </div>
+                            )}
 
                             {(taxValue !== 0) && (
                                 <div className={`p-6 rounded-xl border animate-in slide-in-from-top-2 duration-300 ${isIncome ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
@@ -442,6 +518,97 @@ export default function AddTaskModal({
                     </div>
                 </form>
             </div>
+
+            {/* Quick Add Movement Modal */}
+            {showQuickMovModal && (
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="glass-card max-w-sm w-full p-6 rounded-2xl border border-white/10 bg-slate-900 shadow-2xl relative">
+                        <button
+                            onClick={() => setShowQuickMovModal(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                        >
+                            <X size={18} />
+                        </button>
+                        <h4 className="text-base font-bold text-white mb-3">Nuevo Tipo de Movimiento</h4>
+                        <form onSubmit={handleQuickAddMovement} className="space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nombre</label>
+                                <input
+                                    type="text"
+                                    value={quickMovName}
+                                    onChange={(e) => setQuickMovName(e.target.value)}
+                                    placeholder="Ej: Asesorías, Herramientas..."
+                                    required
+                                    autoFocus
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Clasificación</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuickMovType('Ingreso')}
+                                        className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${quickMovType === 'Ingreso' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-white/5 text-slate-400 border border-white/10'}`}
+                                    >
+                                        Ingreso ↗
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuickMovType('Gasto')}
+                                        className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${quickMovType === 'Gasto' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-white/5 text-slate-400 border border-white/10'}`}
+                                    >
+                                        Gasto ↘
+                                    </button>
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isCreatingMov}
+                                className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 disabled:opacity-50"
+                            >
+                                {isCreatingMov ? 'Creando...' : 'Crear y Seleccionar'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Quick Add Document Modal */}
+            {showQuickDocModal && (
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="glass-card max-w-sm w-full p-6 rounded-2xl border border-white/10 bg-slate-900 shadow-2xl relative">
+                        <button
+                            onClick={() => setShowQuickDocModal(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                        >
+                            <X size={18} />
+                        </button>
+                        <h4 className="text-base font-bold text-white mb-3">Nuevo Tipo de Documento</h4>
+                        <form onSubmit={handleQuickAddDocument} className="space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nombre del Documento</label>
+                                <input
+                                    type="text"
+                                    value={quickDocName}
+                                    onChange={(e) => setQuickDocName(e.target.value)}
+                                    placeholder="Ej: Orden de Compra, Certificado..."
+                                    required
+                                    autoFocus
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isCreatingDoc}
+                                className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 disabled:opacity-50"
+                            >
+                                {isCreatingDoc ? 'Creando...' : 'Crear y Seleccionar'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>,
         document.body
     );

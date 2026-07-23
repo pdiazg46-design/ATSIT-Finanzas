@@ -22,29 +22,43 @@ export async function createTask(data: any) {
     const absoluteValue = Math.round(Math.abs(netValue || 0));
     const adjustedNetValue = type === 'Ingreso' ? absoluteValue : -absoluteValue;
 
-    // Verify document type for Tax
+    // Verify document type for Tax and Nota de Crédito sign inversion
     const document = await db.select().from(documents).where(eq(documents.id, documentId)).get();
 
     let taxValue = 0;
+    let signMultiplier = 1;
+
     if (document) {
-        if (document.name === 'Factura Electrónica' || document.id === 42) {
+        const docName = (document.name || '').toLowerCase();
+        const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
+        const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
+        const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
+        const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
+
+        if (isInvoice) {
             taxValue = Math.round(adjustedNetValue * 0.19);
-        } else if (document.name === 'Boleta Honorarios' || document.id === 44) {
+        } else if (isHonorarium) {
             // Honorarium Logic (2026: 15.25%)
-            // Net (Liquid) -> Retention
             const rate = 0.1525;
             taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
         }
+
+        // Nota de Crédito reverses the transaction sign
+        if (isCreditNote) {
+            signMultiplier = -1;
+        }
     }
 
-    const totalValue = adjustedNetValue + taxValue;
+    const finalNetValue = adjustedNetValue * signMultiplier;
+    const finalTaxValue = taxValue * signMultiplier;
+    const totalValue = finalNetValue + finalTaxValue;
 
     await db.insert(tasks).values({
         ...rest,
         movementId,
         documentId,
-        netValue: adjustedNetValue,
-        taxValue,
+        netValue: finalNetValue,
+        taxValue: finalTaxValue,
         totalValue,
         observations,
         lastActionAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
@@ -75,30 +89,44 @@ export async function updateTask(id: number, data: any) {
     const absoluteValue = Math.round(Math.abs(netValue || 0));
     const adjustedNetValue = type === 'Ingreso' ? absoluteValue : -absoluteValue;
 
-    // Verify document type for Tax
+    // Verify document type for Tax and Nota de Crédito sign inversion
     const document = await db.select().from(documents).where(eq(documents.id, documentId)).get();
 
     let taxValue = 0;
+    let signMultiplier = 1;
+
     if (document) {
-        if (document.name === 'Factura Electrónica' || document.id === 42) {
+        const docName = (document.name || '').toLowerCase();
+        const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
+        const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
+        const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
+        const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
+
+        if (isInvoice) {
             taxValue = Math.round(adjustedNetValue * 0.19);
-        } else if (document.name === 'Boleta Honorarios' || document.id === 44) {
+        } else if (isHonorarium) {
             // Honorarium Logic (2026: 15.25%)
-            // Net (Liquid) -> Retention
             const rate = 0.1525;
             taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
         }
+
+        // Nota de Crédito reverses the transaction sign
+        if (isCreditNote) {
+            signMultiplier = -1;
+        }
     }
 
-    const totalValue = adjustedNetValue + taxValue;
+    const finalNetValue = adjustedNetValue * signMultiplier;
+    const finalTaxValue = taxValue * signMultiplier;
+    const totalValue = finalNetValue + finalTaxValue;
 
     await db.update(tasks)
         .set({
             ...rest,
             movementId,
             documentId,
-            netValue: adjustedNetValue,
-            taxValue,
+            netValue: finalNetValue,
+            taxValue: finalTaxValue,
             totalValue,
             observations,
             lastActionAt: new Date().toISOString().replace('T', ' ').substring(0, 19),

@@ -24,7 +24,9 @@ const defaultSettings: CompanySettings = {
     description: 'Sistema de Gestión de Proyectos'
 };
 
-const DATA_FILE = join(process.cwd(), 'company-settings.json');
+import { getDataDirectory } from './paths';
+
+const DATA_FILE = join(getDataDirectory(), 'company-settings.json');
 
 export async function getCompanySettings(): Promise<CompanySettings> {
     try {

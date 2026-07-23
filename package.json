@@ -53,6 +53,15 @@
   "build": {
     "appId": "com.atsit.finance",
     "productName": "ATSIT Finanzas",
+    "asar": false,
+    "files": [
+      "**/*",
+      "!finance.db*",
+      "!company-settings.json",
+      "!license.json",
+      "!scratch/**/*",
+      "!backups/**/*"
+    ],
     "directories": {
       "output": "dist"
     },

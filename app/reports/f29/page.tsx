@@ -18,7 +18,7 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
 
     const monthLike = `${currentMonth}%`;
 
-    // 1. VENTAS (Ingresos afectos a IVA) - Factura Electrónica (ID 42)
+    // 1. VENTAS (Ingresos afectos a IVA) - Facturas / Boletas / Notas de Crédito de Venta
     const salesData = await db.select({
         id: tasks.id,
         title: tasks.title,
@@ -26,21 +26,22 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
         projectId: projects.id,
-        projectName: projects.name, // Add Project Name
+        projectName: projects.name,
         totalValue: tasks.totalValue
     })
         .from(tasks)
         .leftJoin(documents, eq(tasks.documentId, documents.id))
-        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
+        .leftJoin(movements, eq(tasks.movementId, movements.id))
+        .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(tasks.documentId, 42), // Factura Electrónica
-                like(tasks.startDate, monthLike), // In this month
-                sql`${tasks.netValue} > 0` // Positive value = Income (Venta)
+                eq(movements.type, 'Ingreso'),
+                like(tasks.startDate, monthLike),
+                sql`${tasks.taxValue} != 0`
             )
         ).all();
 
-    // 2. COMPRAS (Gastos afectos a IVA) - Factura Electrónica (ID 42)
+    // 2. COMPRAS (Gastos afectos a IVA) - Facturas / Notas de Crédito de Compra
     const purchasesData = await db.select({
         id: tasks.id,
         title: tasks.title,
@@ -48,20 +49,23 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         netValue: tasks.netValue,
         taxValue: tasks.taxValue,
         projectId: projects.id,
-        projectName: projects.name, // Add Project Name
+        projectName: projects.name,
         totalValue: tasks.totalValue
     })
         .from(tasks)
-        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
+        .leftJoin(documents, eq(tasks.documentId, documents.id))
+        .leftJoin(movements, eq(tasks.movementId, movements.id))
+        .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(tasks.documentId, 42), // Factura Electrónica
+                eq(movements.type, 'Gasto'),
                 like(tasks.startDate, monthLike),
-                sql`${tasks.netValue} < 0` // Negative value = Expense (Compra)
+                sql`${tasks.taxValue} != 0`,
+                sql`${documents.name} NOT LIKE '%Honorario%'`
             )
         ).all();
 
-    // 3. HONORARIOS (Retenciones) - Boleta Honorarios (ID 44)
+    // 3. HONORARIOS (Retenciones) - Boleta de Honorarios
     const honorariumData = await db.select({
         id: tasks.id,
         title: tasks.title,
@@ -69,14 +73,15 @@ export default async function F29ReportPage({ searchParams }: { searchParams: Pr
         netValue: tasks.netValue, // Líquido
         taxValue: tasks.taxValue, // Retención
         projectId: projects.id,
-        projectName: projects.name, // Add Project Name
+        projectName: projects.name,
         totalValue: tasks.totalValue
     })
         .from(tasks)
-        .leftJoin(projects, eq(tasks.projectId, projects.id)) // Join Projects
+        .leftJoin(documents, eq(tasks.documentId, documents.id))
+        .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(tasks.documentId, 44), // Boleta Honorarios
+                like(documents.name, '%Honorario%'),
                 like(tasks.startDate, monthLike)
             )
         ).all();

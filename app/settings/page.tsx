@@ -1,7 +1,7 @@
 import { getCompanySettings } from '@/lib/company-data';
-import SettingsForm from '@/components/SettingsForm';
-import UsersManager from '@/components/UsersManager';
+import SettingsTabContainer from '@/components/SettingsTabContainer';
 import { getUsers, hasPermission } from '@/lib/user-actions';
+import { getMovements, getDocuments } from '@/lib/catalog-actions';
 import { PERMISSIONS } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -19,18 +19,25 @@ export default async function SettingsPage() {
     };
     let isAdmin = false;
     let users: any[] = [];
+    let movements: any[] = [];
+    let documents: any[] = [];
     let hasError = false;
 
     try {
-        // Attempt to load settings
         try {
             settings = await getCompanySettings();
         } catch (e) {
             console.error("Failed to load company settings:", e);
         }
 
-        // Attempt to check permissions and load users
-        if (process.env.DATABASE_URL) {
+        try {
+            movements = await getMovements();
+            documents = await getDocuments();
+        } catch (e) {
+            console.error("Failed to load catalog data:", e);
+        }
+
+        if (process.env.DATABASE_URL || true) {
             try {
                 isAdmin = await hasPermission(PERMISSIONS.ADMIN);
                 if (isAdmin) {
@@ -46,10 +53,10 @@ export default async function SettingsPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-6">
             <header>
-                <h2 className="text-3xl font-bold text-white mb-2">Configuración</h2>
-                <p className="text-slate-400">Personaliza la identidad y datos de tu empresa</p>
+                <h2 className="text-3xl font-bold text-white mb-1">Configuración del Sistema</h2>
+                <p className="text-slate-400 text-sm">Personaliza la identidad, categorías financieras, documentos y equipo</p>
                 {hasError && (
                     <div className="bg-amber-900/20 text-amber-200 text-xs p-2 rounded mt-2">
                         Modo Seguro (Error de Carga): Algunas funciones pueden estar deshabilitadas.
@@ -57,11 +64,13 @@ export default async function SettingsPage() {
                 )}
             </header>
 
-            <SettingsForm initialSettings={settings} />
-
-            {isAdmin && (
-                <UsersManager initialUsers={users} />
-            )}
+            <SettingsTabContainer
+                initialSettings={settings}
+                initialUsers={users}
+                initialMovements={movements}
+                initialDocuments={documents}
+                isAdmin={isAdmin}
+            />
         </div>
     );
 }

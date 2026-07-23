@@ -97,3 +97,19 @@ export async function registerInitialAdmin(formData: FormData) {
         return { error: 'Error del servidor: ' + (e instanceof Error ? e.message : String(e)) };
     }
 }
+
+// Server Action to activate full lifetime license
+export async function activateLicenseAction(formData: FormData) {
+    try {
+        const key = formData.get('key') as string;
+        const { activateFullLicense } = await import('@/lib/license');
+        const result = await activateFullLicense(key || '');
+        if (result.success) {
+            const { revalidatePath } = await import('next/cache');
+            revalidatePath('/', 'layout');
+        }
+        return result;
+    } catch (e) {
+        return { success: false, message: 'Error procesando clave de activación' };
+    }
+}

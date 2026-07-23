@@ -9,8 +9,18 @@ if (!url) {
     console.error('⚠️ CRITICAL: DATABASE_URL is missing. DB queries will fail. (This is expected during build if env vars are unset)');
 }
 
-// Turso/Vercel compatibility: Force HTTPS instead of libsql (WebSocket) to avoid "Failed query"
-const finalUrl = url?.replace('libsql://', 'https://') || 'file:finance.db';
+import { getDataDirectory } from './paths';
+import { join } from 'path';
+
+let finalUrl = 'file:finance.db';
+const isDesktopApp = process.env.ELECTRON_RUN_AS_NODE === '1' || !process.env.VERCEL;
+
+if (isDesktopApp) {
+    const dataDir = getDataDirectory();
+    finalUrl = `file:${join(dataDir, 'finance.db')}`;
+} else if (url) {
+    finalUrl = url.replace('libsql://', 'https://');
+}
 
 // Fix: Strip quotes if user added them in Vercel env vars
 const cleanToken = authToken?.replace(/^['"]|['"]$/g, '');
@@ -133,6 +143,57 @@ export async function initializeDatabase() {
                 created_at TEXT
             );
         `);
+
+        // AUTO-SEED: Insert original movement types if missing
+        const existingMovs = await db.select().from(schema.movements).all();
+        const existingNames = new Set(existingMovs.map(m => m.name.toLowerCase()));
+        
+        const defaultMovements = [
+            { name: 'Pago Cliente (Ingreso)', type: 'Ingreso' },
+            { name: 'Venta Materiales / Servicios', type: 'Ingreso' },
+            { name: 'Aporte de Capital', type: 'Ingreso' },
+            { name: 'Caja Ingreso', type: 'Ingreso' },
+            { name: 'Otros Ingresos', type: 'Ingreso' },
+            { name: 'Servicios Profesionales / Contratistas', type: 'Gasto' },
+            { name: 'Remuneraciones / Honorarios', type: 'Gasto' },
+            { name: 'Materiales Obra', type: 'Gasto' },
+            { name: 'Mano de Obra', type: 'Gasto' },
+            { name: 'Arriendo Maquinaria', type: 'Gasto' },
+            { name: 'Gastos Generales', type: 'Gasto' },
+            { name: 'Gastos de Oficina / Gastos Comunes', type: 'Gasto' },
+            { name: 'Gastos Financieros', type: 'Gasto' },
+            { name: 'Retiros Socios', type: 'Gasto' },
+            { name: 'Caja Gasto', type: 'Gasto' },
+            { name: 'Otros Gastos', type: 'Gasto' }
+        ];
+
+        const toInsertMovs = defaultMovements.filter(m => !existingNames.has(m.name.toLowerCase()));
+        if (toInsertMovs.length > 0) {
+            await db.insert(schema.movements).values(toInsertMovs).run();
+        }
+
+        // AUTO-SEED: Insert standard Chilean DTE document types if missing
+        const existingDocs = await db.select().from(schema.documents).all();
+        const existingDocNames = new Set(existingDocs.map(d => d.name.toLowerCase()));
+
+        const defaultDocuments = [
+            { name: 'Factura Electrónica' },
+            { name: 'Factura Exenta Electrónica' },
+            { name: 'Boleta Electrónica' },
+            { name: 'Boleta Exenta Electrónica' },
+            { name: 'Boleta de Honorarios' },
+            { name: 'Nota de Crédito Electrónica' },
+            { name: 'Nota de Débito Electrónica' },
+            { name: 'Guía de Despacho Electrónica' },
+            { name: 'Comprobante de Transferencia' },
+            { name: 'Liquidación de Sueldo' },
+            { name: 'Comprobante Interno / Sin Documento' }
+        ];
+
+        const toInsertDocs = defaultDocuments.filter(d => !existingDocNames.has(d.name.toLowerCase()));
+        if (toInsertDocs.length > 0) {
+            await db.insert(schema.documents).values(toInsertDocs).run();
+        }
     } catch (error) {
         console.error('Failed to initialize database tables:', error);
     }
