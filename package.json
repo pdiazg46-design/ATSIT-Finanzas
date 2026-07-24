@@ -74,6 +74,7 @@
       "category": "public.app-category.business",
       "target": ["dmg", "zip"],
       "icon": "public/logo.png",
+      "identity": null,
       "artifactName": "ATSIT-Finanzas-Mac-${version}.${ext}"
     },
     "nsis": {
