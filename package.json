@@ -53,9 +53,12 @@
   "build": {
     "appId": "com.atsit.finance",
     "productName": "ATSIT Finanzas",
-    "asar": false,
+    "asar": true,
     "files": [
       "**/*",
+      "!dist/**/*",
+      "!.git/**/*",
+      "!.github/**/*",
       "!finance.db*",
       "!company-settings.json",
       "!license.json",
