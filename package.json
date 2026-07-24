@@ -54,6 +54,7 @@
     "appId": "com.atsit.finance",
     "productName": "ATSIT Finanzas",
     "asar": true,
+    "npmRebuild": false,
     "files": [
       "**/*",
       "!dist/**/*",
