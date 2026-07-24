@@ -92,5 +92,6 @@ jobs:
           name: "ATSIT Finanzas v1.0.0"
           body: "Descargas oficiales directas para Windows (.exe) y Mac (.dmg)."
           files: release-files/*
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
