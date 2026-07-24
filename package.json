@@ -76,7 +76,7 @@
     },
     "mac": {
       "category": "public.app-category.business",
-      "target": ["dmg", "zip"],
+      "target": ["zip"],
       "identity": null,
       "artifactName": "ATSIT-Finanzas-Mac-${version}.${ext}"
     },
