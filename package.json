@@ -71,7 +71,6 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "public/logo.png",
       "artifactName": "ATSIT-Finanzas-Setup-${version}.${ext}"
     },
     "mac": {
