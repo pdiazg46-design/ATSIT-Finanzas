@@ -54,6 +54,10 @@
     "appId": "com.atsit.finance",
     "productName": "ATSIT Finanzas",
     "asar": true,
+    "asarUnpack": [
+      "**/node_modules/next/**/*",
+      "**/node_modules/@libsql/**/*"
+    ],
     "npmRebuild": false,
     "files": [
       "**/*",
