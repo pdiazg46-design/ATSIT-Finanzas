@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "ATSIT Finanzas - Aplicación de Control Financiero",
   "author": "AT-SIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pdiazg46-design/ATSIT-Finanzas.git"
+  },
   "main": "main.js",
   "private": true,
   "scripts": {
