@@ -60,15 +60,14 @@
     ],
     "npmRebuild": false,
     "files": [
-      "**/*",
-      "!dist/**/*",
-      "!.git/**/*",
-      "!.github/**/*",
-      "!finance.db*",
-      "!company-settings.json",
-      "!license.json",
-      "!scratch/**/*",
-      "!backups/**/*"
+      "main.js",
+      "package.json",
+      "app/**/*",
+      "components/**/*",
+      "lib/**/*",
+      "public/**/*",
+      ".next/**/*",
+      "node_modules/**/*"
     ],
     "directories": {
       "output": "dist"
