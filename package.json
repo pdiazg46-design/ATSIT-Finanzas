@@ -78,12 +78,16 @@
     },
     "win": {
       "target": "nsis",
+      "icon": "public/brand/icon.ico",
       "artifactName": "ATSIT-Finanzas-Setup-${version}.${ext}"
     },
     "mac": {
       "category": "public.app-category.business",
-      "target": ["zip"],
+      "target": [
+        "zip"
+      ],
       "identity": null,
+      "icon": "public/brand/icon.ico",
       "artifactName": "ATSIT-Finanzas-Mac-${version}.${ext}"
     },
     "nsis": {
@@ -91,7 +95,10 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "ATSIT Finanzas"
+      "shortcutName": "ATSIT Finanzas",
+      "installerIcon": "public/brand/icon.ico",
+      "uninstallerIcon": "public/brand/icon.ico",
+      "installerHeaderIcon": "public/brand/icon.ico"
     }
   }
 }
