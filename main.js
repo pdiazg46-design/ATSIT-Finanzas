@@ -3,6 +3,27 @@ const path = require('path');
 const { spawn } = require('child_process');
 const http = require('http');
 
+// Global Uncaught Exception Handlers to prevent system crash dialogs
+process.on('uncaughtException', (err) => {
+    console.error('[Main Process Uncaught Exception]:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[Main Process Unhandled Rejection]:', reason);
+});
+
+// Ensure full Windows system environment paths
+if (process.platform === 'win32') {
+    process.env.SystemRoot = process.env.SystemRoot || 'C:\\Windows';
+    process.env.ComSpec = process.env.ComSpec || 'C:\\Windows\\system32\\cmd.exe';
+    const sysPath = 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem';
+    if (!process.env.PATH) {
+        process.env.PATH = sysPath;
+    } else if (!process.env.PATH.toLowerCase().includes('system32')) {
+        process.env.PATH = `${sysPath};${process.env.PATH}`;
+    }
+}
+
 let mainWindow;
 let serverProcess;
 const PORT = 3000;
@@ -33,26 +54,32 @@ function startNextServer() {
             shell: true,
             env: { ...process.env, PORT: PORT.toString() }
         });
+        serverProcess.stdout?.on('data', (data) => console.log(`[Dev Server]: ${data}`));
+        serverProcess.stderr?.on('data', (data) => console.error(`[Dev Server Error]: ${data}`));
     } else {
-        const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
-        const execExecutable = process.platform === 'win32' ? `"${process.execPath}"` : process.execPath;
-        serverProcess = spawn(execExecutable, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
-            cwd: appPath,
-            shell: process.platform === 'win32',
-            windowsHide: true,
-            env: {
-                ...process.env,
-                ELECTRON_RUN_AS_NODE: '1',
-                NODE_ENV: 'production',
-                PORT: PORT.toString(),
-                AUTH_SECRET: process.env.AUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback',
-                NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback'
-            }
-        });
-    }
+        process.env.NODE_ENV = 'production';
+        process.env.PORT = PORT.toString();
+        process.env.AUTH_SECRET = process.env.AUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback';
+        process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback';
 
-    serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
-    serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
+        try {
+            const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
+            serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
+                cwd: appPath,
+                windowsHide: true,
+                env: {
+                    ...process.env,
+                    ELECTRON_RUN_AS_NODE: '1',
+                    NODE_ENV: 'production',
+                    PORT: PORT.toString()
+                }
+            });
+            serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
+            serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
+        } catch (err) {
+            console.error('[Next.js Start Error]:', err);
+        }
+    }
 }
 
 function createWindow() {
@@ -65,7 +92,7 @@ function createWindow() {
         minWidth: 1024,
         minHeight: 700,
         title: 'ATSIT Finanzas',
-        icon: path.join(appPath, 'public', 'logo.png'),
+        icon: path.join(appPath, 'public', 'brand', 'icon.ico'),
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: false,
@@ -92,7 +119,7 @@ function createWindow() {
         }
     });
 
-    const serverUrl = `http://localhost:${PORT}`;
+    const serverUrl = `http://127.0.0.1:${PORT}`;
 
     checkServerReady(serverUrl, () => {
         mainWindow.loadURL(serverUrl);
@@ -110,10 +137,16 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
     if (serverProcess) {
-        if (process.platform === 'win32') {
-            spawn('taskkill', ['/pid', serverProcess.pid, '/f', '/t']);
-        } else {
-            serverProcess.kill('SIGTERM');
+        if (typeof serverProcess.close === 'function') {
+            serverProcess.close();
+        } else if (serverProcess.pid) {
+            if (process.platform === 'win32') {
+                try {
+                    spawn('taskkill', ['/pid', serverProcess.pid, '/f', '/t'], { windowsHide: true });
+                } catch (e) {}
+            } else {
+                serverProcess.kill('SIGTERM');
+            }
         }
     }
     if (process.platform !== 'darwin') {
