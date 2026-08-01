@@ -29,7 +29,8 @@ export default function AddTaskModal({
 
     // Inputs
     const [netValue, setNetValue] = useState(task ? Math.abs(task.netValue) : 0);
-    const [movementId, setMovementId] = useState(task?.movementId || movementsList[0]?.id);
+    const [movementId, setMovementId] = useState<number | ''>(task?.movementId ? task.movementId : '');
+    const [movementError, setMovementError] = useState(false);
     const [documentId, setDocumentId] = useState(task?.documentId || documentsList[0]?.id || 1);
     const [mounted, setMounted] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('concepto');
@@ -53,7 +54,7 @@ export default function AddTaskModal({
     }, []);
 
     const currentMovement = movementsList.find(m => m.id === movementId);
-    const isIncome = currentMovement?.type === 'Ingreso';
+    const isIncome = currentMovement ? currentMovement.type === 'Ingreso' : false;
 
     const ingresos = movementsList.filter(m => m.type === 'Ingreso');
     const gastos = movementsList.filter(m => m.type === 'Gasto');
@@ -109,6 +110,7 @@ export default function AddTaskModal({
         if (res.success && res.movement) {
             setMovementsList(prev => [...prev, res.movement]);
             setMovementId(res.movement.id);
+            setMovementError(false);
             setQuickMovName('');
             setShowQuickMovModal(false);
         } else {
@@ -142,7 +144,7 @@ export default function AddTaskModal({
 
     return createPortal(
         <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center z-[9999] p-4 sm:p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <div className={`bg-[#1e293b] w-full max-w-2xl max-h-[90vh] flex flex-col relative rounded-2xl border ${isIncome ? 'border-emerald-500/30 shadow-emerald-500/5' : 'border-rose-500/30 shadow-rose-500/5'} shadow-2xl animate-in fade-in zoom-in duration-200 overflow-hidden`}>
+            <div className={`bg-[#1e293b] w-full max-w-2xl max-h-[90vh] flex flex-col relative rounded-2xl border ${currentMovement ? (isIncome ? 'border-emerald-500/30 shadow-emerald-500/5' : 'border-rose-500/30 shadow-rose-500/5') : 'border-amber-500/30 shadow-amber-500/5'} shadow-2xl animate-in fade-in zoom-in duration-200 overflow-hidden`}>
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors z-[100] p-2 hover:bg-white/5 rounded-full"
@@ -155,11 +157,19 @@ export default function AddTaskModal({
                         <h3 className="text-xl md:text-2xl font-bold text-white">
                             {task ? 'Editar Tarea' : 'Nueva Tarea'}
                         </h3>
-                        <p className="text-slate-400 text-sm mt-1">{isIncome ? 'Registro de Ingreso' : 'Registro de Gasto'}</p>
+                        <p className="text-slate-400 text-sm mt-1">
+                            {currentMovement ? (isIncome ? 'Registro de Ingreso' : 'Registro de Gasto') : 'Seleccione Tipo de Movimiento'}
+                        </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest ${isIncome ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-                        {isIncome ? 'Ingreso ↗' : 'Gasto ↘'}
-                    </span>
+                    {currentMovement ? (
+                        <span className={`px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest ${isIncome ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                            {isIncome ? 'Ingreso ↗' : 'Gasto ↘'}
+                        </span>
+                    ) : (
+                        <span className="px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            Por Seleccionar ↕
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex px-6 md:px-8 gap-4 border-b border-white/5 overflow-x-auto">
@@ -190,11 +200,20 @@ export default function AddTaskModal({
                 </div>
 
                 <form action={async (formData) => {
+                    const rawMovId = formData.get('movementId');
+                    const parsedMovId = rawMovId ? parseInt(rawMovId as string) : 0;
+
+                    if (!parsedMovId || isNaN(parsedMovId)) {
+                        setMovementError(true);
+                        setActiveTab('concepto');
+                        return;
+                    }
+
                     const data = {
                         projectId,
                         title: formData.get('title'),
                         employeeId: parseInt(formData.get('employeeId') as string),
-                        movementId: parseInt(formData.get('movementId') as string),
+                        movementId: parsedMovId,
                         documentId: parseInt(formData.get('documentId') as string),
                         docNumber: formData.get('docNumber'),
                         netValue: parseFloat(formData.get('netValue') as string),
@@ -263,10 +282,18 @@ export default function AddTaskModal({
                                     <div className="relative">
                                          <select
                                              name="movementId"
+                                             required
                                              value={movementId}
-                                             onChange={(e) => setMovementId(parseInt(e.target.value))}
-                                             className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none font-medium pr-10"
+                                             onChange={(e) => {
+                                                 const val = e.target.value ? parseInt(e.target.value) : '';
+                                                 setMovementId(val);
+                                                 if (val) setMovementError(false);
+                                             }}
+                                             className={`w-full bg-slate-900 border ${movementError ? 'border-rose-500 ring-2 ring-rose-500/40' : 'border-white/10'} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 cursor-pointer appearance-none font-medium pr-10`}
                                          >
+                                             <option value="" disabled className="bg-slate-900 text-slate-400">
+                                                 -- Seleccionar Tipo de Movimiento --
+                                             </option>
                                              {ingresos.length > 0 && (
                                                  <optgroup label="INGRESOS ↗" className="bg-slate-900 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                                                      {ingresos.map(m => (
@@ -290,6 +317,11 @@ export default function AddTaskModal({
                                             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                                         </div>
                                     </div>
+                                    {movementError && (
+                                        <p className="text-rose-400 text-xs font-bold mt-1.5 flex items-center gap-1">
+                                            ⚠️ Debe seleccionar un Tipo de Movimiento obligatoriamente.
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -511,9 +543,9 @@ export default function AddTaskModal({
                         </button>
                         <button
                             type="submit"
-                            className={`flex-[1.5] px-4 py-4 text-white rounded-xl font-bold shadow-lg transition-all text-lg ${isIncome ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20'}`}
+                            className={`flex-[1.5] px-4 py-4 text-white rounded-xl font-bold shadow-lg transition-all text-lg ${currentMovement ? (isIncome ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20') : 'bg-sky-600 hover:bg-sky-500 shadow-sky-500/20'}`}
                         >
-                            {task ? 'Guardar Cambios' : `Guardar ${isIncome ? 'Ingreso' : 'Gasto'}`}
+                            {task ? 'Guardar Cambios' : (currentMovement ? (isIncome ? 'Guardar Ingreso' : 'Guardar Gasto') : 'Guardar Tarea')}
                         </button>
                     </div>
                 </form>

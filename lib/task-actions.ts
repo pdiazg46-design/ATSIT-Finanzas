@@ -14,6 +14,10 @@ export async function createTask(data: any) {
 
     const { netValue, documentId, movementId, observations, ...rest } = data;
 
+    if (!movementId || isNaN(movementId)) {
+        return { success: false, message: 'Debe seleccionar un Tipo de Movimiento' };
+    }
+
     // Fetch movement type to determine sign
     const movement = await db.select().from(movements).where(eq(movements.id, movementId)).get();
     const type = movement?.type || 'Gasto';
@@ -80,6 +84,10 @@ export async function updateTask(id: number, data: any) {
     }
 
     const { netValue, documentId, movementId, observations, ...rest } = data;
+
+    if (!movementId || isNaN(movementId)) {
+        return { success: false, message: 'Debe seleccionar un Tipo de Movimiento' };
+    }
 
     // Fetch movement type to determine sign
     const movement = await db.select().from(movements).where(eq(movements.id, movementId)).get();
