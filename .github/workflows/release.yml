@@ -44,6 +44,7 @@ jobs:
           Get-ChildItem dist/*.exe | ForEach-Object {
             Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.0.0.exe" -Force
             Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.0.1.exe" -Force
+            Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.0.2.exe" -Force
             Copy-Item $_.FullName "release-win/ATSIT.Finanzas.Setup.1.0.0.exe" -Force
           }
 
@@ -86,6 +87,7 @@ jobs:
           for f in dist/*.zip; do
             cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.0.zip" 2>/dev/null || true
             cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.1.zip" 2>/dev/null || true
+            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.2.zip" 2>/dev/null || true
           done
 
       - name: Upload macOS Installer Artifact
@@ -127,6 +129,18 @@ jobs:
         with:
           tag_name: v1.0.1
           name: "ATSIT Finanzas v1.0.1"
+          body: "Descargas oficiales verificadas para Windows (.exe) y macOS (.zip)."
+          files: release-files/*
+          overwrite: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Automatic Release v1.0.2
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.2
+          name: "ATSIT Finanzas v1.0.2"
           body: "Descargas oficiales verificadas para Windows (.exe) y macOS (.zip)."
           files: release-files/*
           overwrite: true

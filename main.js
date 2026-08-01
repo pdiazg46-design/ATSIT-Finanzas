@@ -35,8 +35,11 @@ function startNextServer() {
         });
     } else {
         const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
-        serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '0.0.0.0', '-p', PORT.toString()], {
+        const execExecutable = process.platform === 'win32' ? `"${process.execPath}"` : process.execPath;
+        serverProcess = spawn(execExecutable, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
             cwd: appPath,
+            shell: process.platform === 'win32',
+            windowsHide: true,
             env: {
                 ...process.env,
                 ELECTRON_RUN_AS_NODE: '1',

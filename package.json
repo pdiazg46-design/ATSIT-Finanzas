@@ -1,6 +1,6 @@
 {
   "name": "atsit-finance",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ATSIT Finanzas - Aplicación de Control Financiero",
   "author": "AT-SIT",
   "repository": {
@@ -78,6 +78,7 @@
     },
     "win": {
       "target": "nsis",
+      "executableName": "ATSIT-Finanzas",
       "icon": "public/brand/icon.ico",
       "artifactName": "ATSIT-Finanzas-Setup-${version}.${ext}"
     },
