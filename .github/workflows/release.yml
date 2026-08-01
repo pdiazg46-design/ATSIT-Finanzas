@@ -36,11 +36,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare Windows Release Files
+        shell: pwsh
+        run: |
+          mkdir -p release-win
+          Copy-Item dist/*.exe release-win/
+          Get-ChildItem dist/*.exe | ForEach-Object {
+            Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.0.0.exe" -Force
+            Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.0.1.exe" -Force
+            Copy-Item $_.FullName "release-win/ATSIT.Finanzas.Setup.1.0.0.exe" -Force
+          }
+
       - name: Upload Windows Installer Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ATSIT-Finanzas-Windows
-          path: dist/*.exe
+          path: release-win/*.exe
 
   build-mac:
     runs-on: macos-latest
@@ -66,13 +77,22 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
 
+      - name: Prepare macOS Release Files
+        shell: bash
+        run: |
+          mkdir -p release-mac
+          cp dist/*.zip release-mac/ 2>/dev/null || true
+          cp dist/*.dmg release-mac/ 2>/dev/null || true
+          for f in dist/*.zip; do
+            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.0.zip" 2>/dev/null || true
+            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.1.zip" 2>/dev/null || true
+          done
+
       - name: Upload macOS Installer Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ATSIT-Finanzas-macOS
-          path: |
-            dist/*.dmg
-            dist/*.zip
+          path: release-mac/*
 
   create-release:
     needs: [build-windows, build-mac]
@@ -90,13 +110,26 @@ jobs:
           name: ATSIT-Finanzas-macOS
           path: release-files
 
-      - name: Create Automatic Release
+      - name: Create Automatic Release v1.0.0
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
           name: "ATSIT Finanzas v1.0.0"
-          body: "Descargas oficiales directas para Windows (.exe) y Mac (.dmg)."
+          body: "Descargas oficiales verificadas para Windows (.exe) y macOS (.zip)."
           files: release-files/*
+          overwrite: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Automatic Release v1.0.1
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.1
+          name: "ATSIT Finanzas v1.0.1"
+          body: "Descargas oficiales verificadas para Windows (.exe) y macOS (.zip)."
+          files: release-files/*
+          overwrite: true
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
