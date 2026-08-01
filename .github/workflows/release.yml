@@ -72,8 +72,8 @@ jobs:
       - name: Build Application
         run: npm run build
 
-      - name: Package macOS (.zip)
-        run: npx electron-builder --mac zip
+      - name: Package macOS (.dmg & .zip)
+        run: npx electron-builder --mac dmg zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"

@@ -1,30 +1,32 @@
 ---
 name: Respaldador Riguroso de Proyectos Activos (D:\Desarrollos)
-description: Al término de cada proyecto o hito de desarrollo, exige actualizar los respaldos en D:\Desarrollos (incluyendo binarios en dist/ y código fuente) y solicitar explícitamente al usuario la conexión de su disco duro externo.
+description: Compara empíricamente los proyectos trabajados en la sesión con la carpeta de respaldo D:\Desarrollos (código fuente y binarios dist/). Si detecta diferencias o archivos faltantes, ejecuta el respaldo automáticamente y valida la coincidencia 100% idéntica.
 ---
 
 # Respaldador Riguroso de Proyectos Activos (D:\Desarrollos)
 
 ## Propósito
-Garantizar la protección absoluta del código fuente y los binarios compilados de los proyectos desarrollados, exigiendo la consolidación completa en la ruta oficial `D:\Desarrollos` y notificando proactivamente al usuario Patricio para conectar su disco duro externo al finalizar cada proyecto o tarea relevante.
+Garantizar la coincidencia idéntica del código fuente y binarios compilados entre el entorno de trabajo y la unidad de respaldo `D:\Desarrollos`, comparando empíricamente cada proyecto trabajado en la sesión y ejecutando la sincronización automática ante cualquier diferencia.
 
 ---
 
 ## Reglas de Funcionamiento
 
-### 1. Directorio Raíz Oficial
-- **Ruta Oficial de Trabajo**: `D:\Desarrollos`
-- Todo proyecto (`ATSIT-Finanzas`, `Pagina WEB` / `AT-SIT-Portafolio`, etc.) debe estar 100% sincronizado en `D:\Desarrollos`.
+### 1. Protocolo Obligatorio de Comparación Directa
+Al concluir cualquier tarea o hito de desarrollo:
+1. **Identificar Proyectos Trabajados**: Listar todos los proyectos modificados o desarrollados durante la sesión actual (ej: `ATSIT-Finanzas`, `Pagina WEB`).
+2. **Comparar Origen vs Destino**:
+   - Inspeccionar los archivos fuente (`main.js`, `package.json`, `src/`, `app/`, etc.) y los binarios compilados (`dist/*.exe`, `dist/*.zip`).
+   - Comparar fechas de modificación (`LastWriteTime`) y tamaño en bytes (`Length`) entre el origen `C:\Users\pdiaz\Desarrollos\[Proyecto]` y la carpeta de respaldo `D:\Desarrollos\[Proyecto]`.
+3. **Ejecutar Respaldo Si Hay Diferencias**:
+   - Si se detecta cualquier archivo faltante, desactualizado o con diferente tamaño/fecha en la carpeta de respaldo, ejecutar la sincronización limpia (`robocopy` / PowerShell copy) **incluyendo la carpeta `dist/` con los instaladores `.exe`**.
+4. **Re-Validar e Informar**:
+   - Volver a comparar ambas ubicaciones para emitir un reporte empírico demostrando que el origen y la unidad de respaldo coinciden al 100%.
 
-### 2. Inclusión Obligatoria de Binarios y Validación Rigurosa
-- **NO Excluir `dist/`**: Si en la sesión de trabajo se generaron ejecutables o instaladores (`.exe`, `.zip`, `.dmg`), la carpeta `dist/` o de publicación **DEBE ser copiada y respaldada** en `D:\Desarrollos\[Proyecto]\dist\`.
-- **Exclusiones autorizadas únicamente**: Temporales de caché sin valor (`node_modules`, `.next`, `.cache`).
+### 2. Inclusión Obligatoria de Binarios (`dist/`)
+- **NO Excluir `dist/`**: Si se compilaron ejecutables `.exe` o paquetes `.zip`, deben respaldarse y compararse explícitamente en `D:\Desarrollos\[Proyecto]\dist\`.
+- Exclusiones permitidas únicamente: Archivos de caché temporales regenerables (`node_modules`, `.next`, `.cache`).
 
-### 3. Protocolo de Validación Empírica
-Antes de informar un respaldo como completado, el agente debe:
-1. Validar que la carpeta de código fuente exista en `D:\Desarrollos\[Proyecto]`.
-2. **Validar explícitamente los archivos compilados**: Verificar que los instaladores (`dist/*.exe`) existan en el disco D con tamaño en bytes y fecha idénticos a los del disco C.
-
-### 4. Alerta de Disco Externo
-Solicitar de manera explícita y obligatoria al usuario:
-> *"Patricio, el proyecto [Nombre] se ha completado y respaldado al 100% en `D:\Desarrollos` (incluyendo ejecutables y código fuente). Por favor conecta tu **disco duro externo** para la copia de seguridad física."*
+### 3. Alerta de Disco Duro Externo
+Una vez validada la coincidencia 100% idéntica en `D:\Desarrollos`:
+> *"Patricio, se ha comparado y verificado que el proyecto [Nombre] en `D:\Desarrollos` es 100% idéntico al origen (código y ejecutables `.exe`). Por favor conecta tu **disco duro externo** para realizar la copia física final."*
