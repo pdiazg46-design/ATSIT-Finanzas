@@ -72,8 +72,8 @@ jobs:
       - name: Build Application
         run: npm run build
 
-      - name: Package macOS (.dmg & .zip)
-        run: npx electron-builder --mac dmg zip
+      - name: Package macOS (.dmg & .zip for Intel and Apple Silicon)
+        run: npx electron-builder --mac dmg zip --x64 --arm64
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
@@ -84,10 +84,12 @@ jobs:
           mkdir -p release-mac
           cp dist/*.zip release-mac/ 2>/dev/null || true
           cp dist/*.dmg release-mac/ 2>/dev/null || true
-          for f in dist/*.zip; do
-            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.0.zip" 2>/dev/null || true
-            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.1.zip" 2>/dev/null || true
-            cp "$f" "release-mac/ATSIT-Finanzas-Mac-1.0.2.zip" 2>/dev/null || true
+          # Crear copias con nombres amigables directos para Intel y Apple Silicon
+          for f in dist/*-x64.dmg; do
+            [ -f "$f" ] && cp "$f" "release-mac/ATSIT-Finanzas-Mac-Intel.dmg" 2>/dev/null || true
+          done
+          for f in dist/*-arm64.dmg; do
+            [ -f "$f" ] && cp "$f" "release-mac/ATSIT-Finanzas-Mac-AppleSilicon.dmg" 2>/dev/null || true
           done
 
       - name: Upload macOS Installer Artifact
