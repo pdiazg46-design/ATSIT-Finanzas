@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut, User as UserIcon, DownloadCloud, Sparkles } from 'lucide-react';
 import { logout } from '@/lib/actions';
 import LogoutButton from './LogoutButton';
 
@@ -56,14 +56,30 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
             <Link href="/settings" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/settings') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Configuración
             </Link>
+
+            <a 
+                href="https://www.atsit.cl/#descargas" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center justify-between py-2 px-3 rounded-xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 hover:from-sky-500/20 hover:to-purple-500/20 text-sky-300 border border-sky-500/20 transition-all font-bold text-xs shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95"
+                title="Buscar y descargar la última actualización lanzada en la web"
+            >
+                <span className="flex items-center gap-2">
+                    <DownloadCloud size={15} className="text-sky-400" />
+                    Buscar Actualización
+                </span>
+                <span className="bg-sky-500/20 text-sky-300 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-sky-500/30">
+                    v1.0.0
+                </span>
+            </a>
             
             <a 
                 href="https://www.atsit.cl/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="block py-2 px-3 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-white/5 transition-colors font-medium"
+                className="block py-2 px-3 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-white/5 transition-colors font-medium text-xs"
             >
-                Soporte y Mejoras
+                Soporte y Sitio Web
             </a>
 
             {user && (

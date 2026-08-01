@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { uploadLogo, saveCompanyDetails } from '@/lib/settings-actions';
 import { CompanySettings } from '@/lib/company-data';
-import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck } from 'lucide-react';
+import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck, DownloadCloud, Sparkles } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: CompanySettings }) {
     const [preview, setPreview] = useState<string | null>(null);
@@ -232,6 +232,27 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                                 Visitar ATSIT (atsit.cl)
                             </a>
                         </div>
+                    </div>
+
+                    <div className="space-y-3 bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-950 p-6 rounded-xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:col-span-2 shadow-lg">
+                        <div>
+                            <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                                <Sparkles size={16} className="text-purple-400" />
+                                Versión e Historial de Lanzamientos en la Web
+                            </h4>
+                            <p className="text-slate-300 text-xs mt-1 leading-relaxed">
+                                Versión Actual Instalada: <span className="font-black text-emerald-400">v1.0.0</span>. Puedes consultar e instalar nuevas versiones desde la web sin afectar tus licencias, pruebas ni datos guardados.
+                            </p>
+                        </div>
+                        <a
+                            href="https://www.atsit.cl/#descargas"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 hover:from-purple-500 hover:to-sky-500 text-white font-bold py-3 px-5 rounded-xl shadow-lg transition-all text-xs whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
+                        >
+                            <DownloadCloud size={16} />
+                            Buscar Actualización en atsit.cl
+                        </a>
                     </div>
                 </div>
             </section>
