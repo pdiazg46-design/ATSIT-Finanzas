@@ -1,6 +1,6 @@
 {
   "name": "atsit-finance",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "ATSIT Finanzas - Aplicación de Control Financiero",
   "author": "AT-SIT",
   "repository": {
@@ -59,8 +59,7 @@
     "productName": "ATSIT Finanzas",
     "asar": true,
     "asarUnpack": [
-      "**/node_modules/next/**/*",
-      "**/node_modules/@libsql/**/*"
+      "**/node_modules/**/*"
     ],
     "npmRebuild": false,
     "files": [

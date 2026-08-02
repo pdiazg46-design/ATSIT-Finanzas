@@ -80,7 +80,7 @@ function startNextServer() {
                 serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
                 serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
             } else {
-                // Lógica específica para macOS / Linux (resuelve app.asar.unpacked para ejecutar el servidor)
+                // Lógica específica para macOS / Linux (usa fork para ejecutar el binario de Next.js sin bloqueo de SIP)
                 let unpackedAppPath = appPath;
                 if (appPath.endsWith('.asar')) {
                     unpackedAppPath = appPath + '.unpacked';
@@ -89,7 +89,8 @@ function startNextServer() {
                 }
                 const nextBin = path.join(unpackedAppPath, 'node_modules', 'next', 'dist', 'bin', 'next');
 
-                serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
+                const { fork } = require('child_process');
+                serverProcess = fork(nextBin, ['start', '-H', '127.0.0.1', '-p', PORT.toString()], {
                     cwd: unpackedAppPath,
                     env: {
                         ...process.env,

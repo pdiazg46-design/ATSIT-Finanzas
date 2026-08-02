@@ -69,7 +69,7 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
                     Buscar Actualización
                 </span>
                 <span className="bg-sky-500/20 text-sky-300 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-sky-500/30">
-                    v1.0.3
+                    v1.0.4
                 </span>
             </a>
             
