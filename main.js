@@ -64,46 +64,22 @@ function startNextServer() {
         process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback';
 
         try {
-            if (process.platform === 'win32') {
-                // Lógica de Windows 100% intacta
-                const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
-                serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
-                    cwd: appPath,
-                    windowsHide: true,
-                    env: {
-                        ...process.env,
-                        ELECTRON_RUN_AS_NODE: '1',
-                        NODE_ENV: 'production',
-                        PORT: PORT.toString()
-                    }
-                });
-                serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
-                serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
-            } else {
-                // Lógica específica para macOS / Linux (usa fork para ejecutar el binario de Next.js sin bloqueo de SIP)
-                let unpackedAppPath = appPath;
-                if (appPath.endsWith('.asar')) {
-                    unpackedAppPath = appPath + '.unpacked';
-                } else if (appPath.includes('app.asar')) {
-                    unpackedAppPath = appPath.replace('app.asar', 'app.asar.unpacked');
-                }
-                const nextBin = path.join(unpackedAppPath, 'node_modules', 'next', 'dist', 'bin', 'next');
+            const next = require('next');
+            const nextApp = next({ dev: false, dir: appPath });
+            const handle = nextApp.getRequestHandler();
 
-                const { fork } = require('child_process');
-                serverProcess = fork(nextBin, ['start', '-H', '127.0.0.1', '-p', PORT.toString()], {
-                    cwd: unpackedAppPath,
-                    env: {
-                        ...process.env,
-                        ELECTRON_RUN_AS_NODE: '1',
-                        NODE_ENV: 'production',
-                        PORT: PORT.toString()
-                    }
+            nextApp.prepare().then(() => {
+                const server = http.createServer((req, res) => {
+                    handle(req, res);
                 });
-                serverProcess.stdout?.on('data', (data) => console.log(`[macOS Server]: ${data}`));
-                serverProcess.stderr?.on('data', (data) => console.error(`[macOS Server Error]: ${data}`));
-            }
+                server.listen(PORT, '127.0.0.1', () => {
+                    console.log(`[Embedded Next.js Server] Ready on http://127.0.0.1:${PORT}`);
+                });
+            }).catch(err => {
+                console.error('[Embedded Next.js Prepare Error]:', err);
+            });
         } catch (err) {
-            console.error('[Next.js Start Error]:', err);
+            console.error('[Embedded Next.js Init Error]:', err);
         }
     }
 }
