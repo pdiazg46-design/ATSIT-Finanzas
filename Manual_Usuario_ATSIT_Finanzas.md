@@ -83,3 +83,15 @@ Para adaptar la herramienta a su imagen corporativa:
 - **Errores de pantalla**: Si ve un error, intente recargar la página (F5).
 - **Fechas incorrectas**: Verifique que la configuración regional de su equipo esté en Español (Chile).
 - **Carga de datos**: Si sube un logo y no se ve, asegúrese de que sea un archivo de imagen válido (.png, .jpg) y pese menos de 2MB.
+- **Aviso de Seguridad en macOS (Gatekeeper - "No se abrió ATSIT Finanzas")**:
+  - **Opción 1: Clic derecho (Recomendada)**
+    1. Abre el **Finder** y ve a la carpeta **Aplicaciones**.
+    2. Haz **clic derecho** (o mantén presionada la tecla `Control` y haz clic) sobre el ícono de **ATSIT Finanzas**.
+    3. Selecciona **Abrir** en el menú contextual.
+    4. Aparecerá un diálogo similar, pero ahora incluirá un botón que dice **"Abrir"**. Haz clic en él. *(Esto solo es necesario realizarlo la primera vez)*.
+  - **Opción 2: Desde Privacidad y Seguridad**
+    1. En la Mac, ve a **Configuración del Sistema > Privacidad y seguridad**.
+    2. Desplázate hacia abajo hasta la sección **Seguridad**.
+    3. Verás un mensaje referente a que se bloqueó *ATSIT Finanzas*. Haz clic en **Abrir de todos modos**.
+    4. Confirma con la contraseña de la Mac o Touch ID.
+

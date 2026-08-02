@@ -49,7 +49,8 @@ function startNextServer() {
     const appPath = isDev ? __dirname : app.getAppPath();
 
     if (isDev) {
-        serverProcess = spawn('npm.cmd', ['run', 'dev'], {
+        const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+        serverProcess = spawn(npmCmd, ['run', 'dev'], {
             cwd: appPath,
             shell: true,
             env: { ...process.env, PORT: PORT.toString() }
@@ -63,19 +64,43 @@ function startNextServer() {
         process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || 'atsit-finanzas-secret-key-2026-prod-fallback';
 
         try {
-            const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
-            serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
-                cwd: appPath,
-                windowsHide: true,
-                env: {
-                    ...process.env,
-                    ELECTRON_RUN_AS_NODE: '1',
-                    NODE_ENV: 'production',
-                    PORT: PORT.toString()
+            if (process.platform === 'win32') {
+                // Lógica de Windows 100% intacta
+                const nextBin = path.join(appPath, 'node_modules', 'next', 'dist', 'bin', 'next');
+                serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
+                    cwd: appPath,
+                    windowsHide: true,
+                    env: {
+                        ...process.env,
+                        ELECTRON_RUN_AS_NODE: '1',
+                        NODE_ENV: 'production',
+                        PORT: PORT.toString()
+                    }
+                });
+                serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
+                serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
+            } else {
+                // Lógica específica para macOS / Linux (resuelve app.asar.unpacked para ejecutar el servidor)
+                let unpackedAppPath = appPath;
+                if (appPath.endsWith('.asar')) {
+                    unpackedAppPath = appPath + '.unpacked';
+                } else if (appPath.includes('app.asar')) {
+                    unpackedAppPath = appPath.replace('app.asar', 'app.asar.unpacked');
                 }
-            });
-            serverProcess.stdout?.on('data', (data) => console.log(`[Server]: ${data}`));
-            serverProcess.stderr?.on('data', (data) => console.error(`[Server Error]: ${data}`));
+                const nextBin = path.join(unpackedAppPath, 'node_modules', 'next', 'dist', 'bin', 'next');
+
+                serverProcess = spawn(process.execPath, [nextBin, 'start', '-H', '127.0.0.1', '-p', PORT.toString()], {
+                    cwd: unpackedAppPath,
+                    env: {
+                        ...process.env,
+                        ELECTRON_RUN_AS_NODE: '1',
+                        NODE_ENV: 'production',
+                        PORT: PORT.toString()
+                    }
+                });
+                serverProcess.stdout?.on('data', (data) => console.log(`[macOS Server]: ${data}`));
+                serverProcess.stderr?.on('data', (data) => console.error(`[macOS Server Error]: ${data}`));
+            }
         } catch (err) {
             console.error('[Next.js Start Error]:', err);
         }

@@ -170,6 +170,41 @@
             line-height: 1.6;
         }
 
+        .mac-warning-box {
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .mac-warning-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mac-warning-box p, .mac-warning-box ol {
+            font-size: 13px;
+            color: #fde68a;
+            line-height: 1.6;
+        }
+
+        .mac-warning-box ol {
+            margin-left: 20px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+        }
+
+        .mac-warning-box strong {
+            color: #ffffff;
+        }
+
         .grid-features {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -344,6 +379,32 @@
             <p>
                 La aplicación no requiere base de datos de clientes. Entendemos que las pymes ya usan sistemas de facturación electrónica con toda la data de sus clientes. Aquí nos enfocamos 100% en el control de transacciones y flujos internos de proyectos de manera local. Toda la información financiera reside únicamente en tu computadora de manera privada y offline.
             </p>
+        </div>
+
+        <div class="mac-warning-box">
+            <h4 class="mac-warning-title">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                ⚠️ Nota Importante para usuarios de macOS (Antes de la descarga)
+            </h4>
+            <p>
+                Al abrir la aplicación por primera vez en macOS, la seguridad de Apple (Gatekeeper) mostrará la advertencia: <em>"Apple no pudo verificar que ATSIT Finanzas no contenga software malicioso..."</em>. Para abrirla inmediatamente, sigue estos pasos:
+            </p>
+            <p style="margin-top: 10px;"><strong>Opción 1: Clic derecho (Recomendada)</strong></p>
+            <ol>
+                <li>Abre el <strong>Finder</strong> y ve a la carpeta <strong>Aplicaciones</strong>.</li>
+                <li>Haz <strong>clic derecho</strong> (o mantén presionada la tecla <code>Control</code> y haz clic) sobre el ícono de <strong>ATSIT Finanzas</strong>.</li>
+                <li>Selecciona <strong>Abrir</strong> en el menú contextual.</li>
+                <li>En el diálogo de confirmación, haz clic en el botón <strong>Abrir</strong>. <em>(Solo es necesario realizarlo la primera vez)</em>.</li>
+            </ol>
+            <p><strong>Opción 2: Desde Privacidad y Seguridad</strong></p>
+            <ol>
+                <li>En tu Mac, ve a <strong>Configuración del Sistema > Privacidad y seguridad</strong>.</li>
+                <li>Desplázate hacia abajo hasta la sección <strong>Seguridad</strong>.</li>
+                <li>Verás un aviso indicando que se bloqueó <em>ATSIT Finanzas</em>. Haz clic en <strong>Abrir de todos modos</strong>.</li>
+                <li>Confirma con tu contraseña o Touch ID.</li>
+            </ol>
         </div>
 
         <h3 class="section-title">Alcances Operativos</h3>

@@ -16,6 +16,26 @@ El objetivo de **ATSIT Finanzas** es ofrecer un control financiero interno de tu
 
 ---
 
+## ⚠️ Nota Importante para Usuarios de macOS (Antes de Descargar e Instalar)
+
+Al abrir la aplicación por primera vez en macOS, el sistema de seguridad **Gatekeeper** mostrará la advertencia: *"Apple no pudo verificar que ATSIT Finanzas no contenga software malicioso..."*.
+
+### Solución para el usuario en Mac (para abrirla inmediatamente):
+
+#### **Opción 1: Clic derecho (Recomendada)**
+1. Abre el **Finder** y ve a la carpeta **Aplicaciones**.
+2. Haz **clic derecho** (o mantén presionada la tecla `Control` y haz clic) sobre el ícono de **ATSIT Finanzas**.
+3. Selecciona **Abrir** en el menú contextual.
+4. Aparecerá un diálogo similar, pero ahora incluirá un botón que dice **"Abrir"**. Haz clic en él. *(Esto solo es necesario realizarlo la primera vez)*.
+
+#### **Opción 2: Desde Privacidad y Seguridad**
+1. En tu Mac, ve a **Configuración del Sistema > Privacidad y seguridad**.
+2. Desplázate hacia abajo hasta la sección **Seguridad**.
+3. Verás un mensaje referente a que se bloqueó *ATSIT Finanzas*. Haz clic en **Abrir de todos modos**.
+4. Confirma con la contraseña de la Mac o Touch ID.
+
+---
+
 ## 🚀 Alcances y Funcionalidades Clave
 
 ### 1. Control del Proyecto (Ficha Técnica de Obra)
