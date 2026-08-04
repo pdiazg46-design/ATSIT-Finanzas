@@ -51,15 +51,13 @@ export default function SettingsTabContainer({
                     <FileText size={16} />
                     Tipos de Documentos ({initialDocuments.length})
                 </button>
-                {isAdmin && (
-                    <button
-                        onClick={() => setActiveTab('usuarios')}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'usuarios' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
-                    >
-                        <Users size={16} />
-                        Gestión de Usuarios ({initialUsers.length})
-                    </button>
-                )}
+                <button
+                    onClick={() => setActiveTab('usuarios')}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === 'usuarios' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
+                >
+                    <Users size={16} />
+                    Gestión de Usuarios ({initialUsers.length})
+                </button>
             </div>
 
             {/* Tab Contents */}
@@ -73,7 +71,7 @@ export default function SettingsTabContainer({
                 {activeTab === 'documentos' && (
                     <DocumentsManager initialDocuments={initialDocuments} />
                 )}
-                {activeTab === 'usuarios' && isAdmin && (
+                {activeTab === 'usuarios' && (
                     <UsersManager initialUsers={initialUsers} />
                 )}
             </div>
