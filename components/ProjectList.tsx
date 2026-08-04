@@ -21,7 +21,7 @@ interface Project {
     taxBalance?: number;
 }
 
-export default function ProjectList({ projects, canManage = false }: { projects: Project[], canManage?: boolean }) {
+export default function ProjectList({ projects, canManage = true }: { projects: Project[], canManage?: boolean }) {
     const [filter, setFilter] = useState<'todos' | 'activos' | 'completados'>('activos');
 
     const filteredProjects = projects.filter((p) => {

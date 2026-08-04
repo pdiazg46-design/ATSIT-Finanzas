@@ -144,11 +144,11 @@ export default function UsersManager({ initialUsers }: { initialUsers: User[] })
                             <label className="text-xs text-slate-400 block mb-2 font-bold uppercase tracking-wider">Permisos de Edición</label>
                             <div className="grid grid-cols-2 gap-2">
                                 <label className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer">
-                                    <input type="checkbox" name="perm_projects" defaultChecked={editingUser?.permissions.includes('MANAGE_PROJECTS')} className="rounded bg-white/10 border-white/20 text-sky-500 focus:ring-sky-500" />
+                                    <input type="checkbox" name="perm_projects" defaultChecked={editingUser ? editingUser.permissions.includes('MANAGE_PROJECTS') : true} className="rounded bg-white/10 border-white/20 text-sky-500 focus:ring-sky-500" />
                                     <span className="text-sm text-slate-300">Proyectos</span>
                                 </label>
                                 <label className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer">
-                                    <input type="checkbox" name="perm_tasks" defaultChecked={editingUser?.permissions.includes('MANAGE_TASKS')} className="rounded bg-white/10 border-white/20 text-sky-500 focus:ring-sky-500" />
+                                    <input type="checkbox" name="perm_tasks" defaultChecked={editingUser ? editingUser.permissions.includes('MANAGE_TASKS') : true} className="rounded bg-white/10 border-white/20 text-sky-500 focus:ring-sky-500" />
                                     <span className="text-sm text-slate-300">Tareas y Movs</span>
                                 </label>
                                 <label className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer">

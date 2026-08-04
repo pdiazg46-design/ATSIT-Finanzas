@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import ProjectModal from './ProjectModal';
 
-export default function AddProjectButton({ employees, canCreate = false, categories = [], currentUser }: { employees: any[], canCreate?: boolean, categories?: string[], currentUser?: any }) {
+export default function AddProjectButton({ employees, canCreate = true, categories = [], currentUser }: { employees: any[], canCreate?: boolean, categories?: string[], currentUser?: any }) {
     const [isOpen, setIsOpen] = useState(false);
 
     if (!canCreate) return null;

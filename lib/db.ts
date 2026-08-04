@@ -4,6 +4,7 @@ const url = process.env.DATABASE_URL;
 const authToken = process.env.DATABASE_AUTH_TOKEN;
 import { createClient } from '@libsql/client';
 import { sql } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 if (!url) {
     console.error('⚠️ CRITICAL: DATABASE_URL is missing. DB queries will fail. (This is expected during build if env vars are unset)');
@@ -193,6 +194,20 @@ export async function initializeDatabase() {
         const toInsertDocs = defaultDocuments.filter(d => !existingDocNames.has(d.name.toLowerCase()));
         if (toInsertDocs.length > 0) {
             await db.insert(schema.documents).values(toInsertDocs).run();
+        }
+
+        // AUTO-SEED: Insert default admin user if no users exist
+        const existingUsers = await db.select().from(schema.users).all();
+        if (existingUsers.length === 0) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            const adminPermissions = JSON.stringify(['ADMIN', 'MANAGE_PROJECTS', 'MANAGE_TASKS', 'MANAGE_EMPLOYEES']);
+            await db.insert(schema.users).values({
+                name: 'Administrador',
+                email: 'admin',
+                password: hashedPassword,
+                permissions: adminPermissions,
+                role: 'admin'
+            }).run();
         }
     } catch (error) {
         console.error('Failed to initialize database tables:', error);
