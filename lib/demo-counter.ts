@@ -16,7 +16,7 @@ const defaultStats: DemoStats = {
     totalDownloads: 124, // Base initial demo counter for display
     totalProjectLaunches: 1,
     lastAccessedAt: new Date().toISOString(),
-    version: '1.0.4'
+    version: '1.1.0'
 };
 
 export async function getDemoStats(): Promise<DemoStats> {

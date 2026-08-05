@@ -356,7 +356,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                                 Versión e Historial de Lanzamientos en la Web
                             </h4>
                             <p className="text-slate-300 text-xs mt-1 leading-relaxed">
-                                Versión Actual Instalada: <span className="font-black text-emerald-400">v1.0.4</span>. Puedes consultar e instalar nuevas versiones desde la web sin afectar tus licencias, pruebas ni datos guardados.
+                                Versión Actual Instalada: <span className="font-black text-emerald-400">v1.1.0 (Sudamérica)</span>. Puedes consultar e instalar nuevas versiones desde la web sin afectar tus licencias, pruebas ni datos guardados.
                             </p>
                         </div>
                         <a
