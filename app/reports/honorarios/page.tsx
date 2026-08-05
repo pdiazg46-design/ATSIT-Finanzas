@@ -1,13 +1,18 @@
 import { db } from '@/lib/db';
-import { projects, tasks, employees } from '@/lib/schema';
-import { eq, sql, and, desc } from 'drizzle-orm';
+import { projects, tasks, employees, documents } from '@/lib/schema';
+import { eq, sql, and, desc, inArray } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import ExportButtons from '@/components/ExportButtons';
 
 export default async function HonorariosReportPage() {
-    // Fetch all tasks that are "Boleta Honorarios" (ID 44)
-    // We group by project to show the breakdown
+    // Fetch all document IDs matching "Honorarios"
+    const honorarioDocs = await db.select().from(documents).all();
+    const honorarioDocIds = honorarioDocs
+        .filter(d => d.name.toLowerCase().includes('honorario'))
+        .map(d => d.id);
+
+    // Fetch all tasks that are Boletas de Honorarios
     const reportData = await db.select({
         id: tasks.id,
         projectId: projects.id,
@@ -15,14 +20,14 @@ export default async function HonorariosReportPage() {
         docNumber: tasks.docNumber,
         title: tasks.title,
         netValue: tasks.netValue, // This is the Liquid Amount
-        taxValue: tasks.taxValue, // This is the 15.25% Retention
+        taxValue: tasks.taxValue, // This is the Retention Amount
         totalValue: tasks.totalValue   // Total Bruto
     })
         .from(tasks)
         .leftJoin(projects, eq(tasks.projectId, projects.id))
         .where(
             and(
-                eq(tasks.documentId, 44), // Boleta Honorarios
+                honorarioDocIds.length > 0 ? inArray(tasks.documentId, honorarioDocIds) : eq(tasks.documentId, 44),
                 eq(projects.isArchived, false) // Active projects only
             )
         )

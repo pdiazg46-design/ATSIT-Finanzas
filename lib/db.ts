@@ -3,7 +3,7 @@ import * as schema from './schema';
 const url = process.env.DATABASE_URL;
 const authToken = process.env.DATABASE_AUTH_TOKEN;
 import { createClient } from '@libsql/client';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 if (!url) {
@@ -33,8 +33,18 @@ const client = createClient({
 
 export const db = drizzle(client, { schema });
 
+let isInitDone = false;
+
 export async function initializeDatabase() {
+    if (isInitDone) return;
+    isInitDone = true;
+
     try {
+        try {
+            await db.run(sql`PRAGMA journal_mode = WAL;`);
+            await db.run(sql`PRAGMA busy_timeout = 5000;`);
+        } catch {}
+
         await db.run(sql`
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -194,6 +204,49 @@ export async function initializeDatabase() {
         const toInsertDocs = defaultDocuments.filter(d => !existingDocNames.has(d.name.toLowerCase()));
         if (toInsertDocs.length > 0) {
             await db.insert(schema.documents).values(toInsertDocs).run();
+        }
+
+        // DEDUPLICATION & CLEANUP: Consolidate duplicate document types in DB
+        const updatedDocs = await db.select().from(schema.documents).all();
+        const canonicalTargetMap: Record<string, string> = {
+            'boleta honorarios': 'Boleta de Honorarios',
+            'boleta de honorarios': 'Boleta de Honorarios',
+            'liquidacion sueldo': 'Liquidación de Sueldo',
+            'liquidación sueldo': 'Liquidación de Sueldo',
+            'liquidación de sueldo': 'Liquidación de Sueldo',
+            'transferencia': 'Comprobante de Transferencia',
+            'comprobante de transferencia': 'Comprobante de Transferencia'
+        };
+
+        const docGroupMap: Record<string, typeof updatedDocs> = {};
+        for (const doc of updatedDocs) {
+            const key = canonicalTargetMap[doc.name.trim().toLowerCase()] || doc.name.trim().toLowerCase();
+            if (!docGroupMap[key]) {
+                docGroupMap[key] = [];
+            }
+            docGroupMap[key].push(doc);
+        }
+
+        try {
+            for (const [key, group] of Object.entries(docGroupMap)) {
+                if (group.length > 1) {
+                    const canonicalName = canonicalTargetMap[key] || group[0].name;
+                    const keeper = group.find(d => d.name === canonicalName) || group[0];
+                    
+                    if (keeper.name !== canonicalName) {
+                        await db.update(schema.documents).set({ name: canonicalName }).where(eq(schema.documents.id, keeper.id)).run();
+                    }
+
+                    for (const doc of group) {
+                        if (doc.id !== keeper.id) {
+                            await db.update(schema.tasks).set({ documentId: keeper.id }).where(eq(schema.tasks.documentId, doc.id)).run();
+                            await db.delete(schema.documents).where(eq(schema.documents.id, doc.id)).run();
+                        }
+                    }
+                }
+            }
+        } catch (dedupError) {
+            // Safe fallback if another concurrent process is editing documents
         }
 
         // AUTO-SEED: Insert default admin user if no users exist

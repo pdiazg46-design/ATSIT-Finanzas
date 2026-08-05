@@ -27,8 +27,9 @@ export default async function IVAReportPage() {
         if (item.movementType === 'Ingreso') {
             groupedByMonth[monthKey].debito.push(item);
         } else {
-            // Check if it is Honorarios (ID 44)
-            if (item.documentName === 'Boleta Honorarios' || item.documentId === 44) {
+            // Check if it is Honorarios
+            const isHonorario = item.documentName?.toLowerCase().includes('honorario') || item.documentId === 44;
+            if (isHonorario) {
                 groupedByMonth[monthKey].honorarios.push(item);
             } else {
                 groupedByMonth[monthKey].credito.push(item);
@@ -65,8 +66,8 @@ export default async function IVAReportPage() {
     // Calculate Global Totals for Summary
     const globalDebito = rawData.filter((i: any) => i.movementType === 'Ingreso').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
     // IVA Credit EXCLUDES Honorarios now
-    const globalCredito = rawData.filter((i: any) => i.movementType !== 'Ingreso' && i.documentId !== 44 && i.documentName !== 'Boleta Honorarios').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
-    const globalRetenciones = rawData.filter((i: any) => i.documentId === 44 || i.documentName === 'Boleta Honorarios').reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    const globalCredito = rawData.filter((i: any) => i.movementType !== 'Ingreso' && !(i.documentName?.toLowerCase().includes('honorario') || i.documentId === 44)).reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
+    const globalRetenciones = rawData.filter((i: any) => (i.documentName?.toLowerCase().includes('honorario') || i.documentId === 44)).reduce((acc: any, curr: any) => acc + (curr.taxValue || 0), 0);
     const globalPagado = payments.reduce((acc: number, curr: any) => acc + curr.amount, 0);
 
     // Balance IVA = Debit + Credit (neg) + Abs(Retentions) - Paid
@@ -77,7 +78,7 @@ export default async function IVAReportPage() {
         ...rawData.map((item: any) => {
             let typeLabel = 'Compra (IVA Crédito)';
             if (item.movementType === 'Ingreso') typeLabel = 'Venta (IVA Débito)';
-            if (item.documentId === 44 || item.documentName === 'Boleta Honorarios') typeLabel = 'Honorarios (Retención)';
+            if (item.documentName?.toLowerCase().includes('honorario') || item.documentId === 44) typeLabel = 'Honorarios (Retención)';
 
             return {
                 date: item.date,
