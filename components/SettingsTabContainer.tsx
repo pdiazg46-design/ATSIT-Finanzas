@@ -14,6 +14,7 @@ interface SettingsTabContainerProps {
     initialUsers: any[];
     initialMovements: any[];
     initialDocuments: any[];
+    demoStats?: any;
     isAdmin: boolean;
 }
 
@@ -22,6 +23,7 @@ export default function SettingsTabContainer({
     initialUsers,
     initialMovements,
     initialDocuments,
+    demoStats,
     isAdmin
 }: SettingsTabContainerProps) {
     const [activeTab, setActiveTab] = useState<Tab>('empresa');
@@ -63,7 +65,7 @@ export default function SettingsTabContainer({
             {/* Tab Contents */}
             <div className="pt-2">
                 {activeTab === 'empresa' && (
-                    <SettingsForm initialSettings={initialSettings} />
+                    <SettingsForm initialSettings={initialSettings} demoStats={demoStats} />
                 )}
                 {activeTab === 'movimientos' && (
                     <MovementsManager initialMovements={initialMovements} />

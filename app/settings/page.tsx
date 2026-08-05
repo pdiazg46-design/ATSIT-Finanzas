@@ -1,4 +1,5 @@
 import { getCompanySettings } from '@/lib/company-data';
+import { getDemoStats } from '@/lib/demo-counter';
 import SettingsTabContainer from '@/components/SettingsTabContainer';
 import { getUsers, hasPermission } from '@/lib/user-actions';
 import { getMovements, getDocuments } from '@/lib/catalog-actions';
@@ -17,6 +18,12 @@ export default async function SettingsPage() {
         email: '',
         rut: ''
     };
+    let demoStats = {
+        totalDownloads: 124,
+        totalProjectLaunches: 1,
+        lastAccessedAt: new Date().toISOString(),
+        version: '1.1.0'
+    };
     let isAdmin = false;
     let users: any[] = [];
     let movements: any[] = [];
@@ -26,6 +33,7 @@ export default async function SettingsPage() {
     try {
         try {
             settings = await getCompanySettings();
+            demoStats = await getDemoStats();
         } catch (e) {
             console.error("Failed to load company settings:", e);
         }
@@ -66,6 +74,7 @@ export default async function SettingsPage() {
                 initialUsers={users}
                 initialMovements={movements}
                 initialDocuments={documents}
+                demoStats={demoStats}
                 isAdmin={isAdmin}
             />
         </div>

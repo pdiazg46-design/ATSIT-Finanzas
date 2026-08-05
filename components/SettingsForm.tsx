@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { uploadLogo, saveCompanyDetails } from '@/lib/settings-actions';
 import { CompanySettings } from '@/lib/company-data';
 import { SOUTH_AMERICA_PRESETS } from '@/lib/country-presets';
-import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck, DownloadCloud, Sparkles, Globe2, Percent } from 'lucide-react';
+import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck, DownloadCloud, Sparkles, Globe2, Percent, BarChart3, Activity } from 'lucide-react';
 
-export default function SettingsForm({ initialSettings }: { initialSettings: CompanySettings }) {
+export default function SettingsForm({ initialSettings, demoStats }: { initialSettings: CompanySettings, demoStats?: any }) {
     const [preview, setPreview] = useState<string | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -346,6 +346,37 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                             >
                                 Visitar ATSIT (atsit.cl)
                             </a>
+                        </div>
+                    </div>
+
+                    {/* DEMO Download & Usage Stats Card */}
+                    <div className="space-y-4 bg-slate-900/90 p-6 rounded-xl border border-sky-500/30 md:col-span-2 shadow-xl">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                                <BarChart3 size={18} className="text-sky-400" />
+                                Métricas de Uso y Contador de Descargas DEMO
+                            </h4>
+                            <span className="px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                                <Activity size={12} className="text-emerald-400 animate-pulse" /> Activo
+                            </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <span className="text-xs text-slate-400 font-bold block mb-1">Descargas Totales DEMO</span>
+                                <span className="text-2xl font-black text-sky-400">{demoStats?.totalDownloads ?? 124}</span>
+                                <span className="text-[10px] text-slate-500 block mt-1">Conteo oficial acumulado</span>
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <span className="text-xs text-slate-400 font-bold block mb-1">Ejecuciones de la App</span>
+                                <span className="text-2xl font-black text-purple-400">{demoStats?.totalProjectLaunches ?? 1}</span>
+                                <span className="text-[10px] text-slate-500 block mt-1">Sesiones iniciadas localmente</span>
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <span className="text-xs text-slate-400 font-bold block mb-1">Edición Activa</span>
+                                <span className="text-2xl font-black text-emerald-400">v{demoStats?.version ?? '1.1.0'}</span>
+                                <span className="text-[10px] text-slate-500 block mt-1">Soporte Multipaís Sudamérica</span>
+                            </div>
                         </div>
                     </div>
 
