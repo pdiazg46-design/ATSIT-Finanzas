@@ -4,13 +4,40 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { uploadLogo, saveCompanyDetails } from '@/lib/settings-actions';
 import { CompanySettings } from '@/lib/company-data';
-import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck, DownloadCloud, Sparkles } from 'lucide-react';
+import { SOUTH_AMERICA_PRESETS } from '@/lib/country-presets';
+import { Upload, Save, AlertCircle, CheckCircle2, Building2, ShieldCheck, DownloadCloud, Sparkles, Globe2, Percent } from 'lucide-react';
 
 export default function SettingsForm({ initialSettings }: { initialSettings: CompanySettings }) {
     const [preview, setPreview] = useState<string | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [logoLoading, setLogoLoading] = useState(false);
+
+    // Country & Tax settings state
+    const [selectedCountry, setSelectedCountry] = useState<string>(initialSettings.country || 'Chile');
+    const [currency, setCurrency] = useState<string>(initialSettings.currency || 'CLP');
+    const [currencySymbol, setCurrencySymbol] = useState<string>(initialSettings.currencySymbol || '$');
+    const [locale, setLocale] = useState<string>(initialSettings.locale || 'es-CL');
+    const [vatRatePercent, setVatRatePercent] = useState<number>((initialSettings.vatRate ?? 0.19) * 100);
+    const [honorariumRatePercent, setHonorariumRatePercent] = useState<number>((initialSettings.honorariumRate ?? 0.1525) * 100);
+    const [honorariumTaxMode, setHonorariumTaxMode] = useState<'net_based' | 'gross_based'>(initialSettings.honorariumTaxMode || 'net_based');
+    const [taxName, setTaxName] = useState<string>(initialSettings.taxName || 'IVA');
+    const [taxReportName, setTaxReportName] = useState<string>(initialSettings.taxReportName || 'Formulario F29');
+
+    const handleCountrySelect = (countryName: string) => {
+        setSelectedCountry(countryName);
+        const preset = SOUTH_AMERICA_PRESETS[countryName];
+        if (preset) {
+            setCurrency(preset.currency);
+            setCurrencySymbol(preset.currencySymbol);
+            setLocale(preset.locale);
+            setVatRatePercent(preset.vatRate * 100);
+            setHonorariumRatePercent(preset.honorariumRate * 100);
+            setHonorariumTaxMode(preset.honorariumTaxMode);
+            setTaxName(preset.taxName);
+            setTaxReportName(preset.taxReportName);
+        }
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -31,8 +58,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
 
         if (res.success) {
             setMessage({ type: 'success', text: res.message });
-            setPreview(null); // Clear preview to show "saved" state effectively or keep it?
-            // Page reload or revalidation will handle the image update
+            setPreview(null);
         } else {
             setMessage({ type: 'error', text: res.message });
         }
@@ -66,14 +92,51 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                 </div>
             )}
 
+            {/* Regional and Tax Settings Section */}
+            <section className="glass-card p-8 border border-sky-500/20 shadow-xl">
+                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                    <Globe2 size={24} className="text-sky-400" />
+                    País de Operación y Configuración Tributaria (Sudamérica)
+                </h3>
+                <p className="text-slate-400 text-sm mb-6">
+                    Selecciona tu país para cargar automáticamente la moneda y las tasas oficiales de IVA y Retención de Servicios / Honorarios.
+                </p>
+
+                <div className="space-y-6">
+                    {/* Country Selector */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-sky-300">Seleccionar País</label>
+                        <select
+                            value={selectedCountry}
+                            onChange={(e) => handleCountrySelect(e.target.value)}
+                            className="w-full bg-slate-900 border border-sky-500/30 rounded-xl p-3 text-white font-bold focus:outline-none focus:border-sky-400 transition-colors cursor-pointer"
+                        >
+                            {Object.keys(SOUTH_AMERICA_PRESETS).map((countryKey) => (
+                                <option key={countryKey} value={countryKey} className="bg-slate-900 text-white">
+                                    {countryKey} - {SOUTH_AMERICA_PRESETS[countryKey].currency} ({SOUTH_AMERICA_PRESETS[countryKey].taxName} {SOUTH_AMERICA_PRESETS[countryKey].vatRate * 100}%)
+                                </option>
+                            ))}
+                            <option value="Personalizado" className="bg-slate-900 text-white">Personalizado / Otro País</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
             {/* Company Details Section */}
             <section className="glass-card p-8">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <Building2 size={24} className="text-sky-400" />
-                    Información de la Empresa
+                    Información de la Empresa e Impuestos
                 </h3>
 
                 <form onSubmit={handleDetailsSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="hidden" name="country" value={selectedCountry} />
+                    <input type="hidden" name="currency" value={currency} />
+                    <input type="hidden" name="currencySymbol" value={currencySymbol} />
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="taxName" value={taxName} />
+                    <input type="hidden" name="taxReportName" value={taxReportName} />
+
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-400">Nombre de Fantasía (App)</label>
                         <input name="name" defaultValue={initialSettings.name} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors" placeholder="Ej: ATSIT Finanzas" />
@@ -90,8 +153,60 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-400">RUT / Identificador Fiscal</label>
+                        <label className="text-sm font-bold text-slate-400">RUT / Identificador Fiscal (RUC, NIT, CUIT)</label>
                         <input name="rut" defaultValue={initialSettings.rut} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors" />
+                    </div>
+
+                    {/* Tax Rates Inputs */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                            <Percent size={16} />
+                            Tasa de IVA / Impuesto a las Ventas (%)
+                        </label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="vatRatePercent"
+                            value={vatRatePercent}
+                            onChange={(e) => setVatRatePercent(parseFloat(e.target.value) || 0)}
+                            className="w-full bg-white/5 border border-emerald-500/30 rounded-lg p-3 text-white font-mono font-bold focus:outline-none focus:border-emerald-500 transition-colors"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                            <Percent size={16} />
+                            Tasa Retención Honorarios / Servicios (%)
+                        </label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="honorariumRatePercent"
+                            value={honorariumRatePercent}
+                            onChange={(e) => setHonorariumRatePercent(parseFloat(e.target.value) || 0)}
+                            className="w-full bg-white/5 border border-amber-500/30 rounded-lg p-3 text-white font-mono font-bold focus:outline-none focus:border-amber-500 transition-colors"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-400">Modalidad de Retención</label>
+                        <select
+                            name="honorariumTaxMode"
+                            value={honorariumTaxMode}
+                            onChange={(e) => setHonorariumTaxMode(e.target.value as any)}
+                            className="w-full bg-slate-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                        >
+                            <option value="net_based">Sobre Líquido / Neto (Estilo Chile: Neto / (1 - rate))</option>
+                            <option value="gross_based">Sobre Total / Bruto (Estilo Internacional: Bruto * rate)</option>
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-400">Moneda y Símbolo</label>
+                        <div className="flex gap-2">
+                            <input name="currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-1/2 bg-white/5 border border-white/10 rounded-lg p-3 text-white font-mono font-bold" placeholder="ISO: CLP" />
+                            <input name="currencySymbol" value={currencySymbol} onChange={(e) => setCurrencySymbol(e.target.value)} className="w-1/2 bg-white/5 border border-white/10 rounded-lg p-3 text-white font-mono font-bold" placeholder="Símbolo: $" />
+                        </div>
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
@@ -123,7 +238,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Com
                             {isLoading ? 'Guardando...' : (
                                 <>
                                     <Save size={20} />
-                                    Guardar Información
+                                    Guardar Información y Tasas
                                 </>
                             )}
                         </button>

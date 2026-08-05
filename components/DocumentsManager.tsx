@@ -22,13 +22,13 @@ export default function DocumentsManager({ initialDocuments }: { initialDocument
             return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Descuento / Inversión de Signo</span>;
         }
         if (lower.includes('factura') && !lower.includes('exenta')) {
-            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">19% IVA F29</span>;
+            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Afecto a IVA/IGV País</span>;
         }
-        if (lower.includes('boleta') && lower.includes('honorario')) {
-            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">15.25% Retención 2° Cat</span>;
+        if (lower.includes('boleta') || lower.includes('honorario') || lower.includes('recibo') || lower.includes('servicio')) {
+            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">Retención de Servicios</span>;
         }
         if (lower.includes('boleta') && !lower.includes('exenta')) {
-            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">19% IVA Incluido</span>;
+            return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">IVA/Impuesto Incluido</span>;
         }
         return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-500/10 text-slate-400 border border-slate-500/20">Exento / Respaldo</span>;
     };
@@ -39,10 +39,10 @@ export default function DocumentsManager({ initialDocuments }: { initialDocument
                 <div>
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <FileText className="text-sky-400" size={22} />
-                        Catálogo Oficial de Documentos Tributarios (Chile SII)
+                        Catálogo Oficial de Documentos Tributarios y Contables
                     </h3>
                     <p className="text-xs text-slate-400 mt-1">
-                        Estructura estandarizada y protegida bajo la normativa del Servicio de Impuestos Internos de Chile
+                        Estructura estandarizada compatible con las normativas tributarias de la región
                     </p>
                 </div>
                 <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 shadow-sm">
@@ -54,8 +54,8 @@ export default function DocumentsManager({ initialDocuments }: { initialDocument
             <div className="bg-sky-500/10 border border-sky-500/20 p-4 rounded-xl text-xs text-sky-200 flex items-start gap-3">
                 <FileText className="text-sky-400 shrink-0 mt-0.5" size={18} />
                 <div>
-                    <strong className="block text-sky-300 font-bold mb-0.5">Estandarización Normativa SII Protegida:</strong>
-                    Para evitar inconsistencias en el cálculo de impuestos y resguardar la seguridad de tus informes (F29, Libros de IVA y Flujo de Caja), los tipos de documentos tributarios son fijos y oficiales. Los cálculos (19% IVA, 15.25% Retención y Notas de Crédito) operan automáticamente.
+                    <strong className="block text-sky-300 font-bold mb-0.5">Estandarización Normativa Protegida:</strong>
+                    Para evitar inconsistencias en el cálculo de impuestos y resguardar la seguridad de tus informes (Impuestos, Libros Contables y Flujo de Caja), los tipos de documentos tributarios son fijos y oficiales. Los cálculos (IVA/IGV, Retenciones y Notas de Crédito) operan automáticamente según el país seleccionado.
                 </div>
             </div>
 

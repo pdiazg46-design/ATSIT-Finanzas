@@ -82,18 +82,19 @@ export default function AddTaskModal({
     const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
     const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
     const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote) && !docName.includes('exenta');
-    const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
+    const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
 
     let taxValue = 0;
     let taxLabel = '';
 
     if (isInvoice) {
+        // Invoice tax (e.g. 19% IVA, 18% IGV, 21% IVA)
         taxValue = netValue * 0.19;
-        taxLabel = isCreditNote ? 'IVA a Descontar (19%)' : 'IVA (19%)';
+        taxLabel = isCreditNote ? 'Impuesto a Descontar (IVA/IGV)' : 'Impuesto (IVA/IGV)';
     } else if (isHonorarium) {
         const rate = 0.1525;
         taxValue = netValue * (rate / (1 - rate));
-        taxLabel = `Retención (${(rate * 100).toFixed(2)}%)`;
+        taxLabel = `Retención de Servicios (${(rate * 100).toFixed(2)}%)`;
     }
 
     // Quick Add Movement Handler

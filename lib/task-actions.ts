@@ -7,6 +7,8 @@ import { eq } from 'drizzle-orm';
 import { hasPermission } from '@/lib/user-actions';
 import { PERMISSIONS } from '@/lib/permissions';
 
+import { getCompanySettings } from '@/lib/company-data';
+
 export async function createTask(data: any) {
     if (!await hasPermission(PERMISSIONS.MANAGE_TASKS)) {
         return { success: false, message: 'No tienes permiso para crear tareas' };
@@ -17,6 +19,12 @@ export async function createTask(data: any) {
     if (!movementId || isNaN(movementId)) {
         return { success: false, message: 'Debe seleccionar un Tipo de Movimiento' };
     }
+
+    // Fetch company tax settings
+    const companySettings = await getCompanySettings();
+    const vatRate = companySettings.vatRate ?? 0.19;
+    const honorariumRate = companySettings.honorariumRate ?? 0.1525;
+    const honorariumTaxMode = companySettings.honorariumTaxMode ?? 'net_based';
 
     // Fetch movement type to determine sign
     const movement = await db.select().from(movements).where(eq(movements.id, movementId)).get();
@@ -37,14 +45,16 @@ export async function createTask(data: any) {
         const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
         const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
         const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
-        const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
+        const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
 
         if (isInvoice) {
-            taxValue = Math.round(adjustedNetValue * 0.19);
+            taxValue = Math.round(adjustedNetValue * vatRate);
         } else if (isHonorarium) {
-            // Honorarium Logic (2026: 15.25%)
-            const rate = 0.1525;
-            taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
+            if (honorariumTaxMode === 'net_based') {
+                taxValue = Math.round(adjustedNetValue * (honorariumRate / (1 - honorariumRate)));
+            } else {
+                taxValue = Math.round(adjustedNetValue * honorariumRate);
+            }
         }
 
         // Nota de Crédito reverses the transaction sign
@@ -89,6 +99,12 @@ export async function updateTask(id: number, data: any) {
         return { success: false, message: 'Debe seleccionar un Tipo de Movimiento' };
     }
 
+    // Fetch company tax settings
+    const companySettings = await getCompanySettings();
+    const vatRate = companySettings.vatRate ?? 0.19;
+    const honorariumRate = companySettings.honorariumRate ?? 0.1525;
+    const honorariumTaxMode = companySettings.honorariumTaxMode ?? 'net_based';
+
     // Fetch movement type to determine sign
     const movement = await db.select().from(movements).where(eq(movements.id, movementId)).get();
     const type = movement?.type || 'Gasto';
@@ -108,14 +124,16 @@ export async function updateTask(id: number, data: any) {
         const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
         const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
         const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
-        const isHonorarium = docName.includes('boleta') && docName.includes('honorario');
+        const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
 
         if (isInvoice) {
-            taxValue = Math.round(adjustedNetValue * 0.19);
+            taxValue = Math.round(adjustedNetValue * vatRate);
         } else if (isHonorarium) {
-            // Honorarium Logic (2026: 15.25%)
-            const rate = 0.1525;
-            taxValue = Math.round(adjustedNetValue * (rate / (1 - rate)));
+            if (honorariumTaxMode === 'net_based') {
+                taxValue = Math.round(adjustedNetValue * (honorariumRate / (1 - honorariumRate)));
+            } else {
+                taxValue = Math.round(adjustedNetValue * honorariumRate);
+            }
         }
 
         // Nota de Crédito reverses the transaction sign

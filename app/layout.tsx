@@ -24,12 +24,16 @@ export const metadata: Metadata = {
   description: "Sistema de Gestión Financiera",
 };
 
+import InitialSetupModal from '@/components/InitialSetupModal';
+import { recordProjectLaunch } from '@/lib/demo-counter';
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   await initializeDatabase();
+  await recordProjectLaunch();
   const settings = await getCompanySettings();
   const session = await auth();
   const license = await checkLicenseStatus();
@@ -40,12 +44,15 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <div className="flex flex-col min-h-screen">
             {session?.user && (
-              <LicenseBannerModal
-                isExpired={license.isExpired}
-                isFull={license.isFull}
-                daysRemaining={license.daysRemaining}
-                hardwareId={license.hardwareId}
-              />
+              <>
+                <LicenseBannerModal
+                  isExpired={license.isExpired}
+                  isFull={license.isFull}
+                  daysRemaining={license.daysRemaining}
+                  hardwareId={license.hardwareId}
+                />
+                <InitialSetupModal isConfigured={settings.isConfigured} />
+              </>
             )}
             <div className="flex flex-1">
               <Sidebar companyName={settings.name} user={session?.user} />

@@ -24,36 +24,35 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
 
     const NavLinks = () => (
         <nav 
-            className="flex-1 space-y-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="flex-1 space-y-1 overflow-y-auto min-h-0 pr-1"
         >
-            <Link href="/" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/' ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Dashboard General
             </Link>
-            <Link href="/dashboard" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/dashboard' ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/dashboard" className={`block py-2 px-3 rounded-lg transition-colors ${pathname === '/dashboard' ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Dashboard
             </Link>
-            <Link href="/projects" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/projects') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/projects" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/projects') ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Proyectos
             </Link>
-            <Link href="/history" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/history') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/reports" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/reports') ? 'bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+                Informes
+            </Link>
+            <Link href="/history" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/history') ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Historial
             </Link>
-            <Link href="/employees" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/employees') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+            <Link href="/employees" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/employees') ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Empleados
             </Link>
-            <Link href="/pagos-iva" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/pagos-iva') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
-                Pagos F29
-            </Link>
-            <Link href="/reports" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/reports') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
-                Informes
+            <Link href="/pagos-iva" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/pagos-iva') ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+                Pagos F29 / Impuestos
             </Link>
         </nav>
     );
 
     const UserSection = () => (
-        <div className="pt-3 border-t border-white/5 mt-3 shrink-0 space-y-2">
-            <Link href="/settings" className={`block py-2 px-3 rounded-lg transition-colors ${pathname.startsWith('/settings') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
+        <div className="pt-2 border-t border-white/5 mt-2 shrink-0 space-y-1.5">
+            <Link href="/settings" className={`block py-1.5 px-3 rounded-lg transition-colors text-xs ${pathname.startsWith('/settings') ? 'bg-white/10 text-white font-bold' : 'hover:bg-white/5 text-slate-400 hover:text-white'}`}>
                 Configuración
             </Link>
 
@@ -61,14 +60,14 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
                 href="https://www.atsit.cl/#descargas" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center justify-between py-2 px-3 rounded-xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 hover:from-sky-500/20 hover:to-purple-500/20 text-sky-300 border border-sky-500/20 transition-all font-bold text-xs shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95"
+                className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 hover:from-sky-500/20 hover:to-purple-500/20 text-sky-300 border border-sky-500/20 transition-all font-bold text-xs shadow-sm hover:scale-[1.02] active:scale-95"
                 title="Buscar y descargar la última actualización lanzada en la web"
             >
-                <span className="flex items-center gap-2">
-                    <DownloadCloud size={15} className="text-sky-400" />
+                <span className="flex items-center gap-1.5">
+                    <DownloadCloud size={14} className="text-sky-400" />
                     Buscar Actualización
                 </span>
-                <span className="bg-sky-500/20 text-sky-300 text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-sky-500/30">
+                <span className="bg-sky-500/20 text-sky-300 text-[10px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-sky-500/30">
                     v1.0.4
                 </span>
             </a>
@@ -77,20 +76,20 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
                 href="https://www.atsit.cl/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="block py-2 px-3 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-white/5 transition-colors font-medium text-xs"
+                className="block py-1 px-3 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-white/5 transition-colors font-medium text-[11px]"
             >
                 Soporte y Sitio Web
             </a>
 
             {user && (
-                <div className="bg-white/5 rounded-xl p-3">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                            <UserIcon size={16} />
+                <div className="bg-white/5 rounded-xl p-2.5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+                            <UserIcon size={14} />
                         </div>
                         <div className="overflow-hidden">
-                            <p className="text-sm font-bold text-white truncate">{user.name}</p>
-                            <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                            <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                            <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
                         </div>
                     </div>
                     <LogoutButton />
@@ -142,9 +141,9 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
             )}
 
             {/* Desktop Sidebar */}
-            <aside className="w-64 glass-card m-4 p-5 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
-                <div className="flex flex-col items-center gap-2 mb-4 w-full shrink-0">
-                    <div className="relative w-full h-24 hover:scale-105 transition-transform duration-300">
+            <aside className="w-64 glass-card m-4 p-4 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
+                <div className="flex flex-col items-center gap-1.5 mb-3 w-full shrink-0">
+                    <div className="relative w-full h-16 hover:scale-105 transition-transform duration-300">
                         <Image
                             src={logoVersion ? `/logo.png?v=${logoVersion}` : '/logo.png'}
                             alt="Company Logo"
@@ -154,7 +153,7 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
                             unoptimized
                         />
                     </div>
-                    <h1 className="text-lg font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
+                    <h1 className="text-base font-bold premium-gradient-text tracking-wide text-center leading-tight">{companyName}</h1>
                 </div>
 
                 <NavLinks />
