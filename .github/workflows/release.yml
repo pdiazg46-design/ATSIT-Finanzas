@@ -42,6 +42,7 @@ jobs:
           mkdir -p release-win
           Copy-Item dist/*.exe release-win/
           Get-ChildItem dist/*.exe | ForEach-Object {
+            Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.1.3.exe" -Force
             Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.1.2.exe" -Force
             Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.1.1.exe" -Force
             Copy-Item $_.FullName "release-win/ATSIT-Finanzas-Setup-1.1.0.exe" -Force
@@ -64,17 +65,26 @@ jobs:
           name: ATSIT-Finanzas-Windows
           path: release-files
 
-      - name: Create Automatic Release v1.1.2
+      - name: Create Automatic Release v1.1.3
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.2
-          name: "ATSIT Finanzas v1.1.2"
-          body: "Descargas oficiales verificadas para Windows (.exe). Fijación absoluta del menú lateral (Sidebar 100% estático) y mejoras tributarias."
+          tag_name: v1.1.3
+          name: "ATSIT Finanzas v1.1.3"
+          body: "Descargas oficiales verificadas para Windows (.exe). Corrección perfecta de margen y posición del menú lateral con barra superior."
           files: release-files/*
           overwrite: true
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Automatic Release v1.1.2
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.2
+          name: "ATSIT Finanzas v1.1.2"
+          body: "Descargas oficiales verificadas para Windows (.exe)."
+          files: release-files/*
+          overwrite: true
 
       - name: Create Automatic Release v1.1.1
         uses: softprops/action-gh-release@v2

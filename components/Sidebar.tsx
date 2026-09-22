@@ -68,7 +68,7 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
                     Buscar Actualización
                 </span>
                 <span className="bg-sky-500/20 text-sky-300 text-[10px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-sky-500/30">
-                    v1.1.2
+                    v1.1.3
                 </span>
             </a>
             
@@ -141,7 +141,7 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
             )}
 
             {/* Desktop Sidebar */}
-            <aside className="w-64 shrink-0 glass-card m-4 p-4 hidden md:flex flex-col h-[calc(100vh-2rem)] fixed top-0 left-0 z-30">
+            <aside className="w-64 shrink-0 glass-card my-4 ml-4 p-4 hidden md:flex flex-col h-[calc(100vh-5rem)] sticky top-16 z-30">
                 <div className="flex flex-col items-center gap-1.5 mb-3 w-full shrink-0">
                     <div className="relative w-full h-16 hover:scale-105 transition-transform duration-300">
                         <Image

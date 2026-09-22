@@ -40,26 +40,24 @@ export default async function RootLayout({
 
   return (
     <html lang="es-CL">
-      <body className={`${inter.className} antialiased min-h-screen bg-[#0b0f17]`} suppressHydrationWarning>
+      <body className={`${inter.className} antialiased min-h-screen bg-[#0b0f17] text-white flex flex-col`} suppressHydrationWarning>
         <SessionProvider session={session}>
-          <div className="flex flex-col min-h-screen">
-            {session?.user && (
-              <>
-                <LicenseBannerModal
-                  isExpired={license.isExpired}
-                  isFull={license.isFull}
-                  daysRemaining={license.daysRemaining}
-                  hardwareId={license.hardwareId}
-                />
-                <InitialSetupModal isConfigured={settings.isConfigured} />
-              </>
-            )}
-            <div className="flex flex-1 md:pl-72 min-h-screen">
-              <Sidebar companyName={settings.name} user={session?.user} />
-              <main className="flex-1 min-w-0 p-4 pt-24 md:p-8 md:pt-8">
-                {children}
-              </main>
-            </div>
+          {session?.user && (
+            <>
+              <LicenseBannerModal
+                isExpired={license.isExpired}
+                isFull={license.isFull}
+                daysRemaining={license.daysRemaining}
+                hardwareId={license.hardwareId}
+              />
+              <InitialSetupModal isConfigured={settings.isConfigured} />
+            </>
+          )}
+          <div className="flex flex-1 items-start relative">
+            <Sidebar companyName={settings.name} user={session?.user} />
+            <main className="flex-1 min-w-0 p-4 md:p-8">
+              {children}
+            </main>
           </div>
         </SessionProvider>
       </body>
