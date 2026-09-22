@@ -41,13 +41,15 @@ export async function createTask(data: any) {
     let signMultiplier = 1;
 
     if (document) {
-        const docName = (document.name || '').toLowerCase();
-        const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
-        const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
-        const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
-        const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
+        const docName = (document.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        const isCreditNote = docName.includes('nota de credito');
+        const isDebitNote = docName.includes('nota de debito');
+        const isExempt = docName.includes('exenta');
 
-        if (isInvoice) {
+        const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote || docName.includes('boleta electronica')) && !isExempt && !docName.includes('honorario');
+        const isHonorarium = docName.includes('honorario');
+
+        if (isInvoice && !isExempt) {
             taxValue = Math.round(adjustedNetValue * vatRate);
         } else if (isHonorarium) {
             if (honorariumTaxMode === 'net_based') {
@@ -120,13 +122,15 @@ export async function updateTask(id: number, data: any) {
     let signMultiplier = 1;
 
     if (document) {
-        const docName = (document.name || '').toLowerCase();
-        const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
-        const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
-        const isInvoice = docName.includes('factura') || isCreditNote || isDebitNote;
-        const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
+        const docName = (document.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        const isCreditNote = docName.includes('nota de credito');
+        const isDebitNote = docName.includes('nota de debito');
+        const isExempt = docName.includes('exenta');
 
-        if (isInvoice) {
+        const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote || docName.includes('boleta electronica')) && !isExempt && !docName.includes('honorario');
+        const isHonorarium = docName.includes('honorario');
+
+        if (isInvoice && !isExempt) {
             taxValue = Math.round(adjustedNetValue * vatRate);
         } else if (isHonorarium) {
             if (honorariumTaxMode === 'net_based') {

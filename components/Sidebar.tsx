@@ -141,7 +141,7 @@ export default function Sidebar({ companyName = 'Sistema Financiero', user }: { 
             )}
 
             {/* Desktop Sidebar */}
-            <aside className="w-64 glass-card m-4 p-4 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
+            <aside className="w-64 shrink-0 glass-card m-4 p-4 hidden md:flex flex-col h-[calc(100vh-2rem)] sticky top-4">
                 <div className="flex flex-col items-center gap-1.5 mb-3 w-full shrink-0">
                     <div className="relative w-full h-16 hover:scale-105 transition-transform duration-300">
                         <Image

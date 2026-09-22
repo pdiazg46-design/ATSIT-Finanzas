@@ -183,9 +183,20 @@ export async function initializeDatabase() {
             await db.insert(schema.movements).values(toInsertMovs).run();
         }
 
-        // AUTO-SEED: Insert standard Chilean DTE document types if missing
-        const existingDocs = await db.select().from(schema.documents).all();
-        const existingDocNames = new Set(existingDocs.map(d => d.name.toLowerCase()));
+        // AUTO-SEED & DEDUPLICATION: Chilean document types with accent normalization
+        const normalizeKey = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+        const canonicalTargetMap: Record<string, string> = {
+            'boleta honorarios': 'Boleta de Honorarios',
+            'boleta de honorarios': 'Boleta de Honorarios',
+            'boleta de honorario': 'Boleta de Honorarios',
+            'liquidacion sueldo': 'Liquidación de Sueldo',
+            'liquidacion de sueldo': 'Liquidación de Sueldo',
+            'transferencia': 'Comprobante de Transferencia',
+            'comprobante de transferencia': 'Comprobante de Transferencia',
+            'vale vista': 'Vale Vista',
+            'comprobante interno / sin documento': 'Comprobante Interno / Sin Documento'
+        };
 
         const defaultDocuments = [
             { name: 'Factura Electrónica' },
@@ -197,30 +208,27 @@ export async function initializeDatabase() {
             { name: 'Nota de Débito Electrónica' },
             { name: 'Guía de Despacho Electrónica' },
             { name: 'Comprobante de Transferencia' },
+            { name: 'Vale Vista' },
             { name: 'Liquidación de Sueldo' },
             { name: 'Comprobante Interno / Sin Documento' }
         ];
 
-        const toInsertDocs = defaultDocuments.filter(d => !existingDocNames.has(d.name.toLowerCase()));
+        const existingDocs = await db.select().from(schema.documents).all();
+        const existingNormKeys = new Set(existingDocs.map(d => normalizeKey(d.name)));
+
+        const toInsertDocs = defaultDocuments.filter(d => !existingNormKeys.has(normalizeKey(d.name)));
         if (toInsertDocs.length > 0) {
             await db.insert(schema.documents).values(toInsertDocs).run();
         }
 
-        // DEDUPLICATION & CLEANUP: Consolidate duplicate document types in DB
+        // Run thorough deduplication pass
         const updatedDocs = await db.select().from(schema.documents).all();
-        const canonicalTargetMap: Record<string, string> = {
-            'boleta honorarios': 'Boleta de Honorarios',
-            'boleta de honorarios': 'Boleta de Honorarios',
-            'liquidacion sueldo': 'Liquidación de Sueldo',
-            'liquidación sueldo': 'Liquidación de Sueldo',
-            'liquidación de sueldo': 'Liquidación de Sueldo',
-            'transferencia': 'Comprobante de Transferencia',
-            'comprobante de transferencia': 'Comprobante de Transferencia'
-        };
-
         const docGroupMap: Record<string, typeof updatedDocs> = {};
+
         for (const doc of updatedDocs) {
-            const key = canonicalTargetMap[doc.name.trim().toLowerCase()] || doc.name.trim().toLowerCase();
+            const norm = normalizeKey(doc.name);
+            const canonicalName = canonicalTargetMap[norm] || doc.name.trim();
+            const key = normalizeKey(canonicalName);
             if (!docGroupMap[key]) {
                 docGroupMap[key] = [];
             }
@@ -229,24 +237,23 @@ export async function initializeDatabase() {
 
         try {
             for (const [key, group] of Object.entries(docGroupMap)) {
-                if (group.length > 1) {
-                    const canonicalName = canonicalTargetMap[key] || group[0].name;
-                    const keeper = group.find(d => d.name === canonicalName) || group[0];
-                    
-                    if (keeper.name !== canonicalName) {
-                        await db.update(schema.documents).set({ name: canonicalName }).where(eq(schema.documents.id, keeper.id)).run();
-                    }
+                const firstNorm = normalizeKey(group[0].name);
+                const canonicalName = canonicalTargetMap[firstNorm] || canonicalTargetMap[key] || group[0].name;
+                const keeper = group.find(d => d.name === canonicalName) || group[0];
 
-                    for (const doc of group) {
-                        if (doc.id !== keeper.id) {
-                            await db.update(schema.tasks).set({ documentId: keeper.id }).where(eq(schema.tasks.documentId, doc.id)).run();
-                            await db.delete(schema.documents).where(eq(schema.documents.id, doc.id)).run();
-                        }
+                if (keeper.name !== canonicalName) {
+                    await db.update(schema.documents).set({ name: canonicalName }).where(eq(schema.documents.id, keeper.id)).run();
+                }
+
+                for (const doc of group) {
+                    if (doc.id !== keeper.id) {
+                        await db.update(schema.tasks).set({ documentId: keeper.id }).where(eq(schema.tasks.documentId, doc.id)).run();
+                        await db.delete(schema.documents).where(eq(schema.documents.id, doc.id)).run();
                     }
                 }
             }
         } catch (dedupError) {
-            // Safe fallback if another concurrent process is editing documents
+            console.error('Deduplication cleanup notice:', dedupError);
         }
 
         // AUTO-SEED: Insert default admin user if no users exist

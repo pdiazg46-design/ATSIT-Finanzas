@@ -76,21 +76,23 @@ export default function AddTaskModal({
         if (!manualDueDate) setDueDate(newDate);
     };
 
-    // Dynamic Tax Matching Logic (matching by document name)
+    // Dynamic Tax Matching Logic (matching by document name with accent normalization)
     const selectedDoc = documentsList.find(d => d.id === documentId);
-    const docName = (selectedDoc?.name || '').toLowerCase();
-    const isCreditNote = docName.includes('nota de crédito') || docName.includes('nota de credito');
-    const isDebitNote = docName.includes('nota de débito') || docName.includes('nota de debito');
-    const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote) && !docName.includes('exenta');
-    const isHonorarium = docName.includes('boleta') || docName.includes('honorario') || docName.includes('recibo') || docName.includes('servicio');
+    const docName = (selectedDoc?.name || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    const isCreditNote = docName.includes('nota de credito');
+    const isDebitNote = docName.includes('nota de debito');
+    const isExempt = docName.includes('exenta');
+
+    const isInvoice = (docName.includes('factura') || isCreditNote || isDebitNote || docName.includes('boleta electronica')) && !isExempt && !docName.includes('honorario');
+    const isHonorarium = docName.includes('honorario');
 
     let taxValue = 0;
     let taxLabel = '';
 
-    if (isInvoice) {
-        // Invoice tax (e.g. 19% IVA, 18% IGV, 21% IVA)
+    if (isInvoice && !isExempt) {
+        // Invoice / Boleta tax (e.g. 19% IVA)
         taxValue = netValue * 0.19;
-        taxLabel = isCreditNote ? 'Impuesto a Descontar (IVA/IGV)' : 'Impuesto (IVA/IGV)';
+        taxLabel = isCreditNote ? 'Impuesto a Descontar (IVA 19%)' : 'Impuesto (IVA 19%)';
     } else if (isHonorarium) {
         const rate = 0.1525;
         taxValue = netValue * (rate / (1 - rate));

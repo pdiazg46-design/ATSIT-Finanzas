@@ -56,7 +56,7 @@ export default async function RootLayout({
             )}
             <div className="flex flex-1">
               <Sidebar companyName={settings.name} user={session?.user} />
-              <main className="flex-1 p-4 pt-24 md:p-8 md:pt-8">
+              <main className="flex-1 min-w-0 p-4 pt-24 md:p-8 md:pt-8">
                 {children}
               </main>
             </div>
