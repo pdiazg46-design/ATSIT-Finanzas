@@ -40,9 +40,9 @@ export default async function RootLayout({
 
   return (
     <html lang="es-CL">
-      <body className={`${inter.className} antialiased h-screen overflow-hidden bg-[#0b0f17]`} suppressHydrationWarning>
+      <body className={`${inter.className} antialiased min-h-screen bg-[#0b0f17]`} suppressHydrationWarning>
         <SessionProvider session={session}>
-          <div className="flex flex-col h-screen w-screen overflow-hidden">
+          <div className="flex flex-col min-h-screen">
             {session?.user && (
               <>
                 <LicenseBannerModal
@@ -54,9 +54,9 @@ export default async function RootLayout({
                 <InitialSetupModal isConfigured={settings.isConfigured} />
               </>
             )}
-            <div className="flex flex-1 h-full overflow-hidden">
+            <div className="flex flex-1 md:pl-72 min-h-screen">
               <Sidebar companyName={settings.name} user={session?.user} />
-              <main className="flex-1 min-w-0 h-full overflow-y-auto p-4 pt-24 md:p-8 md:pt-8 custom-scrollbar">
+              <main className="flex-1 min-w-0 p-4 pt-24 md:p-8 md:pt-8">
                 {children}
               </main>
             </div>

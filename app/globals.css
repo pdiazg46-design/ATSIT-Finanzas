@@ -48,3 +48,23 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   transform: scale(1.08);
 }
+
+/* Custom Dark Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 9999px;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
